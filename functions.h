@@ -23,7 +23,6 @@ void parseInput(char *input_command, size_t input_lenght)
     printf("%s\n", input_parameters[i]);
     i++;
   }
-  printf("%d\n", i);
 }
 
 void waitForInput()
@@ -115,4 +114,5 @@ void parseDotFile(char *file_content)
     counter++;
   }
   printf("%d\n", number_of_lines);
+  free(file_content);
 }
