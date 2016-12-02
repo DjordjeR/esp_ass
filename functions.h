@@ -104,10 +104,23 @@ char *storeFileIntoMemory(const char *file_name)
 
 void parseDotFile(char *file_content)
 {
-  int i = 0;
-  while (*(file_content+i) != '\0')
+  int number_of_lines = 0;
+  int counter = 0;
+  while (*(file_content+counter) != '\0')
   {
-    printf("%c", *(file_content+i));
-    i++;
+    if(*(file_content+counter) =='\n')
+    {
+      number_of_lines++;
+    }
+    counter++;
   }
+
+  char *file_content_line_array = (char*)malloc(sizeof(char)*number_of_lines);
+
+  for(counter = 0; counter < number_of_lines; counter++)
+  {
+    strcpy(file_content_line_array+i,)
+  }
+
+  printf("%d\n", number_of_lines);
 }
