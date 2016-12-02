@@ -8,9 +8,9 @@ void parseInput(char *input_command, size_t input_lenght)
       printf("Bye.\n");
       exit(0);
   }
-  if(strcmp(input_command,"list"))
+  if(strcmp(input_command,"list") == 0)
   {
-      //Neka funkcija za ovo
+      printf("Skoro pa kul\n");
   }
 
   splitted_string = strtok(input_command," ");
@@ -114,13 +114,5 @@ void parseDotFile(char *file_content)
     }
     counter++;
   }
-
-  char *file_content_line_array = (char*)malloc(sizeof(char)*number_of_lines);
-
-  for(counter = 0; counter < number_of_lines; counter++)
-  {
-    strcpy(file_content_line_array+i,)
-  }
-
   printf("%d\n", number_of_lines);
 }
