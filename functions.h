@@ -1,8 +1,40 @@
-typedef short BOOL;
-#define TRUE 1
-#define FALSE 0
+void parseInput(char *input_command, size_t input_lenght)
+{
+    strtok(input_command, "\n"); // Ne treba nam end line na kraju stringa
+    int i = 0;
 
-BOOL fileExistst(const char *file_name) // Provjeravamo da li fajl postoji 
+    if(strcmp(input_command,"quit") == 0)
+    {
+        printf("Bye.\n");
+        exit(0);
+    }
+
+    while(*(input_command + i) != '\0')
+    {
+        printf("%c\n", *(input_command + i));
+        i++;
+    }
+}
+
+void waitForInput()
+{
+  char input_command[INPUT_COMMAND_LENGHT] ;
+  while(TRUE)
+  {
+    printf("esp>");
+    fgets(input_command,INPUT_COMMAND_LENGHT,stdin);
+    if(strlen(input_command) != 1)
+    {
+        parseInput(input_command,strlen(input_command));
+    }
+    if (feof(stdin))
+    {
+        exit(0);
+    } 
+  }
+}
+
+BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji 
 {
     FILE *file_stream;
     if((file_stream = fopen(file_name,"r")))
@@ -13,10 +45,21 @@ BOOL fileExistst(const char *file_name) // Provjeravamo da li fajl postoji
     return FALSE;
 }
 
-void storeFileIntoMemory()
+BOOL fileIsWritable(const char *file_name) // Provjeravamo da li je moguće pisati u fajl
+{
+     FILE *file_stream;
+    if((file_stream = fopen(file_name,"rw")))
+    {
+        fclose(file_stream);
+        return TRUE;
+    }
+    return FALSE; 
+}
+
+char *storeFileIntoMemory(const char *file_name)
 {
     char *file_content = NULL; // TODO : Dodati provjeru da li fajl postoji
-    FILE *file_stream = fopen("black_fam-tree.dot","r");
+    FILE *file_stream = fopen(file_name,"r");
 
     if(file_stream != NULL)
     {
@@ -46,6 +89,5 @@ void storeFileIntoMemory()
         }
         fclose(file_stream);
     }
-    printf("%s\n", file_content);
-    free(file_content); // Ovo ce ici negdje drugdje poslije
+    return file_content;
 }
