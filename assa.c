@@ -1,11 +1,9 @@
 #include <stdio.h> // Standardna biblioteka
 #include <stdlib.h> // Trebaće nam za malloc
 #include <string.h> // Trebaće nam za stringove
+#include "functions.h"
 
 
-typedef short BOOL;
-#define TRUE 1
-#define FALSE 0
 
 typedef struct _Person_ // Nesto ovako za svaku osobu posebno
 {
@@ -17,6 +15,7 @@ typedef struct _Person_ // Nesto ovako za svaku osobu posebno
 
 int main(int argc, char const *argv[])
 {
+  storeFileIntoMemory();
   return 0;
 }
 
