@@ -1,14 +1,20 @@
 #include <stdio.h> // Standardna biblioteka
-#include <stdlib.h> // Trebaće nam za malloc
+#include <stdlib.h> // Trebaće nam za 
 #include <string.h> // Trebaće nam za stringove
 
 typedef short BOOL;
 #define TRUE 1
 #define FALSE 0
+
+//Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
+#define ERROR_TO_MANY_ARGUMENTS 1
+#define ERROR_OUT_OF_MEMORY 2
+//String lenghts
 #define INPUT_COMMAND_LENGHT 256
-#define NUMBER_OF_MAX_INPUT_PARAMETERS 5
 #define MAX_NAME_LENGHT 256
+//Msc
+#define INITIAL_NUMBER_OF_PERSONS 5 //NOTE: ovo je samo za testiranje
 
 typedef struct _Person_ 
 {
@@ -17,11 +23,13 @@ typedef struct _Person_
   struct _Person_ *mother_; 
   struct _Person_ *father_; 
 }Person;
-
+/**
+ * [parseInput description]
+ * @param input_command [description]
+ * @param input_lenght  [description]
+ */
 void parseInput(char *input_command, size_t input_lenght)
 {
-  char *input_parameters[NUMBER_OF_MAX_INPUT_PARAMETERS]; //Array of pointers
-  char *splitted_string;
   strtok(input_command, "\n"); // Ne treba nam end line na kraju stringa
   if(strcmp(input_command,"quit") == 0)
   {
@@ -32,19 +40,10 @@ void parseInput(char *input_command, size_t input_lenght)
   {
       printf("Skoro pa kul\n"); //TODO : napraviti funkciju
   }
-
-  splitted_string = strtok(input_command," ");
-  int i = 0;
-  while (splitted_string != NULL)
-  {
-    input_parameters[i] = malloc(strlen(splitted_string) + 1); // TODO: osloboditi memoriju poslije
-    strcpy(input_parameters[i], splitted_string);
-    splitted_string = strtok (NULL, " ");
-    printf("%s\n", input_parameters[i]);
-    i++;
-  }
 }
-
+/**
+ * [waitForInput description]
+ */
 void waitForInput()
 {
   char input_command[INPUT_COMMAND_LENGHT] ;
@@ -62,7 +61,11 @@ void waitForInput()
     } 
   }
 }
-
+/**
+ * [fileExists description]
+ * @param  file_name [description]
+ * @return           [description]
+ */
 BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji 
 {
   FILE *file_stream;
@@ -73,7 +76,11 @@ BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji
   }
   return FALSE;
 }
-
+/**
+ * [fileIsWritable description]
+ * @param  file_name [description]
+ * @return           [description]
+ */
 BOOL fileIsWritable(const char *file_name) // Provjeravamo da li je moguće pisati u fajl
 {
   FILE *file_stream;
@@ -84,10 +91,14 @@ BOOL fileIsWritable(const char *file_name) // Provjeravamo da li je moguće pisa
   }
   return FALSE; 
 }
-
+/**
+ * [storeFileIntoMemory description]
+ * @param  file_name [description]
+ * @return           [description]
+ */
 char *storeFileIntoMemory(const char *file_name)
 {
-  char *file_content = NULL; // TODO : Dodati provjeru da li fajl postoji
+  char *file_content = NULL;
   FILE *file_stream = fopen(file_name,"r");
 
   if(file_stream != NULL)
@@ -98,9 +109,12 @@ char *storeFileIntoMemory(const char *file_name)
           if(buffer_size == -1)
           {
               printf("Neki error.\n");
-          } // TODO : Projvjeriti da li je malloc radio sa if == null
+          }
           file_content = (char*)malloc(sizeof(char)*(buffer_size + 1));
-
+          if(file_content == NULL)
+          {
+            exit(ERROR_OUT_OF_MEMORY);
+          }
           if(fseek(file_stream,0L,SEEK_SET) != 0)
           {
               printf("Neki error\n");
@@ -119,42 +133,86 @@ char *storeFileIntoMemory(const char *file_name)
   }
   return file_content;
 }
-
-void parseDotFile(char *file_content)
+/**
+ * [listPersons description]
+ * @param persons           [description]
+ * @param number_of_entries [description]
+ */
+void listPersons(Person *persons, int number_of_entries)
 {
-
-  int number_of_lines = 0;
-  int counter = 0;
-  while (*(file_content+counter) != '\0')
+  int counter;
+  for(counter = 0; counter < number_of_entries; counter++)
   {
-    if(*(file_content+counter) == ' ')
-    {
-      *(file_content+counter) = '\0';
-      printf("%d\n", strcmp(file_content,"digraph"));
-      break;
-    }
-    counter++;
+    printf("%s ", persons[counter].name_);
+    printf("%s\n", (persons[counter].gender_ == 1) ? "[f]" : "[m]");
   }
-
+}
+/**
+ * [parseDotFile description]
+ * @param file_content [description]
+ */
+void parseDotFile(char *file_content) //TODO: najvazniej
+{
   free(file_content);
 }
-
-int main(int argc, char const *argv[])
+/**
+ * [findPerson description]
+ * @param  persons           [description]
+ * @param  number_of_persons [description]
+ * @param  name              [description]
+ * @param  gender_           [description]
+ * @return                   [description]
+ */
+Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender_)
 {
-
-  char *file_name = "black_fam-tree.dot";
-  if(!fileExists(file_name)){
-    printf("[ERR] Could not read file.\n");
-    return ERROR_FILE_COULD_NOT_BE_READ;
+  int counter;
+  for(counter = 0; counter < number_of_persons; counter++)
+  {
+    if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender_)
+    {
+      return persons+counter;
+    }
   }
-  char *file_content_ptr = storeFileIntoMemory(file_name);
-  parseDotFile(storeFileIntoMemory(file_name));
-  waitForInput();
+  return NULL;
+}
+/**
+ * [main description]
+ * @param  argc [description]
+ * @param  argv [description]
+ * @return      [description]
+ */
+int main(int argc, char **argv)
+{
+  //Only for testing
+  Person *list_of_persons = (Person*)malloc(sizeof(Person)*INITIAL_NUMBER_OF_PERSONS);
+  strcpy(list_of_persons[0].name_,"Marija");
+  list_of_persons[0].gender_ = 1;
+  strcpy(list_of_persons[1].name_,"Aragan");
+  list_of_persons[1].gender_ = 0;
+
+  if(argc == 1)
+  {
+    listPersons(list_of_persons,2);
+    free(list_of_persons);
+    waitForInput();
+  }
+  else if(argc == 2)
+  {
+    char *file_name = argv[1];
+    if(!fileExists(file_name))
+    {
+      printf("[ERR] Could not read file.\n");
+      return ERROR_FILE_COULD_NOT_BE_READ;
+    }
+    char *file_content_ptr = storeFileIntoMemory(file_name);
+    parseDotFile(file_content_ptr);
+    //parseDotFile
+    //printPersons
+    waitForInput();
+  }
+  else
+  {
+    return ERROR_TO_MANY_ARGUMENTS;
+  }
   return 0;
 }
-
-
-// TODO : istDotFileValid()
-// TODO : parseDotFile()
-// TODO : parseConsoleInput()
-// TODO : createDotFile()
