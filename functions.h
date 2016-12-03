@@ -10,7 +10,7 @@ void parseInput(char *input_command, size_t input_lenght)
   }
   if(strcmp(input_command,"list") == 0)
   {
-      printf("Skoro pa kul\n");
+      printf("Skoro pa kul\n"); //TODO : napraviti funkciju
   }
 
   splitted_string = strtok(input_command," ");
