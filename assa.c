@@ -223,14 +223,16 @@ void parseDotFile(char *file_content)
   }
 
   char name[256];
+  char name2[256];
   char gender[4];
+  char gender2[4];
   BOOL gender_b;
   int number_of_persons = 0;
   Person *array_of_persons = (Person*)malloc(sizeof(Person)*lines_separated_counter); //This will be reallocated later
 
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    sscanf(lines_separated[counter]," \"%[^ [] [%[^]]",name,gender);
+    sscanf(lines_separated[counter]," \"%[^ [] [%[^]];",name,gender);
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
     if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
     {
@@ -241,9 +243,13 @@ void parseDotFile(char *file_content)
       array_of_persons[number_of_persons].father_ = new_temp_person->father_;
       free(new_temp_person);
       number_of_persons++;
+
     }
   }
-  listPersons(array_of_persons,number_of_persons);
+  sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2); //TODO: moraćemo čitati svake navodnike i onaj znak -> i ; na kraju da možemo prebrojati imaju li svi da vidimo da li je fajl važeći
+  printf("%s - %s - %s %s\n",name, gender,name2,gender2 );
+  printf("%d\n", sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2));
+ // listPersons(array_of_persons,number_of_persons);
   printf("File parsing successful...\n");
   free(array_of_persons); // TODO: ovo ide negdje drugdje
   free(file_content);
