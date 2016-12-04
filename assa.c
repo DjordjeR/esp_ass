@@ -249,7 +249,7 @@ void parseDotFile(char *file_content)
   sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2); //TODO: moraćemo čitati svake navodnike i onaj znak -> i ; na kraju da možemo prebrojati imaju li svi da vidimo da li je fajl važeći
   printf("%s - %s - %s %s\n",name, gender,name2,gender2 );
   printf("%d\n", sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2));
- // listPersons(array_of_persons,number_of_persons);
+  listPersons(array_of_persons,number_of_persons);
   printf("File parsing successful...\n");
   free(array_of_persons); // TODO: ovo ide negdje drugdje
   free(file_content);
