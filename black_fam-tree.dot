@@ -5,7 +5,7 @@ digraph FamilyTree
   "Cygnus [m]" -> "Ursula [f]";
   "Cygnus [m]" -> "Phineas [m]";
   "Hester [f]";
-  "Irma Dragana [f]";
+  "Irma [f]";
   "Melania [f]";
   "Orion [m]" -> "Melania [f]";
   "Orion [m]" -> "Arcturus [m]";
@@ -21,5 +21,4 @@ digraph FamilyTree
   "Violetta [f]";
   "Walburga [f]" -> "Irma [f]";
   "Walburga [f]" -> "Pollux [m]";
-  "Jelena [f]" -> "Ivana [f]";
 }

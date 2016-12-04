@@ -2,10 +2,10 @@
 #include <stdlib.h> // Trebaće nam za 
 #include <string.h> // Trebaće nam za stringove
 
+//Substitue for BOOL
 typedef short BOOL;
 #define TRUE 1
 #define FALSE 0
-#define MAXSIZE 32
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
 #define ERROR_TO_MANY_ARGUMENTS 1
@@ -230,7 +230,7 @@ void parseDotFile(char *file_content)
 
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    sscanf(lines_separated[counter]," \"%[^[] [%[^]]",name,gender);
+    sscanf(lines_separated[counter]," \"%[^ [] [%[^]]",name,gender);
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
     if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
     {
@@ -244,6 +244,7 @@ void parseDotFile(char *file_content)
     }
   }
   listPersons(array_of_persons,number_of_persons);
+  printf("File parsing successful...\n");
   free(array_of_persons); // TODO: ovo ide negdje drugdje
   free(file_content);
 }
