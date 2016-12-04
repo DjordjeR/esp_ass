@@ -5,7 +5,7 @@
 typedef short BOOL;
 #define TRUE 1
 #define FALSE 0
-
+#define MAXSIZE 32
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
 #define ERROR_TO_MANY_ARGUMENTS 1
@@ -147,13 +147,19 @@ void listPersons(Person *persons, int number_of_entries)
     printf("%s\n", (persons[counter].gender_ == 1) ? "[f]" : "[m]");
   }
 }
-/**
- * [parseDotFile description]
- * @param file_content [description]
- */
-void parseDotFile(char *file_content) //TODO: najvazniej
+Person *addNewPerson(char *name, BOOL gender, Person *mother, Person *father)
 {
-  free(file_content);
+  Person *new_person = (Person*)malloc(sizeof(Person));
+  if(new_person == NULL)
+  {
+    exit(ERROR_OUT_OF_MEMORY);
+  }
+  strcpy(new_person->name_,name);
+  new_person->gender_ = gender;
+  new_person->father_ = father;
+  new_person->mother_ = mother;
+
+  return new_person;
 }
 /**
  * [findPerson description]
@@ -163,17 +169,83 @@ void parseDotFile(char *file_content) //TODO: najvazniej
  * @param  gender_           [description]
  * @return                   [description]
  */
-Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender_)
+Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender)
 {
   int counter;
   for(counter = 0; counter < number_of_persons; counter++)
   {
-    if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender_)
+    if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
     {
       return persons+counter;
     }
   }
   return NULL;
+}
+/**
+ * [parseDotFile description]
+ * @param file_content [description]
+ */
+void parseDotFile(char *file_content)
+{
+  int number_of_lines = 0;
+  int counter = 0;
+  while(*(file_content + counter) != '\0') // Counting number of lines
+  {
+    if(*(file_content + counter) == '\n')
+    {
+      number_of_lines++;
+    }
+    counter++;
+  }
+  char *lines_separated[number_of_lines];
+  int lines_separated_counter = 0;
+  int file_content_counter = 0;
+
+  counter = 0;
+  while(*(file_content + counter) != '\0') // Extrating values from single string to array of pointers to the specific adresses withing the string
+  {
+    if(*(file_content + counter) == '\n')
+    {
+      *(file_content + counter) = '\0'; //Puting null byte insted of newline so the string is later valid for string functions
+      lines_separated[lines_separated_counter] = file_content + file_content_counter;
+      
+      file_content_counter = counter + 1;
+      lines_separated_counter++;
+    }
+    ++counter;
+  }
+  // Provjeravamo da li je pocetak i da li zagrade odgovaraju
+  if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp(lines_separated[1],"{") != 0 || file_content[counter-1] != '}')
+  {
+    free(file_content);
+    printf("[ERR] Could not read file.\n");
+    exit(ERROR_FILE_COULD_NOT_BE_READ);
+  }
+
+  char name[256];
+  char gender[4];
+  BOOL gender_b;
+  int number_of_persons = 0;
+  Person *array_of_persons = (Person*)malloc(sizeof(Person)*lines_separated_counter); //This will be reallocated later
+
+  for(counter = 2; counter < lines_separated_counter; counter++ )
+  {
+    sscanf(lines_separated[counter]," \"%[^[] [%[^]]",name,gender);
+    gender_b = (gender[0] == 'f') ? TRUE : FALSE;
+    if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
+    {
+      Person *new_temp_person = addNewPerson(name,gender_b,NULL,NULL);
+      strcpy(array_of_persons[number_of_persons].name_,new_temp_person->name_);
+      array_of_persons[number_of_persons].gender_ = new_temp_person->gender_;
+      array_of_persons[number_of_persons].mother_ = new_temp_person->mother_;
+      array_of_persons[number_of_persons].father_ = new_temp_person->father_;
+      free(new_temp_person);
+      number_of_persons++;
+    }
+  }
+  listPersons(array_of_persons,number_of_persons);
+  free(array_of_persons); // TODO: ovo ide negdje drugdje
+  free(file_content);
 }
 /**
  * [main description]
@@ -184,16 +256,16 @@ Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gend
 int main(int argc, char **argv)
 {
   //Only for testing
-  Person *list_of_persons = (Person*)malloc(sizeof(Person)*INITIAL_NUMBER_OF_PERSONS);
+  /*Person *list_of_persons = (Person*)malloc(sizeof(Person)*INITIAL_NUMBER_OF_PERSONS);
   strcpy(list_of_persons[0].name_,"Marija");
   list_of_persons[0].gender_ = 1;
   strcpy(list_of_persons[1].name_,"Aragan");
   list_of_persons[1].gender_ = 0;
-
+*/
   if(argc == 1)
   {
-    listPersons(list_of_persons,2);
-    free(list_of_persons);
+    //listPersons(list_of_persons,2);
+    //free(list_of_persons);
     waitForInput();
   }
   else if(argc == 2)
@@ -204,14 +276,14 @@ int main(int argc, char **argv)
       printf("[ERR] Could not read file.\n");
       return ERROR_FILE_COULD_NOT_BE_READ;
     }
-    char *file_content_ptr = storeFileIntoMemory(file_name);
-    parseDotFile(file_content_ptr);
+    parseDotFile(storeFileIntoMemory(file_name));
     //parseDotFile
     //printPersons
     waitForInput();
   }
   else
   {
+    printf("Usage: ./ass [file-name]\\n\n");
     return ERROR_TO_MANY_ARGUMENTS;
   }
   return 0;
