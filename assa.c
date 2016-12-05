@@ -244,7 +244,6 @@ Person *parseDotFile(char *file_content)
     printf("[ERR] Could not read file.\n");
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
-
   char name[256];
   char gender[4];
   BOOL gender_b;
@@ -254,7 +253,8 @@ Person *parseDotFile(char *file_content)
 
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    sscanf(lines_separated[counter]," \"%[^ [] [%[^]];",name,gender);
+    sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
+    name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
     if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
     {
@@ -265,13 +265,11 @@ Person *parseDotFile(char *file_content)
       array_of_persons[number_of_persons].father_ = new_temp_person->father_;
       free(new_temp_person);
       number_of_persons++;
-
     }
   }
-
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
-
   array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*(number_of_persons+1));
+  
   /*
   char name2[256];
   char gender2[4];
