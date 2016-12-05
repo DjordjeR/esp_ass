@@ -1,11 +1,14 @@
 #include <stdio.h> // Standardna biblioteka
 #include <stdlib.h> // Trebaće nam za 
 #include <string.h> // Trebaće nam za stringove
+#include <ctype.h> // Treba nam za isAlpha
 
 //Substitue for BOOL
 typedef short BOOL;
 #define TRUE 1
 #define FALSE 0
+//Success states
+#define SUCCESS_PROGRAM_CLOSED 0
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
 #define ERROR_TO_MANY_ARGUMENTS 1
@@ -14,7 +17,6 @@ typedef short BOOL;
 #define INPUT_COMMAND_LENGHT 256
 #define MAX_NAME_LENGHT 256
 //Msc
-#define INITIAL_NUMBER_OF_PERSONS 5 //NOTE: ovo je samo za testiranje
 
 typedef struct _Person_ 
 {
@@ -23,18 +25,38 @@ typedef struct _Person_
   struct _Person_ *mother_; 
   struct _Person_ *father_; 
 }Person;
+
+/**
+ * [isValidName description]
+ * @param  name [description]
+ * @return      [description]
+ */
+BOOL isValidName(char *name)
+{
+  int counter = 0;
+  while(*(name+counter) != '\0')
+  {
+    if(!(isalpha(*(name+counter)) != 0 || *(name+counter) == ' ' || *(name+counter) == '.'))
+    {
+      return 0;
+    }
+    counter++;
+  }
+  return 1;
+}
 /**
  * [parseInput description]
  * @param input_command [description]
  * @param input_lenght  [description]
  */
-void parseInput(char *input_command, size_t input_lenght)
+void parseInput(char *input_command, Person *persons_array)
 {
   strtok(input_command, "\n"); // Ne treba nam end line na kraju stringa
   if(strcmp(input_command,"quit") == 0)
   {
-      printf("Bye.\n");
-      exit(0);
+    free(persons_array);
+    printf("Bye.\n");
+    exit(SUCCESS_PROGRAM_CLOSED);
   }
   if(strcmp(input_command,"list") == 0)
   {
@@ -44,7 +66,7 @@ void parseInput(char *input_command, size_t input_lenght)
 /**
  * [waitForInput description]
  */
-void waitForInput()
+void waitForInput(Person *persons_array)
 {
   char input_command[INPUT_COMMAND_LENGHT] ;
   while(TRUE)
@@ -53,11 +75,11 @@ void waitForInput()
     fgets(input_command,INPUT_COMMAND_LENGHT,stdin);
     if(strlen(input_command) != 1)
     {
-        parseInput(input_command,strlen(input_command));
+        parseInput(input_command,persons_array);
     }
     if (feof(stdin))
     {
-        exit(0); // TODO: provjeriti üsta ide ovdje
+      exit(SUCCESS_PROGRAM_CLOSED); // TODO: provjeriti üsta ide ovdje, nisam siguran za SUCCESS_PROGRAM_CLOSED
     } 
   }
 }
@@ -140,13 +162,7 @@ char *storeFileIntoMemory(const char *file_name)
  */
 void listPersons(Person *persons)
 {
-
   int counter = 0;
- /* for(counter = 0; counter < number_of_entries; counter++)
-  {
-    printf("%s ", persons[counter].name_);
-    printf("%s\n", (persons[counter].gender_ == 1) ? "[f]" : "[m]");
-  }*/
   while(persons[counter].gender_  != 3)
   {
     printf("%s ", persons[counter].name_);
@@ -192,7 +208,7 @@ Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gend
  * [parseDotFile description]
  * @param file_content [description]
  */
-void parseDotFile(char *file_content)
+Person *parseDotFile(char *file_content)
 {
   int number_of_lines = 0;
   int counter = 0;
@@ -255,7 +271,7 @@ void parseDotFile(char *file_content)
 
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
 
-  array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*number_of_persons+1);
+  array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*(number_of_persons+1));
   /*
   char name2[256];
   char gender2[4];
@@ -266,8 +282,8 @@ void parseDotFile(char *file_content)
 */
   listPersons(array_of_persons);
   printf("File parsing successful...\n");
-  free(array_of_persons); // TODO: ovo ide negdje drugdje
   free(file_content);
+  return array_of_persons;
 }
 /**
  * [main description]
@@ -277,18 +293,12 @@ void parseDotFile(char *file_content)
  */
 int main(int argc, char **argv)
 {
-  //Only for testing
-  /*Person *list_of_persons = (Person*)malloc(sizeof(Person)*INITIAL_NUMBER_OF_PERSONS);
-  strcpy(list_of_persons[0].name_,"Marija");
-  list_of_persons[0].gender_ = 1;
-  strcpy(list_of_persons[1].name_,"Aragan");
-  list_of_persons[1].gender_ = 0;
-*/
   if(argc == 1)
   {
-    //listPersons(list_of_persons,2);
-    //free(list_of_persons);
-    waitForInput();
+    printf("%d\n", isValidName("Marija"));
+    Person *persons_array = (Person*)malloc(sizeof(Person));
+    (persons_array)->gender_ = 3;
+    waitForInput(persons_array);
   }
   else if(argc == 2)
   {
@@ -298,10 +308,7 @@ int main(int argc, char **argv)
       printf("[ERR] Could not read file.\n");
       return ERROR_FILE_COULD_NOT_BE_READ;
     }
-    parseDotFile(storeFileIntoMemory(file_name));
-    //parseDotFile
-    //printPersons
-    waitForInput();
+    waitForInput(parseDotFile(storeFileIntoMemory(file_name))); //NOTE: ovo mozda ljepse napisati
   }
   else
   {
@@ -310,3 +317,10 @@ int main(int argc, char **argv)
   }
   return 0;
 }
+
+//NOTE: main() je gotovo 
+//NOTE: fileIsWritable() je gotov
+//NOTE: fileExists() je gotov
+//NOTE: findPerson() je gotov
+//NOTE: storeFileIntoMemory() je gotov
+//NOTE: addNewPerson() je gotov
