@@ -170,7 +170,15 @@ void listPersons(Person *persons)
     ++counter;
   }
 }
-Person *addNewPerson(char *name, BOOL gender, Person *mother, Person *father)
+/**
+ * [createPersonInstance description]
+ * @param  name   [description]
+ * @param  gender [description]
+ * @param  mother [description]
+ * @param  father [description]
+ * @return        [description]
+ */
+Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father)
 {
   Person *new_person = (Person*)malloc(sizeof(Person));
   if(new_person == NULL)
@@ -258,7 +266,7 @@ Person *parseDotFile(char *file_content)
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
     if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
     {
-      Person *new_temp_person = addNewPerson(name,gender_b,NULL,NULL);
+      Person *new_temp_person = createPersonInstance(name,gender_b,NULL,NULL);
       strcpy(array_of_persons[number_of_persons].name_,new_temp_person->name_);
       array_of_persons[number_of_persons].gender_ = new_temp_person->gender_;
       array_of_persons[number_of_persons].mother_ = new_temp_person->mother_;
@@ -269,7 +277,7 @@ Person *parseDotFile(char *file_content)
   }
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
   array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*(number_of_persons+1));
-  
+
   /*
   char name2[256];
   char gender2[4];
@@ -321,4 +329,4 @@ int main(int argc, char **argv)
 //NOTE: fileExists() je gotov
 //NOTE: findPerson() je gotov
 //NOTE: storeFileIntoMemory() je gotov
-//NOTE: addNewPerson() je gotov
+//NOTE: createPersonInstance() je gotov
