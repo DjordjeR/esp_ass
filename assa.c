@@ -57,7 +57,7 @@ void waitForInput()
     }
     if (feof(stdin))
     {
-        exit(0);
+        exit(0); // TODO: provjeriti üsta ide ovdje
     } 
   }
 }
@@ -138,13 +138,20 @@ char *storeFileIntoMemory(const char *file_name)
  * @param persons           [description]
  * @param number_of_entries [description]
  */
-void listPersons(Person *persons, int number_of_entries)
+void listPersons(Person *persons)
 {
-  int counter;
-  for(counter = 0; counter < number_of_entries; counter++)
+
+  int counter = 0;
+ /* for(counter = 0; counter < number_of_entries; counter++)
   {
     printf("%s ", persons[counter].name_);
     printf("%s\n", (persons[counter].gender_ == 1) ? "[f]" : "[m]");
+  }*/
+  while(persons[counter].gender_  != 3)
+  {
+    printf("%s ", persons[counter].name_);
+    printf("%s\n", (persons[counter].gender_ == 1) ? "[f]" : "[m]");
+    ++counter;
   }
 }
 Person *addNewPerson(char *name, BOOL gender, Person *mother, Person *father)
@@ -223,11 +230,10 @@ void parseDotFile(char *file_content)
   }
 
   char name[256];
-  char name2[256];
   char gender[4];
-  char gender2[4];
   BOOL gender_b;
   int number_of_persons = 0;
+
   Person *array_of_persons = (Person*)malloc(sizeof(Person)*lines_separated_counter); //This will be reallocated later
 
   for(counter = 2; counter < lines_separated_counter; counter++ )
@@ -246,10 +252,19 @@ void parseDotFile(char *file_content)
 
     }
   }
+
+  array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
+
+  array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*number_of_persons+1);
+  /*
+  char name2[256];
+  char gender2[4];
   sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2); //TODO: moraćemo čitati svake navodnike i onaj znak -> i ; na kraju da možemo prebrojati imaju li svi da vidimo da li je fajl važeći
   printf("%s - %s - %s %s\n",name, gender,name2,gender2 );
   printf("%d\n", sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2));
-  listPersons(array_of_persons,number_of_persons);
+  
+*/
+  listPersons(array_of_persons);
   printf("File parsing successful...\n");
   free(array_of_persons); // TODO: ovo ide negdje drugdje
   free(file_content);
