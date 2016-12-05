@@ -79,6 +79,8 @@ void waitForInput(Person *persons_array)
     }
     if (feof(stdin))
     {
+      free(persons_array);
+      printf("\n");
       exit(SUCCESS_PROGRAM_CLOSED); // TODO: provjeriti üsta ide ovdje, nisam siguran za SUCCESS_PROGRAM_CLOSED
     } 
   }
