@@ -17,7 +17,7 @@ typedef short BOOL;
 #define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? 
 #define MAX_NAME_LENGHT 256
 //Msc
-
+#define MAX_NUMBER_OF_ARGUMENTS_IN_DOT_FILE_STRING 150
 typedef struct _Person_ 
 {
   char name_[MAX_NAME_LENGHT];
@@ -36,6 +36,8 @@ BOOL nameIsUnknown(const char *name);
 BOOL fileExists(const char *file_name);
 
 BOOL fileIsWritable(const char *file_name);
+
+BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b);
 
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
@@ -135,6 +137,7 @@ Person *parseDotFile(char *file_content)
     showError(ERROR_FILE_COULD_NOT_BE_READ);
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
+
   char name[MAX_NAME_LENGHT];
   char gender[4];
   BOOL gender_b;
@@ -144,16 +147,10 @@ Person *parseDotFile(char *file_content)
   array_of_persons[lines_separated_counter].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
+    //sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
+    parseSingleFileLine(lines_separated[counter],name,&gender_b);
     name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
-    if(!(nameIsUnknown(name) == TRUE || isValidName(name) == TRUE))
-    {
-      free(file_content);
-      free(array_of_persons);
-      showError(ERROR_FILE_COULD_NOT_BE_READ);
-    	exit(ERROR_FILE_COULD_NOT_BE_READ);
-    }
 
     if(findPerson(array_of_persons,name,gender_b) == NULL)
     {
@@ -181,6 +178,46 @@ Person *parseDotFile(char *file_content)
   printf("File parsing successful...\n");
   free(file_content);
   return array_of_persons;
+}
+
+/**
+ * [parseSingleFileLine description]
+ * @param  line_to_parse [description]
+ * @param  name          [description]
+ * @param  gender_b      [description]
+ * @return               [description]
+ */
+BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b)
+{
+  if(*(line_to_parse) != ' ' || *(line_to_parse+1) != ' ' || *(line_to_parse+2) != '"')
+  {
+    return FALSE;
+  }
+  int counter = 3;
+  int null_counter = 0;
+  while(*(line_to_parse+counter) != '[')
+  {
+    *(name+null_counter) = *(line_to_parse+counter);
+    counter++;
+    null_counter++;
+    if(counter >= MAX_NAME_LENGHT || *(line_to_parse+counter) == ']' || *(line_to_parse+counter) == '>' || *(line_to_parse+counter) == ';' || *(line_to_parse+counter) == '"')
+    {
+      return FALSE;
+    }
+  }
+  *(name+(null_counter-1)) = '\0';
+  counter+=2; // We are skipping [
+  if(*(line_to_parse+counter) != ']')
+  {
+    return FALSE;
+  }
+  *gender_b = (*(line_to_parse+counter) == 'f') ? TRUE : FALSE;
+  ++counter;
+  if(*(line_to_parse+counter) == ';' || *(line_to_parse+counter) == ' ')
+  {
+    return TRUE;
+  }
+ return FALSE;
 }
 
 /**
@@ -358,6 +395,7 @@ void listPersons(Person *persons)
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father)
 {
   Person *new_person = (Person*)malloc(sizeof(Person));
+  
   if(new_person == NULL)
   {
     exit(ERROR_OUT_OF_MEMORY);
@@ -366,7 +404,6 @@ Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *fa
   new_person->gender_ = gender;
   new_person->father_ = father;
   new_person->mother_ = mother;
-
   return new_person;
 }
 /**
@@ -379,7 +416,7 @@ Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *fa
  */
 Person *findPerson(Person *persons, char *name, BOOL gender)
 {
-  int counter = 1;
+  int counter = 0;
   while((persons+counter)->gender_ != 3)
   {
     if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
