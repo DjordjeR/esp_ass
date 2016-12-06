@@ -49,7 +49,7 @@ Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *fa
 
 Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender);
 
-
+void showError(short error_code);
 
 /**
  * [main description]
@@ -70,14 +70,14 @@ int main(int argc, char **argv)
     char *file_name = argv[1];
     if(!fileExists(file_name))
     {
-      printf("[ERR] Could not read file.\n");
+      showError(ERROR_FILE_COULD_NOT_BE_READ);
       return ERROR_FILE_COULD_NOT_BE_READ;
     }
     waitForInput(parseDotFile(storeFileIntoMemory(file_name))); //NOTE: ovo mozda ljepse napisati
   }
   else
   {
-    printf("Usage: ./ass [file-name]\\n\n");
+    showError(ERROR_TO_MANY_ARGUMENTS);
     return ERROR_TO_MANY_ARGUMENTS;
   }
   return SUCCESS_PROGRAM_CLOSED;
@@ -133,7 +133,7 @@ Person *parseDotFile(char *file_content)
   if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp(lines_separated[1],"{") != 0 || file_content[counter-1] != '}')
   {
     free(file_content);
-    printf("[ERR] Could not read file.\n");
+    showError(ERROR_FILE_COULD_NOT_BE_READ);
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
   char name[256];
@@ -154,7 +154,7 @@ Person *parseDotFile(char *file_content)
     {
       free(file_content);
       free(array_of_persons);
-    	printf("[ERR] Could not read file.\n");
+      showError(ERROR_FILE_COULD_NOT_BE_READ);
     	exit(ERROR_FILE_COULD_NOT_BE_READ);
     }
 
@@ -372,15 +372,32 @@ Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *fa
  * @param  gender_           [description]
  * @return                   [description]
  */
-Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender)
+Person *findPerson(Person *persons, char *name, BOOL gender)
 {
   int counter;
-  for(counter = 0; counter < number_of_persons; counter++)
+  while(*(persons+counter).gender_ != 3)
   {
     if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
     {
       return persons+counter;
     }
+    counter++;
   }
   return NULL;
+}
+/**
+ * [showError description]
+ * @param error_code [description]
+ */
+void showError(short error_code)
+{
+  switch(error_code)
+  {
+    case ERROR_FILE_COULD_NOT_BE_READ:
+    printf("[ERR] Could not read file.\n");
+    break;
+    case ERROR_TO_MANY_ARGUMENTS:
+    printf("Usage: ./ass [file-name]\\n\n");
+    break;
+  }
 }
