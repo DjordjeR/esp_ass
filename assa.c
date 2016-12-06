@@ -115,7 +115,6 @@ Person *parseDotFile(char *file_content)
   char *lines_separated[number_of_lines];
   int lines_separated_counter = 0;
   int file_content_counter = 0;
-
   counter = 0;
   while(*(file_content + counter) != '\0') // Extrating values from single string to array of pointers to the specific adresses withing the string
   {
@@ -136,7 +135,6 @@ Person *parseDotFile(char *file_content)
     showError(ERROR_FILE_COULD_NOT_BE_READ);
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
-
   char name[MAX_NAME_LENGHT];
   char parrent_name[MAX_NAME_LENGHT];
   BOOL gender;
@@ -147,7 +145,6 @@ Person *parseDotFile(char *file_content)
   array_of_persons[lines_separated_counter].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    //sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
     parseSingleFileLine(lines_separated[counter], name, &gender, parrent_name, &parrent_gender);
     /*if(parrent_name[0] != '\0')
     {
