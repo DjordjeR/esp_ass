@@ -36,7 +36,7 @@ BOOL fileExists(const char *file_name);
 
 BOOL fileIsWritable(const char *file_name);
 
-BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b);
+BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b);
 
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
@@ -138,8 +138,9 @@ Person *parseDotFile(char *file_content)
   }
 
   char name[MAX_NAME_LENGHT];
-  char gender[4];
-  BOOL gender_b;
+  char parrent_name[MAX_NAME_LENGHT];
+  BOOL gender;
+  BOOL parrent_gender;
   int number_of_persons = 0;
 
   Person *array_of_persons = (Person*)malloc(sizeof(Person)*lines_separated_counter); //This will be reallocated later
@@ -147,13 +148,15 @@ Person *parseDotFile(char *file_content)
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
     //sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
-    parseSingleFileLine(lines_separated[counter],name,&gender_b);
-    name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
-    gender_b = (gender[0] == 'f') ? TRUE : FALSE;
-
-    if(findPerson(array_of_persons,name,gender_b) == NULL)
+    parseSingleFileLine(lines_separated[counter], name, &gender, parrent_name, &parrent_gender);
+    /*if(parrent_name[0] != '\0')
     {
-      Person *new_temp_person = createPersonInstance(name,gender_b,NULL,NULL);
+      printf("Roditelj od : %s, pol = %d, se zove : %s, pol %d\n",name,gender,parrent_name,parrent_gender);
+    }*/
+    name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
+    if(findPerson(array_of_persons,name,gender) == NULL)
+    {
+      Person *new_temp_person = createPersonInstance(name,gender,NULL,NULL);
       strcpy(array_of_persons[number_of_persons].name_,new_temp_person->name_);
       array_of_persons[number_of_persons].gender_ = new_temp_person->gender_;
       array_of_persons[number_of_persons].mother_ = new_temp_person->mother_;
@@ -164,15 +167,6 @@ Person *parseDotFile(char *file_content)
   }
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
   array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*(number_of_persons+1));
-
-  /*
-  char name2[256];
-  char gender2[4];
-  sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2); //TODO: moraćemo čitati svake navodnike i onaj znak -> i ; na kraju da možemo prebrojati imaju li svi da vidimo da li je fajl važeći
-  printf("%s - %s - %s %s\n",name, gender,name2,gender2 );
-  printf("%d\n", sscanf(lines_separated[3]," \"%[^ [] [%[^]]%*[^->]->%*[^\"]\"%[^[] [%[^]]%*[^;]",name,gender,name2,gender2));
-  
-*/
   listPersons(array_of_persons);
   printf("File parsing successful...\n");
   free(file_content);
@@ -181,12 +175,14 @@ Person *parseDotFile(char *file_content)
 
 /**
  * [parseSingleFileLine description]
- * @param  line_to_parse [description]
- * @param  name          [description]
- * @param  gender_b      [description]
- * @return               [description]
+ * @param  line_to_parse    [description]
+ * @param  name             [description]
+ * @param  gender_b         [description]
+ * @param  parrent_name     [description]
+ * @param  parrent_gender_b [description]
+ * @return                  [description]
  */
-BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b)
+BOOL parseSingleFileLine(char *line_to_parse, char *name,BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b)
 {
   if(*(line_to_parse) != ' ' || *(line_to_parse+1) != ' ' || *(line_to_parse+2) != '"')
   {
@@ -204,19 +200,44 @@ BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b)
       return FALSE;
     }
   }
-  *(name+(null_counter-1)) = '\0';
+  *(name+(null_counter)) = '\0';
   counter+=2; // We are skipping [
   if(*(line_to_parse+counter) != ']')
   {
     return FALSE;
   }
-  *gender_b = (*(line_to_parse+counter) == 'f') ? TRUE : FALSE;
+  *gender_b = (*(line_to_parse+(counter-1)) == 'f') ? TRUE : FALSE;
   ++counter;
-  if(*(line_to_parse+counter) == ';' || *(line_to_parse+counter) == ' ')
+  if(*(line_to_parse+counter) == ' ' || *(line_to_parse+(counter+1)) == ';')
   {
+    *parrent_name = '\0';
     return TRUE;
   }
- return FALSE;
+  counter+=2;
+  if(*(line_to_parse+(counter)) != '-' || *(line_to_parse+(counter+1)) != '>' || *(line_to_parse+(counter+2)) != ' ' || *(line_to_parse+(counter+3)) != '"')
+  {
+    return FALSE;
+  }
+  counter+=4;
+  null_counter = 0;
+  while(*(line_to_parse+counter) != '[')
+  {
+    *(parrent_name+null_counter) = *(line_to_parse+counter);
+    counter++;
+    null_counter++;
+    if(counter >= MAX_NAME_LENGHT || *(line_to_parse+counter) == ']' || *(line_to_parse+counter) == '>' || *(line_to_parse+counter) == ';' || *(line_to_parse+counter) == '"')
+    {
+      return FALSE;
+    }
+  }
+  *(parrent_name+(null_counter-1)) = '\0';
+  counter+=2; // We are skipping [
+  if(*(line_to_parse+counter) != ']' || *(line_to_parse+(counter+1)) != '"' || *(line_to_parse+(counter+2)) != ';')
+  {
+    return FALSE;
+  }
+  *parrent_gender_b = (*(line_to_parse+(counter-1)) == 'f') ? TRUE : FALSE;
+ return TRUE;
 }
 
 /**
