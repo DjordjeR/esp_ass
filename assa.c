@@ -31,8 +31,6 @@ typedef struct _Person_
 
 Person *parseDotFile(char *file_content);
 
-BOOL isValidName(const char *name);
-
 BOOL nameIsUnknown(const char *name);
 
 BOOL fileExists(const char *file_name);
@@ -238,25 +236,6 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name,BOOL *gender_b, char *p
   }
   *parrent_gender_b = (*(line_to_parse+(counter-1)) == 'f') ? TRUE : FALSE;
  return TRUE;
-}
-
-/**
- * [isValidName description]
- * @param  name [description]
- * @return      [description]
- */
-BOOL isValidName(const char *name)
-{
-  int counter = 0;
-  while(*(name+counter) != '\0')
-  {
-    if(!(isalpha(*(name+counter)) != 0 || *(name+counter) == ' ' || *(name+counter) == '.'))
-    {
-      return 0;
-    }
-    counter++;
-  }
-  return 1;
 }
 /**
  * nameIsUnknown description]
