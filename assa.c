@@ -17,7 +17,6 @@ typedef short BOOL;
 #define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? 
 #define MAX_NAME_LENGHT 256
 //Msc
-#define MAX_NUMBER_OF_ARGUMENTS_IN_DOT_FILE_STRING 150
 typedef struct _Person_ 
 {
   char name_[MAX_NAME_LENGHT];
