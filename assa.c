@@ -281,10 +281,6 @@ void parseInput(char *input_command, Person *persons_array)
     showSuccessMessage(MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT);
     exit(SUCCESS_PROGRAM_CLOSED);
   }
-  if(strcmp(input_command,"draw-all"))
-  {
-    //TODO: pozovi draw-all funkciju
-  }
   if(strcmp(input_command,"list") == 0)
   {
   	listPersons(persons_array);
@@ -309,7 +305,7 @@ void waitForInput(Person *persons_array)
     {
       free(persons_array);
       showSuccessMessage(MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF);
-      exit(SUCCESS_PROGRAM_CLOSED); // TODO: provjeriti üsta ide ovdje, nisam siguran za SUCCESS_PROGRAM_CLOSED
+      exit(SUCCESS_PROGRAM_CLOSED);
     } 
   }
 }
@@ -333,7 +329,7 @@ BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji
  * @param  file_name [description]
  * @return           [description]
  */
-BOOL fileIsWritable(const char *file_name) // Provjeravamo da li je moguće pisati u fajl
+BOOL fileIsWritable(const char *file_name) // TODO: Izgleda da je nepotrebno
 {
   FILE *file_stream;
   if((file_stream = fopen(file_name,"rw")))
@@ -394,7 +390,7 @@ char *storeFileIntoMemory(const char *file_name)
  * @param persons           [description]
  * @param number_of_entries [description]
  */
-void listPersons(Person *persons)
+void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
 {
   int counter = 0;
   while(persons[counter].gender_  != 3)
@@ -414,8 +410,7 @@ void listPersons(Person *persons)
  */
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father)
 {
-  Person *new_person = (Person*)malloc(sizeof(Person));
-  
+  Person *new_person = (Person*)malloc(sizeof(Person));  
   if(new_person == NULL)
   {
     exit(ERROR_OUT_OF_MEMORY);
@@ -463,6 +458,10 @@ void showError(short error_code)
     break;
   }
 }
+/**
+ * [showSuccessMessage description]
+ * @param msg_code [description]
+ */
 void showSuccessMessage(short msg_code)
 {
   switch(msg_code)
