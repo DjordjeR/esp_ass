@@ -47,7 +47,7 @@ void listPersons(Person *persons);
 
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
-Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender);
+Person *findPerson(Person *persons, char *name, BOOL gender);
 
 void showError(short error_code);
 
@@ -144,7 +144,7 @@ Person *parseDotFile(char *file_content)
   int number_of_persons = 0;
 
   Person *array_of_persons = (Person*)malloc(sizeof(Person)*lines_separated_counter); //This will be reallocated later
-
+  array_of_persons[lines_separated_counter].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
     sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
@@ -158,7 +158,7 @@ Person *parseDotFile(char *file_content)
     	exit(ERROR_FILE_COULD_NOT_BE_READ);
     }
 
-    if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
+    if(findPerson(array_of_persons,name,gender_b) == NULL)
     {
       Person *new_temp_person = createPersonInstance(name,gender_b,NULL,NULL);
       strcpy(array_of_persons[number_of_persons].name_,new_temp_person->name_);
@@ -374,8 +374,8 @@ Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *fa
  */
 Person *findPerson(Person *persons, char *name, BOOL gender)
 {
-  int counter;
-  while(*(persons+counter).gender_ != 3)
+  int counter = 1;
+  while((persons+counter)->gender_ != 3)
   {
     if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
     {
