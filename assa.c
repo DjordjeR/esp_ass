@@ -31,6 +31,8 @@ Person *parseDotFile(char *file_content);
 
 BOOL isValidName(char *name);
 
+BOOL nameIsUnknown(char *name);
+
 void parseInput(char *input_command, Person *persons_array);
 
 void waitForInput(Person *persons_array);
@@ -46,6 +48,8 @@ void listPersons(Person *persons);
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
 Person *findPerson(Person *persons, int number_of_persons, char *name, BOOL gender);
+
+
 
 /**
  * [main description]
@@ -141,6 +145,12 @@ Person *parseDotFile(char *file_content)
     sscanf(lines_separated[counter]," \"%[^[][%[^]];",name,gender);
     name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
+    if(!(nameIsUnknown(name) == TRUE || isValidName(name) == TRUE))
+    {
+    	printf("[ERR] Could not read file.\n");
+    	exit(ERROR_FILE_COULD_NOT_BE_READ);
+    }
+
     if(findPerson(array_of_persons,number_of_persons,name,gender_b) == NULL)
     {
       Person *new_temp_person = createPersonInstance(name,gender_b,NULL,NULL);
@@ -186,6 +196,15 @@ BOOL isValidName(char *name)
     counter++;
   }
   return 1;
+}
+/**
+ * nameIsUnknown description]
+ * @param  name [description]
+ * @return      [description]
+ */
+BOOL nameIsUnknown(char *name)
+{
+	return (name[0] == '?' && isdigit(name[1])) ? TRUE : FALSE; 
 }
 /**
  * [parseInput description]
