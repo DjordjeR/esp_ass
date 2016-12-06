@@ -33,17 +33,9 @@ BOOL isValidName(const char *name);
 
 BOOL nameIsUnknown(const char *name);
 
-void parseInput(char *input_command, Person *persons_array);
-
-void waitForInput(Person *persons_array);
-
 BOOL fileExists(const char *file_name);
 
 BOOL fileIsWritable(const char *file_name);
-
-char *storeFileIntoMemory(const char *file_name);
-
-void listPersons(Person *persons);
 
 Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
@@ -51,6 +43,13 @@ Person *findPerson(Person *persons, char *name, BOOL gender);
 
 void showError(short error_code);
 
+char *storeFileIntoMemory(const char *file_name);
+
+void listPersons(Person *persons);
+
+void parseInput(char *input_command, Person *persons_array);
+
+void waitForInput(Person *persons_array);
 /**
  * [main description]
  * @param  argc [description]
@@ -136,10 +135,8 @@ Person *parseDotFile(char *file_content)
     showError(ERROR_FILE_COULD_NOT_BE_READ);
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
-  char name[256];
-
+  char name[MAX_NAME_LENGHT];
   char gender[4];
-
   BOOL gender_b;
   int number_of_persons = 0;
 
@@ -227,11 +224,15 @@ void parseInput(char *input_command, Person *persons_array)
     printf("Bye.\n");
     exit(SUCCESS_PROGRAM_CLOSED);
   }
+  if(strcmp(input_command,"draw-all"))
+  {
+    //TODO: pozovi draw-all funkciju
+  }
   if(strcmp(input_command,"list") == 0)
   {
   	listPersons(persons_array);
   }
-
+  //TODO: napisati parse za ostale opcije
 }
 /**
  * [waitForInput description]
@@ -302,7 +303,7 @@ char *storeFileIntoMemory(const char *file_name)
           long buffer_size = ftell(file_stream);
           if(buffer_size == -1)
           {
-              printf("Neki error.\n");
+            exit(ERROR_OUT_OF_MEMORY);
           }
           file_content = (char*)malloc(sizeof(char)*(buffer_size + 1));
           if(file_content == NULL)
@@ -311,12 +312,16 @@ char *storeFileIntoMemory(const char *file_name)
           }
           if(fseek(file_stream,0L,SEEK_SET) != 0)
           {
-              printf("Neki error\n");
+            free(file_content);
+            showError(ERROR_FILE_COULD_NOT_BE_READ);
+            exit(ERROR_FILE_COULD_NOT_BE_READ);
           }
           size_t new_lenght = fread(file_content,sizeof(char),buffer_size,file_stream);
           if(ferror(file_stream) != 0)
           {
-              fputs("Error reading this file",stderr);
+            free(file_content);
+            showError(ERROR_FILE_COULD_NOT_BE_READ);
+            exit(ERROR_FILE_COULD_NOT_BE_READ);
           }
           else
           {
