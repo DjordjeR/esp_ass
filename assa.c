@@ -3,7 +3,7 @@
 #include <string.h> // Trebaće nam za stringove
 #include <ctype.h> // Treba nam za isAlpha
 
-//Substitue for BOOL
+//Substitute for BOOL
 typedef short BOOL;
 #define TRUE 1
 #define FALSE 0
@@ -14,7 +14,7 @@ typedef short BOOL;
 #define ERROR_TO_MANY_ARGUMENTS 1
 #define ERROR_OUT_OF_MEMORY 2
 //String lenghts
-#define INPUT_COMMAND_LENGHT 256
+#define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? 
 #define MAX_NAME_LENGHT 256
 //Msc
 
@@ -29,9 +29,9 @@ typedef struct _Person_
 
 Person *parseDotFile(char *file_content);
 
-BOOL isValidName(char *name);
+BOOL isValidName(const char *name);
 
-BOOL nameIsUnknown(char *name);
+BOOL nameIsUnknown(const char *name);
 
 void parseInput(char *input_command, Person *persons_array);
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     printf("Usage: ./ass [file-name]\\n\n");
     return ERROR_TO_MANY_ARGUMENTS;
   }
-  return 0;
+  return SUCCESS_PROGRAM_CLOSED;
 }
 
 //NOTE: main() je gotovo 
@@ -89,12 +89,17 @@ int main(int argc, char **argv)
 //NOTE: findPerson() je gotov
 //NOTE: storeFileIntoMemory() je gotov
 //NOTE: createPersonInstance() je gotov
+//NOTE: nameIsUnknown()
+//NOTE: Sta treba raditi sa fajlom ako je nepravilno formatiran ? 
+//NOTE: Da li cemo uvijek dobiti fajl sa newline na kraju, mozemo li to koristi za razvajanje ? 
+//NOTE: pitaj tutora za sscanf
+//NOTE: Pitati za njemacka slova ? 
+
 
 /**
  * [parseDotFile description]
  * @param file_content [description]
  */
-
 Person *parseDotFile(char *file_content)
 {
   int number_of_lines = 0;
@@ -147,6 +152,8 @@ Person *parseDotFile(char *file_content)
     gender_b = (gender[0] == 'f') ? TRUE : FALSE;
     if(!(nameIsUnknown(name) == TRUE || isValidName(name) == TRUE))
     {
+      free(file_content);
+      free(array_of_persons);
     	printf("[ERR] Could not read file.\n");
     	exit(ERROR_FILE_COULD_NOT_BE_READ);
     }
@@ -184,7 +191,7 @@ Person *parseDotFile(char *file_content)
  * @param  name [description]
  * @return      [description]
  */
-BOOL isValidName(char *name)
+BOOL isValidName(const char *name)
 {
   int counter = 0;
   while(*(name+counter) != '\0')
@@ -202,7 +209,7 @@ BOOL isValidName(char *name)
  * @param  name [description]
  * @return      [description]
  */
-BOOL nameIsUnknown(char *name)
+BOOL nameIsUnknown(const char *name)
 {
 	return (name[0] == '?' && isdigit(name[1])) ? TRUE : FALSE; 
 }
@@ -234,7 +241,7 @@ void waitForInput(Person *persons_array)
   char input_command[INPUT_COMMAND_LENGHT] ;
   while(TRUE)
   {
-    printf("esp>");
+    printf("esp> ");
     fgets(input_command,INPUT_COMMAND_LENGHT,stdin);
     if(strlen(input_command) != 1)
     {
