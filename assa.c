@@ -9,12 +9,15 @@ typedef short BOOL;
 #define FALSE 0
 //Success states
 #define SUCCESS_PROGRAM_CLOSED 0
+// Success messages
+#define MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT 1
+#define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
 #define ERROR_TO_MANY_ARGUMENTS 1
 #define ERROR_OUT_OF_MEMORY 2
 //String lenghts
-#define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? 
+#define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? Mislim da treba vise nego duplo vece ..
 #define MAX_NAME_LENGHT 256
 //Msc
 typedef struct _Person_ 
@@ -84,16 +87,16 @@ int main(int argc, char **argv)
 }
 
 //NOTE: main() je gotovo 
-//NOTE: fileIsWritable() je gotov
+//NOTE: fileIsWritable() je gotov, postoji mogucnost da nece trebati
 //NOTE: fileExists() je gotov
 //NOTE: findPerson() je gotov
 //NOTE: storeFileIntoMemory() je gotov
 //NOTE: createPersonInstance() je gotov
 //NOTE: nameIsUnknown()
-//NOTE: Sta treba raditi sa fajlom ako je nepravilno formatiran ? 
-//NOTE: Da li cemo uvijek dobiti fajl sa newline na kraju, mozemo li to koristi za razvajanje ? 
-//NOTE: pitaj tutora za sscanf
-//NOTE: Pitati za njemacka slova ? 
+//NOTE: Sta treba raditi sa fajlom ako je nepravilno formatiran ? Ispisati error could not read file ili tako nesto
+//NOTE: Da li cemo uvijek dobiti fajl sa newline na kraju, mozemo li to koristi za razvajanje ? Hocemo
+//NOTE: pitaj tutora za sscanf, umjesto sscanf napisana funkcija koja sve to provjerava
+//NOTE: Pitati za njemacka slova ? Nece doci njemacka slova
 
 
 /**
@@ -275,7 +278,7 @@ void parseInput(char *input_command, Person *persons_array)
   if(strcmp(input_command,"quit") == 0)
   {
     free(persons_array);
-    printf("Bye.\n");
+    showSuccessMessage(MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT);
     exit(SUCCESS_PROGRAM_CLOSED);
   }
   if(strcmp(input_command,"draw-all"))
@@ -296,7 +299,7 @@ void waitForInput(Person *persons_array)
   char input_command[INPUT_COMMAND_LENGHT] ;
   while(TRUE)
   {
-    printf("esp> ");
+    printf("esp>");
     fgets(input_command,INPUT_COMMAND_LENGHT,stdin);
     if(strlen(input_command) != 1)
     {
@@ -305,7 +308,7 @@ void waitForInput(Person *persons_array)
     if (feof(stdin))
     {
       free(persons_array);
-      printf("\n");
+      showSuccessMessage(MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF);
       exit(SUCCESS_PROGRAM_CLOSED); // TODO: provjeriti üsta ide ovdje, nisam siguran za SUCCESS_PROGRAM_CLOSED
     } 
   }
@@ -457,6 +460,18 @@ void showError(short error_code)
     break;
     case ERROR_TO_MANY_ARGUMENTS:
     printf("Usage: ./ass [file-name]\\n\n");
+    break;
+  }
+}
+void showSuccessMessage(short msg_code)
+{
+  switch(msg_code)
+  {
+    case MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF:
+    printf("\n");
+    break;
+    case MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT:
+    printf("Bye.\n");
     break;
   }
 }
