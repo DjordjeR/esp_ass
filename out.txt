@@ -1,0 +1,40 @@
+Ime osobe : Arcturus, tata : Sirius, mama : Hester 
+Ime osobe : Hester, tata : (null), mama : (null) 
+Ime osobe : Sirius, tata : (null), mama : Phineas 
+Ime osobe : Cygnus, tata : Phineas, mama : Ursula 
+Ime osobe : Ursula, tata : (null), mama : (null) 
+Ime osobe : Phineas, tata : (null), mama : (null) 
+Ime osobe : Irma, tata : (null), mama : (null) 
+Ime osobe : Melania, tata : (null), mama : (null) 
+Ime osobe : Orion, tata : (null), mama : Arcturus 
+Ime osobe : Melania, tata : (null), mama : (null) 
+Ime osobe : Pollux, tata : (null), mama : Cygnus 
+Ime osobe : Violetta, tata : (null), mama : (null) 
+Ime osobe : Sirius Jr., tata : (null), mama : Orion 
+Ime osobe : Walburga, tata : (null), mama : Pollux 
+File parsing successful...
+esp>Ime osobe : Arcturus, tata : Sirius, mama : Hester 
+Ime osobe : Hester, tata : (null), mama : (null) 
+Ime osobe : Sirius, tata : (null), mama : Phineas 
+Ime osobe : Cygnus, tata : Phineas, mama : Ursula 
+Ime osobe : Ursula, tata : (null), mama : (null) 
+Ime osobe : Phineas, tata : (null), mama : (null) 
+Ime osobe : Irma, tata : (null), mama : (null) 
+Ime osobe : Melania, tata : (null), mama : (null) 
+Ime osobe : Orion, tata : (null), mama : Arcturus 
+Ime osobe : Melania, tata : (null), mama : (null) 
+Ime osobe : Pollux, tata : (null), mama : Cygnus 
+Ime osobe : Violetta, tata : (null), mama : (null) 
+Ime osobe : Sirius Jr., tata : (null), mama : Orion 
+Ime osobe : Walburga, tata : (null), mama : Pollux 
+esp>[ERR] Wrong usage - list.
+esp>[ERR] Wrong usage - list.
+esp>[ERR] Wrong usage - list.
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>Moj roditelj se zove : raja, pol : 0, a ja sam raja, pol : 1
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>

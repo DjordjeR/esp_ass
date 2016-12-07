@@ -1,0 +1,13 @@
+list
+list nesto
+list 
+list nesto drugo
+add
+add nesto
+add raja [m] mfg nesto [f]
+add raja [m] mfg nesto[f]
+add raja [m] mfg nesto [f] 
+add raja [m]mfg nesto [f]
+addraja [m] mfg nesto [f]
+add raja [m] mfg nesto [#]
+add raja [y] mfg nesto [f]

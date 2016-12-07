@@ -15,7 +15,7 @@ digraph FamilyTree
   "Sirius [m]" -> "Ursula [f]";
   "Sirius [m]" -> "Ursula [f]";
   "Sirius [m]" -> "Phineas [m]";
-  "Siriuss Jr. [m]" -> "Walburga [f]";
+  "Sirius Jr. [m]" -> "Walburga [f]";
   "Sirius Jr. [m]" -> "Orion [m]";
   "Ursula [f]";
   "Violetta [f]";

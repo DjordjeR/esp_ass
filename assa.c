@@ -1,6 +1,6 @@
 #include <stdio.h> // Standardna biblioteka
 #include <stdlib.h> // Trebaće nam za 
-#include <string.h> // Trebaće nam za stringove
+#include <string.h> // Everything has to be done with strings
 #include <ctype.h> // Treba nam za isAlpha
 
 //Substitute for BOOL
@@ -16,11 +16,13 @@ typedef short BOOL;
 
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
-#define ERROR_TO_MANY_ARGUMENTS 1
+#define ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE 1
 #define ERROR_OUT_OF_MEMORY 2
 #define ERROR_NO_ENTRIES_AVAILABLE 8
+#define ERROR_WRONG_LIST_USAGE 7
+#define ERROR_WRONG_ADD_USAGE 6
 //String lenghts
-#define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? Mislim da treba vise nego duplo vece .. ja bih stavio oko 550
+#define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 
 #define MAX_NAME_LENGHT 257
 
 //Msc
@@ -58,6 +60,14 @@ void listPersons(Person *persons);
 void parseInput(char *input_command, Person *persons_array);
 
 void waitForInput(Person *persons_array);
+
+BOOL parseAddInput(char *input_command);
+
+void parseDrawAllInput(char *input_command);
+
+void parseDrawInput(char *input_command);
+
+void parseRelationshipInput(char *input_command);
 /**
  * [main description]
  * @param  argc [description]
@@ -84,19 +94,12 @@ int main(int argc, char **argv)
   }
   else
   {
-    showError(ERROR_TO_MANY_ARGUMENTS);
-    return ERROR_TO_MANY_ARGUMENTS;
+    showError(ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE);
+    return ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE;
   }
   return SUCCESS_PROGRAM_CLOSED;
 }
 
-//NOTE: main() je gotovo 
-//NOTE: fileIsWritable() je gotov, postoji mogucnost da nece trebati
-//NOTE: fileExists() je gotov
-//NOTE: findPerson() je gotov
-//NOTE: storeFileIntoMemory() je gotov
-//NOTE: createPersonInstance() je gotov
-//NOTE: nameIsUnknown()
 //NOTE: Sta treba raditi sa fajlom ako je nepravilno formatiran ? Ispisati error could not read file ili tako nesto
 //NOTE: Da li cemo uvijek dobiti fajl sa newline na kraju, mozemo li to koristi za razvajanje ? Hocemo
 //NOTE: pitaj tutora za sscanf, umjesto sscanf napisana funkcija koja sve to provjerava
@@ -152,20 +155,77 @@ Person *parseDotFile(char *file_content)
   array_of_persons[lines_separated_counter].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    parseSingleFileLine(lines_separated[counter], name, &gender, parrent_name, &parrent_gender);
-    /*if(parrent_name[0] != '\0')
+    if(parseSingleFileLine(lines_separated[counter], name, &gender, parrent_name, &parrent_gender) == FALSE)
     {
-      printf("Roditelj od : %s, pol = %d, se zove : %s, pol %d\n",name,gender,parrent_name,parrent_gender);
-    }*/
+      showError(ERROR_FILE_COULD_NOT_BE_READ);
+      exit(ERROR_FILE_COULD_NOT_BE_READ);
+    }
     name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     if(findPerson(array_of_persons,name,gender) == NULL)
     {
-      Person new_temp_person = createPersonInstance(name,gender,NULL,NULL);
-      strcpy(array_of_persons[number_of_persons].name_,new_temp_person.name_);
-      array_of_persons[number_of_persons].gender_ = new_temp_person.gender_;
-      array_of_persons[number_of_persons].mother_ = new_temp_person.mother_;
-      array_of_persons[number_of_persons].father_ = new_temp_person.father_;
+      strcpy(array_of_persons[number_of_persons].name_,name);
+      array_of_persons[number_of_persons].gender_ = gender;
+      array_of_persons[number_of_persons].mother_ = NULL;
+      array_of_persons[number_of_persons].father_ = NULL;
+      if(parrent_name[0] != '\0')
+      {
+        strcpy(array_of_persons[number_of_persons+1].name_,parrent_name);
+        array_of_persons[number_of_persons+1].gender_ = parrent_gender;
+        array_of_persons[number_of_persons+1].mother_ = NULL;
+        array_of_persons[number_of_persons+1].father_ = NULL;
+        if(parrent_gender == TRUE)
+        {
+          array_of_persons[number_of_persons].mother_ = &array_of_persons[number_of_persons+1];
+        }
+        else if(parrent_gender == FALSE)
+        {
+          array_of_persons[number_of_persons].father_ = &array_of_persons[number_of_persons+1];
+        }
+        number_of_persons++;
+      }
       number_of_persons++;
+      parrent_name[0] = '\0';
+    }
+    else
+    {
+      if(parrent_name[0] != '\0')
+      {
+        Person *new_temp_person = findPerson(array_of_persons,name,gender);
+        if(parrent_gender == TRUE && new_temp_person->mother_ == NULL)
+        {
+          Person *temp_parrent_mother = findPerson(array_of_persons,parrent_name,parrent_gender);
+          if(temp_parrent_mother == NULL)
+          {
+            strcpy(array_of_persons[number_of_persons].name_,parrent_name);
+            array_of_persons[number_of_persons].gender_ = parrent_gender;
+            array_of_persons[number_of_persons].mother_ = NULL;
+            array_of_persons[number_of_persons].father_ = NULL;
+            new_temp_person->mother_ = &array_of_persons[number_of_persons];
+            number_of_persons++;
+          }
+          else
+          {
+            new_temp_person->mother_ = temp_parrent_mother;
+          }
+        }
+        else if(parrent_gender == FALSE && new_temp_person->father_ == NULL)
+        {
+          Person *temp_parrent_father = findPerson(array_of_persons,parrent_name,parrent_gender);
+          if(temp_parrent_father == NULL)
+          {
+            strcpy(array_of_persons[number_of_persons].name_,parrent_name);
+            array_of_persons[number_of_persons].gender_ = parrent_gender;
+            array_of_persons[number_of_persons].mother_ = NULL;
+            array_of_persons[number_of_persons].father_ = NULL;
+            new_temp_person->father_ = &array_of_persons[number_of_persons];
+            number_of_persons++;
+          }
+          else
+          {
+            new_temp_person->mother_ = temp_parrent_father;
+          }
+        }
+      }
     }
   }
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
@@ -209,6 +269,10 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name,BOOL *gender_b, char *p
   {
     return FALSE;
   }
+  if(*(line_to_parse+(counter-1)) != 'f' && *(line_to_parse+(counter-1)) != 'm')
+  {
+    return FALSE;
+  }
   *gender_b = (*(line_to_parse+(counter-1)) == 'f') ? TRUE : FALSE;
   ++counter;
   if(*(line_to_parse+counter) == ' ' || *(line_to_parse+(counter+1)) == ';')
@@ -236,6 +300,10 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name,BOOL *gender_b, char *p
   *(parrent_name+(null_counter-1)) = '\0';
   counter+=2; // We are skipping [
   if(*(line_to_parse+counter) != ']' || *(line_to_parse+(counter+1)) != '"' || *(line_to_parse+(counter+2)) != ';')
+  {
+    return FALSE;
+  }
+  if(*(line_to_parse+(counter-1)) != 'f' && *(line_to_parse+(counter-1)) != 'm')
   {
     return FALSE;
   }
@@ -268,10 +336,149 @@ void parseInput(char *input_command, Person *persons_array)
   {
   	listPersons(persons_array);
   }
-  //TODO: napisati parse za ostale opcije
+  else
+  {
+    int counter = 0;
+    while(*(input_command+counter) != '\n')
+    {
+      if(*(input_command+counter) == ' ')
+      {
+        break;
+      }
+    counter++;  
+    }
+    *(input_command+counter) = '\0';
+    counter+=1;
+    char *command = input_command;
+    if(strcmp(command,"list") == 0)
+    {
+      showError(ERROR_WRONG_LIST_USAGE);
+    }
+    if(strcmp(command,"add") == 0)
+    {
+      if(!parseAddInput(input_command))
+      {
+        showError(ERROR_WRONG_ADD_USAGE);
+      }
+    }
+    if(strcmp(command,"draw") == 0)
+    {
+      parseDrawInput(input_command);
+    }
+    if(strcmp(command,"draw-all") == 0)
+    {
+      parseDrawAllInput(input_command);
+    }
+    if(strcmp(command,"relationship") == 0)
+    {
+      parseRelationshipInput(input_command);
+    }
+  }
+}
+
+/**
+ * [parseAddInput description]
+ * @param input_command [description]
+ */
+BOOL parseAddInput(char *input_command)
+{
+  int counter = 4;
+  while(*(input_command + counter) != '[')
+  {
+    counter++;
+    if(*(input_command + counter) == '\n')
+    {
+      return FALSE;
+    }
+  }
+  if(*(input_command + (counter-1)) != ' ')
+  {
+    return FALSE;
+  }
+  *(input_command + (counter-1)) = '\0';
+  char *first_person_name = input_command + 4;
+  if(*(input_command + counter) != '[' || *(input_command + (counter+2)) != ']' || *(input_command + (counter+3)) != ' ')
+  {
+    return FALSE;
+  }
+  counter++;
+  if(*(input_command + counter) != 'f' && *(input_command + counter) != 'm')
+  {
+    return FALSE;
+  }
+  BOOL first_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
+  counter+=3;
+  char *relationship = input_command + (counter);
+  while(*(input_command + counter) != ' ')
+  {
+    if(*(input_command + counter) == '\n' || *(input_command + counter) == '[' || *(input_command + counter) == ']')
+    {
+      return FALSE;
+    }
+    counter++;
+  }
+  *(input_command + counter) = '\0';
+  if (*(input_command + (counter + 1)) == ' ')
+  {
+    return FALSE;
+  }
+  while(*(input_command + counter) != '[')
+  {
+    counter++;
+    if(*(input_command + counter) == '\n')
+    {
+      return FALSE;
+    }
+  }
+  if(*(input_command + (counter-1)) != ' ')
+  {
+    return FALSE;
+  }
+  *(input_command + (counter-1)) = '\0';
+  char *second_person_name = input_command + 4;
+  if(*(input_command + counter) != '[' || *(input_command + (counter+2)) != ']' || *(input_command + (counter+3)) != '\n')
+  {
+    return FALSE;
+  }
+  counter++;
+  if(*(input_command + counter) != 'f' && *(input_command + counter) != 'm')
+  {
+    return FALSE;
+  }
+  BOOL second_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
+
+  printf("Moj roditelj se zove : %s, pol : %d, a ja sam %s, pol : %d\n", first_person_name,first_person_gender,second_person_name,second_person_gender);
+  return TRUE;
+  //memset(input_command,0,INPUT_COMMAND_LENGHT);
 }
 /**
+ * [parseDrawInput description]
+ * @param input_command [description]
+ */
+void parseDrawInput(char *input_command)
+{
+  printf("Parse draw input ...\n");
+}
+/**
+ * [parseDrawAllInput description]
+ * @param input_command [description]
+ */
+void parseDrawAllInput(char *input_command)
+{
+  printf("Parse draw all input ...\n");
+}
+/**
+ * [parseRelationshipInput description]
+ * @param input_command [description]
+ */
+void parseRelationshipInput(char *input_command)
+{
+  printf("Parse elationship input ...\n");
+}
+
+/**
  * [waitForInput description]
+ * @param persons_array [description]
  */
 void waitForInput(Person *persons_array)
 {
@@ -280,7 +487,7 @@ void waitForInput(Person *persons_array)
   {
     printf("esp>");
     fgets(input_command,INPUT_COMMAND_LENGHT,stdin);
-    if(strlen(input_command) != 1)
+    if(strlen(input_command) != 1 && !feof(stdin))
     {
         parseInput(input_command,persons_array);
     }
@@ -380,15 +587,19 @@ void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
   int counter = 0;
   while((persons+counter)->gender_  != 3)
   {
-    printf("%s ", (persons+counter)->name_);
+    /*printf("%s ", (persons+counter)->name_);
     printf("%s\n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
+*/
+    printf("Ime osobe : %s, tata : %s, mama : %s \n", persons[counter].name_,persons[counter].father_->name_,persons[counter].mother_->name_);
+
     ++counter;
   }
+
+
   if(counter <= 1)
   {
     showError(ERROR_NO_ENTRIES_AVAILABLE);
   }
-
 }
 /**
  * [createPersonInstance description]
@@ -439,15 +650,21 @@ void showError(short error_code)
     case ERROR_FILE_COULD_NOT_BE_READ:
     printf("[ERR] Could not read file.\n");
     break;
-    case ERROR_TO_MANY_ARGUMENTS:
-    printf("Usage: ./ass [file-name]\\n\n");
+    case ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE:
+    printf("Usage: ./ass [file-name]\n");
     break;
     case ERROR_NO_ENTRIES_AVAILABLE:
     printf("[ERR] No entries available.\n");
     break;
     case ERROR_OUT_OF_MEMORY:
     printf("[ERR] Out of memory.\n");
-    break; 
+    break;
+    case ERROR_WRONG_LIST_USAGE:
+    printf("[ERR] Wrong usage - list.\n");
+    break;
+    case ERROR_WRONG_ADD_USAGE:
+    printf("[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].\n");
+    break;
   }
 }
 /**
@@ -467,6 +684,5 @@ void showSuccessMessage(short msg_code)
     case MSG_SUCCESS_DOT_FILE_PARSING:
     printf("File parsing successful...\n");
     break;
-    
   }
 }
