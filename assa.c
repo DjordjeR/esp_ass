@@ -13,13 +13,16 @@ typedef short BOOL;
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT 1
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
 #define MSG_SUCCESS_DOT_FILE_PARSING 10
+
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
 #define ERROR_TO_MANY_ARGUMENTS 1
 #define ERROR_OUT_OF_MEMORY 2
+#define ERROR_NO_ENTRIES_AVAILABLE 8
 //String lenghts
 #define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? Mislim da treba vise nego duplo vece .. ja bih stavio oko 550
 #define MAX_NAME_LENGHT 257
+
 //Msc
 typedef struct _Person_ 
 {
@@ -336,11 +339,13 @@ char *storeFileIntoMemory(const char *file_name)
           long buffer_size = ftell(file_stream);
           if(buffer_size == -1)
           {
+            showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
           file_content = (char*)malloc(sizeof(char)*(buffer_size + 1));
           if(file_content == NULL)
           {
+            showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
           if(fseek(file_stream,0L,SEEK_SET) != 0)
@@ -373,12 +378,17 @@ char *storeFileIntoMemory(const char *file_name)
 void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
 {
   int counter = 0;
-  while(persons[counter].gender_  != 3)
+  while((persons+counter)->gender_  != 3)
   {
-    printf("%s ", persons[counter].name_);
-    printf("%s\n", (persons[counter].gender_ == 1) ? "[f]" : "[m]");
+    printf("%s ", (persons+counter)->name_);
+    printf("%s\n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
     ++counter;
   }
+  if(counter <= 1)
+  {
+    showError(ERROR_NO_ENTRIES_AVAILABLE);
+  }
+
 }
 /**
  * [createPersonInstance description]
@@ -432,6 +442,12 @@ void showError(short error_code)
     case ERROR_TO_MANY_ARGUMENTS:
     printf("Usage: ./ass [file-name]\\n\n");
     break;
+    case ERROR_NO_ENTRIES_AVAILABLE:
+    printf("[ERR] No entries available.\n");
+    break;
+    case ERROR_OUT_OF_MEMORY:
+    printf("[ERR] Out of memory.\n");
+    break; 
   }
 }
 /**
@@ -451,5 +467,6 @@ void showSuccessMessage(short msg_code)
     case MSG_SUCCESS_DOT_FILE_PARSING:
     printf("File parsing successful...\n");
     break;
+    
   }
 }
