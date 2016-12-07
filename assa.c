@@ -12,13 +12,14 @@ typedef short BOOL;
 // Success messages
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT 1
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
+#define MSG_SUCCESS_DOT_FILE_PARSING 10
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
 #define ERROR_TO_MANY_ARGUMENTS 1
 #define ERROR_OUT_OF_MEMORY 2
 //String lenghts
-#define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? Mislim da treba vise nego duplo vece ..
-#define MAX_NAME_LENGHT 256
+#define INPUT_COMMAND_LENGHT 256 //NOTE: Treba li vece ? Mislim da treba vise nego duplo vece .. ja bih stavio oko 550
+#define MAX_NAME_LENGHT 257
 //Msc
 typedef struct _Person_ 
 {
@@ -39,11 +40,13 @@ BOOL fileIsWritable(const char *file_name);
 
 BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b);
 
-Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
+Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
 Person *findPerson(Person *persons, char *name, BOOL gender);
 
 void showError(short error_code);
+
+void showSuccessMessage(short msg_code);
 
 char *storeFileIntoMemory(const char *file_name);
 
@@ -154,19 +157,18 @@ Person *parseDotFile(char *file_content)
     name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     if(findPerson(array_of_persons,name,gender) == NULL)
     {
-      Person *new_temp_person = createPersonInstance(name,gender,NULL,NULL);
-      strcpy(array_of_persons[number_of_persons].name_,new_temp_person->name_);
-      array_of_persons[number_of_persons].gender_ = new_temp_person->gender_;
-      array_of_persons[number_of_persons].mother_ = new_temp_person->mother_;
-      array_of_persons[number_of_persons].father_ = new_temp_person->father_;
-      free(new_temp_person);
+      Person new_temp_person = createPersonInstance(name,gender,NULL,NULL);
+      strcpy(array_of_persons[number_of_persons].name_,new_temp_person.name_);
+      array_of_persons[number_of_persons].gender_ = new_temp_person.gender_;
+      array_of_persons[number_of_persons].mother_ = new_temp_person.mother_;
+      array_of_persons[number_of_persons].father_ = new_temp_person.father_;
       number_of_persons++;
     }
   }
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
   array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*(number_of_persons+1));
   listPersons(array_of_persons);
-  printf("File parsing successful...\n");
+  showSuccessMessage(MSG_SUCCESS_DOT_FILE_PARSING);
   free(file_content);
   return array_of_persons;
 }
@@ -253,14 +255,13 @@ BOOL nameIsUnknown(const char *name)
  */
 void parseInput(char *input_command, Person *persons_array)
 {
-  strtok(input_command, "\n"); // Ne treba nam end line na kraju stringa
-  if(strcmp(input_command,"quit") == 0)
+  if(strcmp(input_command,"quit\n") == 0)
   {
     free(persons_array);
     showSuccessMessage(MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT);
     exit(SUCCESS_PROGRAM_CLOSED);
   }
-  if(strcmp(input_command,"list") == 0)
+  if(strcmp(input_command,"list\n") == 0)
   {
   	listPersons(persons_array);
   }
@@ -387,17 +388,13 @@ void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
  * @param  father [description]
  * @return        [description]
  */
-Person *createPersonInstance(char *name, BOOL gender, Person *mother, Person *father)
+Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father)
 {
-  Person *new_person = (Person*)malloc(sizeof(Person));  
-  if(new_person == NULL)
-  {
-    exit(ERROR_OUT_OF_MEMORY);
-  }
-  strcpy(new_person->name_,name);
-  new_person->gender_ = gender;
-  new_person->father_ = father;
-  new_person->mother_ = mother;
+  Person new_person;  
+  strcpy(new_person.name_,name);
+  new_person.gender_ = gender;
+  new_person.father_ = father;
+  new_person.mother_ = mother;
   return new_person;
 }
 /**
@@ -450,6 +447,9 @@ void showSuccessMessage(short msg_code)
     break;
     case MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT:
     printf("Bye.\n");
+    break;
+    case MSG_SUCCESS_DOT_FILE_PARSING:
+    printf("File parsing successful...\n");
     break;
   }
 }
