@@ -25,6 +25,7 @@ typedef short BOOL;
 #define ERROR_WRONG_LIST_USAGE 7
 #define ERROR_WRONG_ADD_USAGE 6
 #define ERROR_WRONG_DRAW_ALL_USAGE 5
+
 //String lenghts
 #define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 
 #define MAX_NAME_LENGHT 257
@@ -51,7 +52,7 @@ BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b, char *pa
 
 Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
-Person *findPerson(Person **persons, char *name, BOOL gender);
+Person *findPerson(Person *persons, char *name, BOOL gender);
 
 void showError(short error_code);
 
@@ -69,17 +70,18 @@ BOOL parseAddInput(char *input_command);
 
 BOOL copyPerson(Person *first_person, Person *second_person);
 
-BOOL parseDrawAllInput(char *input_command,Person *persons);
-
-BOOL writePersonToFile(char *file_name,Person *persons_to_write);
-
-BOOL sortPersons(Person *persons);
-
 void parseDrawInput(char *input_command);
 
 void parseRelationshipInput(char *input_command);
 
+BOOL parseDrawAllInput(char *input_command,Person *persons);
+
+BOOL sortPersons(Person *persons);
+
 int numberOfPersons(Person *persons);
+
+BOOL writePersonToFile(char *file_name,Person *persons_to_write);
+
 /**
  * [main description]
  * @param  argc [description]
@@ -88,7 +90,6 @@ int numberOfPersons(Person *persons);
  */
 int main(int argc, char **argv)
 {
-  /*
   if(argc == 1)
   {
     Person *persons_array = (Person*)malloc(sizeof(Person));
@@ -109,20 +110,7 @@ int main(int argc, char **argv)
   {
     showError(ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE);
     return ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE;
-  }*/
-
-  Person **array_of_persons = malloc(sizeof(Person)*10);
-
-  int i;
-  for(i = 0; i < 10; ++i)
-  array_of_persons[i] = malloc(sizeof(Person));
-
-  array_of_persons[9]->gender_ = 3;
-  strcpy(array_of_persons[0]->name_,"djordje");
-  array_of_persons[0]->gender_ = 1;
-  printf("%s\n",array_of_persons[0]->name_ );
-
-  findPerson(array_of_persons,"djordje",1);
+  }
   return SUCCESS_PROGRAM_CLOSED;
 }
 
@@ -135,7 +123,7 @@ int main(int argc, char **argv)
 /**
  * [parseDotFile description]
  * @param file_content [description]
- 
+ */
 Person *parseDotFile(char *file_content)
 {
   int number_of_lines = 0;
@@ -189,27 +177,21 @@ Person *parseDotFile(char *file_content)
     name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     if(findPerson(array_of_persons,name,gender) == NULL)
     {
-      array_of_persons[number_of_persons] = (Person*)malloc(sizeof(Person));
-      strcpy(array_of_persons[number_of_persons]->name_,name);
-      array_of_persons[number_of_persons]->gender_ = gender;
-      array_of_persons[number_of_persons]->mother_ = NULL;
-      array_of_persons[number_of_persons]->father_ = NULL;
+      strcpy(array_of_persons[number_of_persons].name_,name);
+      array_of_persons[number_of_persons].gender_ = gender;
       if(parrent_name[0] != '\0')
       {
         if(findPerson(array_of_persons,parrent_name,parrent_gender) == NULL)
         {
-          array_of_persons[number_of_persons+1] = (Person*)malloc(sizeof(Person));
-          strcpy(array_of_persons[number_of_persons+1]->name_,parrent_name);
-          array_of_persons[number_of_persons+1]->gender_ = parrent_gender;
-          array_of_persons[number_of_persons+1]->mother_ = NULL;
-          array_of_persons[number_of_persons+1]->father_ = NULL;
+          strcpy(array_of_persons[number_of_persons+1].name_,parrent_name);
+          array_of_persons[number_of_persons+1].gender_ = parrent_gender;
           if(parrent_gender == TRUE)
           {
-            array_of_persons[number_of_persons]->mother_ = array_of_persons[number_of_persons+1];
+            array_of_persons[number_of_persons].mother_ = &array_of_persons[number_of_persons+1];
           }
           else if(parrent_gender == FALSE)
           {
-            array_of_persons[number_of_persons]->father_ = array_of_persons[number_of_persons+1];
+            array_of_persons[number_of_persons].father_ = &array_of_persons[number_of_persons+1];
           }
           number_of_persons++;
         }
@@ -218,11 +200,11 @@ Person *parseDotFile(char *file_content)
           Person *parrent = findPerson(array_of_persons,parrent_name,parrent_gender);
           if(parrent_gender == TRUE)
           {
-            array_of_persons[number_of_persons]->mother_ = parrent;
+            array_of_persons[number_of_persons].mother_ = parrent;
           }
           else if(parrent_gender == FALSE)
           {
-            array_of_persons[number_of_persons]->father_ = parrent;
+            array_of_persons[number_of_persons].father_ = parrent;
           }
         }
       }
@@ -241,8 +223,6 @@ Person *parseDotFile(char *file_content)
           {
             strcpy(array_of_persons[number_of_persons].name_,parrent_name);
             array_of_persons[number_of_persons].gender_ = parrent_gender;
-            array_of_persons[number_of_persons].mother_ = NULL;
-            array_of_persons[number_of_persons].father_ = NULL;
             new_temp_person->mother_ = &array_of_persons[number_of_persons];
             number_of_persons++;
           }
@@ -258,14 +238,12 @@ Person *parseDotFile(char *file_content)
           {
             strcpy(array_of_persons[number_of_persons].name_,parrent_name);
             array_of_persons[number_of_persons].gender_ = parrent_gender;
-            array_of_persons[number_of_persons].mother_ = NULL;
-            array_of_persons[number_of_persons].father_ = NULL;
             new_temp_person->father_ = &array_of_persons[number_of_persons];
             number_of_persons++;
           }
           else
           {
-            new_temp_person->mother_ = temp_parrent_father;
+            new_temp_person->father_ = temp_parrent_father;
           }
         }
       }
@@ -363,7 +341,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name,BOOL *gender_b, char *p
  */
 BOOL nameIsUnknown(const char *name)
 {
-	return (name[0] == '?' && isdigit(name[1])) ? TRUE : FALSE; 
+  return (name[0] == '?' && isdigit(name[1])) ? TRUE : FALSE; 
 }
 /**
  * [parseInput description]
@@ -507,7 +485,7 @@ BOOL parseAddInput(char *input_command)
  */
 void parseDrawInput(char *input_command)
 {
-
+  printf("Parse draw input ...\n");
 }
 /**
  * [parseDrawAllInput description]
@@ -515,14 +493,18 @@ void parseDrawInput(char *input_command)
  */
 BOOL parseDrawAllInput(char *input_command, Person *persons)
 {
+  int counter = 0;
   char *file_name = input_command + 9;
-  int counter = 9;
-  while(*(input_command + counter) != '\n')
+  printf("%s\n", file_name);
+  while(*(file_name + counter) != '\n')
   {
+    if(counter > INPUT_COMMAND_LENGHT)
+    {
+      return FALSE;
+    }
     counter++;
   }
-  *(input_command + (counter)) = '\0';
-
+  *(file_name + counter) = '\0';
   file_name = strcat(file_name, ".dot");
   writePersonToFile(file_name,persons);
   return TRUE;
@@ -599,31 +581,32 @@ BOOL writePersonToFile(char *file_name,Person *persons_to_write)
     fprintf(file_stream, "digraph FamilyTree\n");
     fprintf(file_stream, "{\n");
     sortPersons(persons_to_write);
-
     while((persons_to_write + counter)->gender_ != 3)
     {
-
-      if((persons_to_write + counter)->father_ != NULL)
-      {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s\";\n",(persons_to_write + counter)->name_,(((persons_to_write + counter)->gender_) == TRUE) ? 'f' : 'm',((persons_to_write + counter)->mother_)->name_);
-      }
-
-      /*if((persons_to_write + counter)->mother_ != NULL)
+      if((persons_to_write + counter)->mother_ != NULL)
       {
         fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n",(persons_to_write + counter)->name_,((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm',
-          ((persons_to_write + counter)->mother_)->name_,(((persons_to_write + counter)->mother_)->gender_ == TRUE) ? 'f' : 'm');
+          ((persons_to_write + counter)->mother_)->name_,'f');
       }
-      if((persons_to_write + counter)->father_ != NULL && (persons_to_write + counter)->mother_ != NULL)
+      if((persons_to_write + counter)->father_ != NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n",(persons_to_write + counter)->name_,
+          (((persons_to_write + counter)->gender_) == TRUE) ? 'f' : 'm',((persons_to_write + counter)->father_)->name_,'m');
+      }
+      if((persons_to_write + counter)->father_ == NULL && (persons_to_write + counter)->mother_ == NULL)
       {
         fprintf(file_stream, "  \"%s [%c]\";\n",(persons_to_write + counter)->name_,((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm');
       }
-*/
       counter++;
     }
-
     fprintf(file_stream, "}\n");
     showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
     fclose(file_stream);
+    return TRUE;
+  }
+  else
+  {
+    //TODO: Create file
   }
 
   return FALSE;
@@ -682,6 +665,7 @@ BOOL sortPersons(Person *persons)
   Person person_placeholder;
   int number_of_persons = numberOfPersons(persons);
   int counter;
+  int parrent_counter;
   int switch_counter;
 
   if(number_of_persons <= 1)
@@ -694,16 +678,55 @@ BOOL sortPersons(Person *persons)
     {
       if (strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) > 0)
       {
-        copyPerson(&person_placeholder,(persons + switch_counter));
-        copyPerson((persons + switch_counter),(persons + (switch_counter + 1)));
-        copyPerson((persons + (switch_counter + 1)),&person_placeholder);
+        person_placeholder = persons[switch_counter];
+        parrent_counter = 0;
+        while((persons + parrent_counter)->gender_ != 3)
+        {
+          if((persons + parrent_counter)->mother_ == &persons[switch_counter])
+          {
+            (persons + parrent_counter)->mother_ = &person_placeholder;
+          }
+          if((persons + parrent_counter)->father_ == &persons[switch_counter])
+          {
+            (persons + parrent_counter)->father_ = &person_placeholder;
+          }
+          parrent_counter++;
+        }
+        persons[switch_counter] = persons[switch_counter + 1];
+        parrent_counter = 0;
+        while((persons + parrent_counter)->gender_ != 3)
+        {
+          if((persons + parrent_counter)->mother_ == &persons[switch_counter + 1])
+          {
+            (persons + parrent_counter)->mother_ = &persons[switch_counter];
+          }
+          if((persons + parrent_counter)->father_ == &persons[switch_counter + 1])
+          {
+            (persons + parrent_counter)->father_ = &persons[switch_counter];
+          }
+          parrent_counter++;
+        }       
+        persons[switch_counter + 1] = person_placeholder;
+        parrent_counter = 0;
+        while((persons + parrent_counter)->gender_ != 3)
+        {
+          if((persons + parrent_counter)->mother_ == &person_placeholder)
+          {
+            (persons + parrent_counter)->mother_ = &persons[switch_counter + 1];
+          }
+          if((persons + parrent_counter)->father_ == &person_placeholder)
+          {
+            (persons + parrent_counter)->father_ = &persons[switch_counter + 1];
+          }
+          parrent_counter++;
+        }      
       }
-      else if(strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) == 0 && (persons + switch_counter)->gender_ < ((persons + (switch_counter+1))->gender_))
+      /*else if(strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) == 0 && (persons + switch_counter)->gender_ < ((persons + (switch_counter+1))->gender_))
       {
-        copyPerson(&person_placeholder,(persons + switch_counter));
-        copyPerson((persons + switch_counter),(persons + (switch_counter + 1)));
-        copyPerson((persons + (switch_counter + 1)),&person_placeholder);
-      }
+        person_placeholder = (persons + switch_counter;
+        persons + switch_counter) = (persons + (switch_counter + 1));
+        persons + (switch_counter + 1) = person_placeholder;
+      }*/
       //TODO: check length of name
     }
   }
@@ -718,13 +741,11 @@ BOOL sortPersons(Person *persons)
 BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
 {
   int counter = 0;
-  //sortPersons(persons);
+  sortPersons(persons);
   while((persons+counter)->gender_  != 3)
   {
-    printf("%s ", (persons+counter)->name_);
-    //printf("%s\n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
-    printf("ja %s ótac : %s majke :  %s \n",(persons + counter)->name_, ((persons + counter)->father_)->name_, ((persons + counter)->mother_)->name_);
-
+    printf("%s - ", (persons+counter)->name_);
+    printf("%s - mother : %s father : %s \n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]",((persons+counter)->mother_)->name_,((persons+counter)->father_)->name_);
     ++counter;
   }
   if(counter <= 1)
@@ -788,14 +809,14 @@ Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *fat
  * @param  gender_           [description]
  * @return                   [description]
  */
-Person *findPerson(Person **persons, char *name, BOOL gender)
+Person *findPerson(Person *persons, char *name, BOOL gender)
 {
   int counter = 0;
-  while(persons[counter]->gender_ != 3)
+  while((persons+counter)->gender_ != 3)
   {
-    if(strcmp(persons[counter]->name_,name) == 0 && persons[counter]->gender_ == gender)
+    if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
     {
-      return persons[counter];
+      return persons+counter;
     }
     counter++;
   }

@@ -1,14 +1,30 @@
-list
-list nesto
-list 
-list nesto drugo
 add
-add nesto
+add
+add
+add
+add
+add
+add
+add nesto 
+add 
 add raja [m] mfg nesto [f]
-add raja [m] mfg nesto[f]
-add raja[m] mfg nesto [f] 
-add raja [m]mfg nesto [f]
-add raja [m] mfg nesto [#]
-add raja [y] mfg nesto [f]
-quit
-add raja [m] mfgnesto [f]
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all rajajeprejak
+draw-all stefan
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
+draw-all
