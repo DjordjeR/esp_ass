@@ -57,7 +57,7 @@ void showSuccessMessage(short msg_code);
 
 char *storeFileIntoMemory(const char *file_name);
 
-void listPersons(Person *persons);
+BOOL listPersons(Person *persons);
 
 void parseInput(char *input_command, Person *persons_array);
 
@@ -232,7 +232,10 @@ Person *parseDotFile(char *file_content)
   }
   array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
   array_of_persons = (Person*)realloc(array_of_persons,sizeof(Person)*(number_of_persons+1));
-  listPersons(array_of_persons);
+  if(!listPersons(array_of_persons))
+  {
+    showError(ERROR_NO_ENTRIES_AVAILABLE);
+  }
   showSuccessMessage(MSG_SUCCESS_DOT_FILE_PARSING);
   free(file_content);
   return array_of_persons;
@@ -336,7 +339,10 @@ void parseInput(char *input_command, Person *persons_array)
   }
   if(strcmp(input_command,"list\n") == 0)
   {
-  	listPersons(persons_array);
+    if(!listPersons(array_of_persons))
+    {
+      showError(ERROR_NO_ENTRIES_AVAILABLE);
+    }
   }
   else
   {
@@ -582,7 +588,7 @@ char *storeFileIntoMemory(const char *file_name)
  * @param persons           [description]
  * @param number_of_entries [description]
  */
-void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
+BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
 {
   int counter = 0;
   while((persons+counter)->gender_  != 3)
@@ -593,8 +599,9 @@ void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
   }
   if(counter <= 1)
   {
-    showError(ERROR_NO_ENTRIES_AVAILABLE);
+    return FALSE;
   }
+  return TRUE;
 }
 /**
  * [createPersonInstance description]
