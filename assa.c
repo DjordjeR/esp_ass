@@ -630,6 +630,7 @@ BOOL sortPersons(Person *persons)
         copyPerson((persons + switch_counter),(persons + (switch_counter + 1)));
         copyPerson((persons + (switch_counter + 1)),&person_placeholder);
       }
+      //TODO: check length of name
     }
   }
   return TRUE;
