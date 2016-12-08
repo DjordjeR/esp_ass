@@ -624,6 +624,12 @@ BOOL sortPersons(Person *persons)
         copyPerson((persons + switch_counter),(persons + (switch_counter + 1)));
         copyPerson((persons + (switch_counter + 1)),&person_placeholder);
       }
+      else if(strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) == 0 && (persons + switch_counter)->gender_ < ((persons + (switch_counter+1))->gender_))
+      {
+        copyPerson(&person_placeholder,(persons + switch_counter));
+        copyPerson((persons + switch_counter),(persons + (switch_counter + 1)));
+        copyPerson((persons + (switch_counter + 1)),&person_placeholder);
+      }
     }
   }
   return TRUE;
