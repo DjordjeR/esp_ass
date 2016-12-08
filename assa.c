@@ -3,6 +3,8 @@
 #include <string.h> // Everything has to be done with strings
 #include <ctype.h> // Treba nam za isAlpha
 
+//TODO Provjeriti trebamo li staviti ?1 ako neko nema roditelja kada ucitavamo fajl
+
 //Substitute for BOOL
 typedef short BOOL;
 #define TRUE 1
