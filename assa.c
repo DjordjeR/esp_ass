@@ -65,11 +65,15 @@ void waitForInput(Person *persons_array);
 
 BOOL parseAddInput(char *input_command);
 
+BOOL copyPerson(Person *first_person, Person *second_person);
+
 void parseDrawAllInput(char *input_command);
 
 void parseDrawInput(char *input_command);
 
 void parseRelationshipInput(char *input_command);
+
+int numberOfPersons(Person *persons);
 /**
  * [main description]
  * @param  argc [description]
@@ -171,19 +175,34 @@ Person *parseDotFile(char *file_content)
       array_of_persons[number_of_persons].father_ = NULL;
       if(parrent_name[0] != '\0')
       {
-        strcpy(array_of_persons[number_of_persons+1].name_,parrent_name);
-        array_of_persons[number_of_persons+1].gender_ = parrent_gender;
-        array_of_persons[number_of_persons+1].mother_ = NULL;
-        array_of_persons[number_of_persons+1].father_ = NULL;
-        if(parrent_gender == TRUE)
+        if(findPerson(array_of_persons,parrent_name,parrent_gender) == NULL)
         {
-          array_of_persons[number_of_persons].mother_ = &array_of_persons[number_of_persons+1];
+          strcpy(array_of_persons[number_of_persons+1].name_,parrent_name);
+          array_of_persons[number_of_persons+1].gender_ = parrent_gender;
+          array_of_persons[number_of_persons+1].mother_ = NULL;
+          array_of_persons[number_of_persons+1].father_ = NULL;
+          if(parrent_gender == TRUE)
+          {
+            array_of_persons[number_of_persons].mother_ = &array_of_persons[number_of_persons+1];
+          }
+          else if(parrent_gender == FALSE)
+          {
+            array_of_persons[number_of_persons].father_ = &array_of_persons[number_of_persons+1];
+          }
+          number_of_persons++;
         }
-        else if(parrent_gender == FALSE)
+        else
         {
-          array_of_persons[number_of_persons].father_ = &array_of_persons[number_of_persons+1];
+          Person *parrent = findPerson(array_of_persons,parrent_name,parrent_gender);
+          if(parrent_gender == TRUE)
+          {
+            array_of_persons[number_of_persons].mother_ = parrent;
+          }
+          else if(parrent_gender == FALSE)
+          {
+            array_of_persons[number_of_persons].father_ = parrent;
+          }
         }
-        number_of_persons++;
       }
       number_of_persons++;
       parrent_name[0] = '\0';
@@ -339,7 +358,7 @@ void parseInput(char *input_command, Person *persons_array)
   }
   if(strcmp(input_command,"list\n") == 0)
   {
-    if(!listPersons(array_of_persons))
+    if(!listPersons(persons_array))
     {
       showError(ERROR_NO_ENTRIES_AVAILABLE);
     }
@@ -583,6 +602,33 @@ char *storeFileIntoMemory(const char *file_name)
   }
   return file_content;
 }
+
+BOOL sortPersons(Person *persons)
+{
+  Person person_placeholder;
+  int number_of_persons = numberOfPersons(persons);
+  int counter;
+  int switch_counter;
+
+  if(number_of_persons <= 1)
+  {
+    return FALSE;
+  }
+  for(counter = 0; counter < number_of_persons; counter++)
+  {
+    for(switch_counter = 0; switch_counter < number_of_persons - 1; switch_counter ++)
+    {
+      if (strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) > 0)
+      {
+        copyPerson(&person_placeholder,(persons + switch_counter));
+        copyPerson((persons + switch_counter),(persons + (switch_counter + 1)));
+        copyPerson((persons + (switch_counter + 1)),&person_placeholder);
+      }
+    }
+  }
+  return TRUE;
+}
+
 /**
  * [listPersons description]
  * @param persons           [description]
@@ -591,6 +637,7 @@ char *storeFileIntoMemory(const char *file_name)
 BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
 {
   int counter = 0;
+  sortPersons(persons);
   while((persons+counter)->gender_  != 3)
   {
     printf("%s ", (persons+counter)->name_);
@@ -602,6 +649,36 @@ BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
     return FALSE;
   }
   return TRUE;
+}
+/**
+ * [copyPerson description]
+ * @param  first_person  [description]
+ * @param  second_person [description]
+ * @return               [description]
+ */
+BOOL copyPerson(Person *first_person, Person *second_person)
+{
+  strcpy(first_person->name_,second_person->name_);
+  first_person->gender_ = second_person->gender_;
+  first_person->father_ = second_person->father_;
+  first_person->mother_ = second_person->mother_;
+
+  return TRUE;
+}
+
+/**
+ * [counterPersons description]
+ * @param  persons [description]
+ * @return         [description]
+ */
+int numberOfPersons(Person *persons)
+{
+  int number_of_persons = 0;
+  while((persons + number_of_persons)->gender_ != 3)
+  {
+    number_of_persons++;
+  }
+  return number_of_persons;
 }
 /**
  * [createPersonInstance description]
