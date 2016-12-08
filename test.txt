@@ -6,10 +6,9 @@ add
 add nesto
 add raja [m] mfg nesto [f]
 add raja [m] mfg nesto[f]
-add raja [m] mfg nesto [f] 
+add raja[m] mfg nesto [f] 
 add raja [m]mfg nesto [f]
-addraja [m] mfg nesto [f]
 add raja [m] mfg nesto [#]
 add raja [y] mfg nesto [f]
-list
 quit
+add raja [m] mfgnesto [f]

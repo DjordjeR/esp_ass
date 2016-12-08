@@ -448,8 +448,6 @@ BOOL parseAddInput(char *input_command)
     return FALSE;
   }
   BOOL second_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
-
-  printf("Moj roditelj se zove : %s, pol : %d, a ja sam %s, pol : %d\n", first_person_name,first_person_gender,second_person_name,second_person_gender);
   return TRUE;
   //memset(input_command,0,INPUT_COMMAND_LENGHT);
 }
@@ -589,15 +587,10 @@ void listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
   int counter = 0;
   while((persons+counter)->gender_  != 3)
   {
-    /*printf("%s ", (persons+counter)->name_);
+    printf("%s ", (persons+counter)->name_);
     printf("%s\n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
-*/
-    printf("Ime osobe : %s, tata : %s, mama : %s \n", persons[counter].name_,persons[counter].father_->name_,persons[counter].mother_->name_);
-
     ++counter;
   }
-
-
   if(counter <= 1)
   {
     showError(ERROR_NO_ENTRIES_AVAILABLE);
