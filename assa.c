@@ -15,6 +15,7 @@ typedef short BOOL;
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT 1
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
 #define MSG_SUCCESS_DOT_FILE_PARSING 10
+#define MSG_SUCCESS_CREATING_DOT_FILE 11
 
 //Return values
 #define ERROR_FILE_COULD_NOT_BE_READ 3
@@ -23,6 +24,7 @@ typedef short BOOL;
 #define ERROR_NO_ENTRIES_AVAILABLE 8
 #define ERROR_WRONG_LIST_USAGE 7
 #define ERROR_WRONG_ADD_USAGE 6
+#define ERROR_WRONG_DRAW_ALL_USAGE 5
 //String lenghts
 #define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 
 #define MAX_NAME_LENGHT 257
@@ -49,7 +51,7 @@ BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b, char *pa
 
 Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
-Person *findPerson(Person *persons, char *name, BOOL gender);
+Person *findPerson(Person **persons, char *name, BOOL gender);
 
 void showError(short error_code);
 
@@ -67,7 +69,11 @@ BOOL parseAddInput(char *input_command);
 
 BOOL copyPerson(Person *first_person, Person *second_person);
 
-void parseDrawAllInput(char *input_command);
+BOOL parseDrawAllInput(char *input_command,Person *persons);
+
+BOOL writePersonToFile(char *file_name,Person *persons_to_write);
+
+BOOL sortPersons(Person *persons);
 
 void parseDrawInput(char *input_command);
 
@@ -82,6 +88,7 @@ int numberOfPersons(Person *persons);
  */
 int main(int argc, char **argv)
 {
+  /*
   if(argc == 1)
   {
     Person *persons_array = (Person*)malloc(sizeof(Person));
@@ -102,7 +109,20 @@ int main(int argc, char **argv)
   {
     showError(ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE);
     return ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE;
-  }
+  }*/
+
+  Person **array_of_persons = malloc(sizeof(Person)*10);
+
+  int i;
+  for(i = 0; i < 10; ++i)
+  array_of_persons[i] = malloc(sizeof(Person));
+
+  array_of_persons[9]->gender_ = 3;
+  strcpy(array_of_persons[0]->name_,"djordje");
+  array_of_persons[0]->gender_ = 1;
+  printf("%s\n",array_of_persons[0]->name_ );
+
+  findPerson(array_of_persons,"djordje",1);
   return SUCCESS_PROGRAM_CLOSED;
 }
 
@@ -115,7 +135,7 @@ int main(int argc, char **argv)
 /**
  * [parseDotFile description]
  * @param file_content [description]
- */
+ 
 Person *parseDotFile(char *file_content)
 {
   int number_of_lines = 0;
@@ -169,25 +189,27 @@ Person *parseDotFile(char *file_content)
     name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
     if(findPerson(array_of_persons,name,gender) == NULL)
     {
-      strcpy(array_of_persons[number_of_persons].name_,name);
-      array_of_persons[number_of_persons].gender_ = gender;
-      array_of_persons[number_of_persons].mother_ = NULL;
-      array_of_persons[number_of_persons].father_ = NULL;
+      array_of_persons[number_of_persons] = (Person*)malloc(sizeof(Person));
+      strcpy(array_of_persons[number_of_persons]->name_,name);
+      array_of_persons[number_of_persons]->gender_ = gender;
+      array_of_persons[number_of_persons]->mother_ = NULL;
+      array_of_persons[number_of_persons]->father_ = NULL;
       if(parrent_name[0] != '\0')
       {
         if(findPerson(array_of_persons,parrent_name,parrent_gender) == NULL)
         {
-          strcpy(array_of_persons[number_of_persons+1].name_,parrent_name);
-          array_of_persons[number_of_persons+1].gender_ = parrent_gender;
-          array_of_persons[number_of_persons+1].mother_ = NULL;
-          array_of_persons[number_of_persons+1].father_ = NULL;
+          array_of_persons[number_of_persons+1] = (Person*)malloc(sizeof(Person));
+          strcpy(array_of_persons[number_of_persons+1]->name_,parrent_name);
+          array_of_persons[number_of_persons+1]->gender_ = parrent_gender;
+          array_of_persons[number_of_persons+1]->mother_ = NULL;
+          array_of_persons[number_of_persons+1]->father_ = NULL;
           if(parrent_gender == TRUE)
           {
-            array_of_persons[number_of_persons].mother_ = &array_of_persons[number_of_persons+1];
+            array_of_persons[number_of_persons]->mother_ = array_of_persons[number_of_persons+1];
           }
           else if(parrent_gender == FALSE)
           {
-            array_of_persons[number_of_persons].father_ = &array_of_persons[number_of_persons+1];
+            array_of_persons[number_of_persons]->father_ = array_of_persons[number_of_persons+1];
           }
           number_of_persons++;
         }
@@ -196,11 +218,11 @@ Person *parseDotFile(char *file_content)
           Person *parrent = findPerson(array_of_persons,parrent_name,parrent_gender);
           if(parrent_gender == TRUE)
           {
-            array_of_persons[number_of_persons].mother_ = parrent;
+            array_of_persons[number_of_persons]->mother_ = parrent;
           }
           else if(parrent_gender == FALSE)
           {
-            array_of_persons[number_of_persons].father_ = parrent;
+            array_of_persons[number_of_persons]->father_ = parrent;
           }
         }
       }
@@ -394,7 +416,10 @@ void parseInput(char *input_command, Person *persons_array)
     }
     if(strcmp(command,"draw-all") == 0)
     {
-      parseDrawAllInput(input_command);
+      if(!parseDrawAllInput(input_command,persons_array))
+      {
+        showError(ERROR_WRONG_DRAW_ALL_USAGE);
+      }
     }
     if(strcmp(command,"relationship") == 0)
     {
@@ -482,15 +507,25 @@ BOOL parseAddInput(char *input_command)
  */
 void parseDrawInput(char *input_command)
 {
-  printf("Parse draw input ...\n");
+
 }
 /**
  * [parseDrawAllInput description]
  * @param input_command [description]
  */
-void parseDrawAllInput(char *input_command)
+BOOL parseDrawAllInput(char *input_command, Person *persons)
 {
-  printf("Parse draw all input ...\n");
+  char *file_name = input_command + 9;
+  int counter = 9;
+  while(*(input_command + counter) != '\n')
+  {
+    counter++;
+  }
+  *(input_command + (counter)) = '\0';
+
+  file_name = strcat(file_name, ".dot");
+  writePersonToFile(file_name,persons);
+  return TRUE;
 }
 /**
  * [parseRelationshipInput description]
@@ -553,6 +588,45 @@ BOOL fileIsWritable(const char *file_name) // TODO: Izgleda da je nepotrebno
       return TRUE;
   }
   return FALSE; 
+}
+BOOL writePersonToFile(char *file_name,Person *persons_to_write)
+{
+  if(fileExists(file_name) && fileIsWritable(file_name))
+  {
+    FILE *file_stream;
+    int counter = 0;
+    file_stream = fopen(file_name,"w");
+    fprintf(file_stream, "digraph FamilyTree\n");
+    fprintf(file_stream, "{\n");
+    sortPersons(persons_to_write);
+
+    while((persons_to_write + counter)->gender_ != 3)
+    {
+
+      if((persons_to_write + counter)->father_ != NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s\";\n",(persons_to_write + counter)->name_,(((persons_to_write + counter)->gender_) == TRUE) ? 'f' : 'm',((persons_to_write + counter)->mother_)->name_);
+      }
+
+      /*if((persons_to_write + counter)->mother_ != NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n",(persons_to_write + counter)->name_,((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm',
+          ((persons_to_write + counter)->mother_)->name_,(((persons_to_write + counter)->mother_)->gender_ == TRUE) ? 'f' : 'm');
+      }
+      if((persons_to_write + counter)->father_ != NULL && (persons_to_write + counter)->mother_ != NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\";\n",(persons_to_write + counter)->name_,((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm');
+      }
+*/
+      counter++;
+    }
+
+    fprintf(file_stream, "}\n");
+    showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
+    fclose(file_stream);
+  }
+
+  return FALSE;
 }
 /**
  * [storeFileIntoMemory description]
@@ -643,11 +717,13 @@ BOOL sortPersons(Person *persons)
 BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortirati po abecedi osobe
 {
   int counter = 0;
-  sortPersons(persons);
+  //sortPersons(persons);
   while((persons+counter)->gender_  != 3)
   {
     printf("%s ", (persons+counter)->name_);
-    printf("%s\n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
+    //printf("%s\n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
+    printf("ja %s ótac : %s majke :  %s \n",(persons + counter)->name_, ((persons + counter)->father_)->name_, ((persons + counter)->mother_)->name_);
+
     ++counter;
   }
   if(counter <= 1)
@@ -711,14 +787,14 @@ Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *fat
  * @param  gender_           [description]
  * @return                   [description]
  */
-Person *findPerson(Person *persons, char *name, BOOL gender)
+Person *findPerson(Person **persons, char *name, BOOL gender)
 {
   int counter = 0;
-  while((persons+counter)->gender_ != 3)
+  while(persons[counter]->gender_ != 3)
   {
-    if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
+    if(strcmp(persons[counter]->name_,name) == 0 && persons[counter]->gender_ == gender)
     {
-      return persons+counter;
+      return persons[counter];
     }
     counter++;
   }
@@ -750,6 +826,9 @@ void showError(short error_code)
     case ERROR_WRONG_ADD_USAGE:
     printf("[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].\n");
     break;
+    case ERROR_WRONG_DRAW_ALL_USAGE:
+    printf("[ERR] Wrong usage - draw-all <file-name>.\n");
+    break;
   }
 }
 /**
@@ -768,6 +847,9 @@ void showSuccessMessage(short msg_code)
     break;
     case MSG_SUCCESS_DOT_FILE_PARSING:
     printf("File parsing successful...\n");
+    break;
+    case MSG_SUCCESS_CREATING_DOT_FILE:
+    printf("Creating DOT-file was successful.\n");
     break;
   }
 }
