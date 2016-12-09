@@ -413,7 +413,7 @@ void parseInput(char *input_command, Person *persons_array)
 BOOL parseAddInput(char *input_command)
 {
   int counter = 4;
-  while(*(input_command + counter) != '[')
+  while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
   {
     counter++;
     if(*(input_command + counter) == '\n')
@@ -439,7 +439,7 @@ BOOL parseAddInput(char *input_command)
   BOOL first_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
   counter+=3;
   char *relationship = input_command + (counter);
-  while(*(input_command + counter) != ' ')
+  while(*(input_command + counter) != ' ' && *(input_command + counter) != '\0')
   {
     if(*(input_command + counter) == '\n' || *(input_command + counter) == '[' || *(input_command + counter) == ']')
     {
@@ -452,7 +452,7 @@ BOOL parseAddInput(char *input_command)
   {
     return FALSE;
   }
-  while(*(input_command + counter) != '[')
+  while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
   {
     counter++;
     if(*(input_command + counter) == '\n')
@@ -496,7 +496,7 @@ BOOL parseDrawAllInput(char *input_command, Person *persons)
   int counter = 0;
   char *file_name = input_command + 9;
   printf("%s\n", file_name);
-  while(*(file_name + counter) != '\n')
+  while(*(file_name + counter) != '\n' && *(file_name + counter) != '\0')
   {
     if(counter > INPUT_COMMAND_LENGHT)
     {
@@ -506,6 +506,10 @@ BOOL parseDrawAllInput(char *input_command, Person *persons)
   }
   *(file_name + counter) = '\0';
   file_name = strcat(file_name, ".dot");
+  if(numberOfPersons(persons) <= 1)
+  {
+    return FALSE;
+  }
   writePersonToFile(file_name,persons);
   return TRUE;
 }
