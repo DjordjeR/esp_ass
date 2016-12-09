@@ -466,6 +466,7 @@ BOOL parseAddInput(char *input_command)
   {
     return FALSE;
   }
+  char *second_person_name = input_command + (counter+1);
   while(*(input_command + counter) != '[')
   {
     counter++;
@@ -479,7 +480,7 @@ BOOL parseAddInput(char *input_command)
     return FALSE;
   }
   *(input_command + (counter-1)) = '\0';
-  char *second_person_name = input_command + 4;
+
   if(*(input_command + counter) != '[' || *(input_command + (counter+2)) != ']' || *(input_command + (counter+3)) != '\n')
   {
     return FALSE;
@@ -766,12 +767,51 @@ BOOL sortPersons(Person *persons)
           parrent_counter++;
         }      
       }
-      /*else if(strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) == 0 && (persons + switch_counter)->gender_ < ((persons + (switch_counter+1))->gender_))
+      else if(strcmp((persons + switch_counter)->name_,(persons + (switch_counter + 1))->name_) == 0 && (persons + switch_counter)->gender_ < ((persons + (switch_counter+1))->gender_))
       {
-        person_placeholder = (persons + switch_counter;
-        persons + switch_counter) = (persons + (switch_counter + 1));
-        persons + (switch_counter + 1) = person_placeholder;
-      }*/
+        person_placeholder = persons[switch_counter];
+        parrent_counter = 0;
+        while((persons + parrent_counter)->gender_ != 3)
+        {
+          if((persons + parrent_counter)->mother_ == &persons[switch_counter])
+          {
+            (persons + parrent_counter)->mother_ = &person_placeholder;
+          }
+          if((persons + parrent_counter)->father_ == &persons[switch_counter])
+          {
+            (persons + parrent_counter)->father_ = &person_placeholder;
+          }
+          parrent_counter++;
+        }
+        persons[switch_counter] = persons[switch_counter + 1];
+        parrent_counter = 0;
+        while((persons + parrent_counter)->gender_ != 3)
+        {
+          if((persons + parrent_counter)->mother_ == &persons[switch_counter + 1])
+          {
+            (persons + parrent_counter)->mother_ = &persons[switch_counter];
+          }
+          if((persons + parrent_counter)->father_ == &persons[switch_counter + 1])
+          {
+            (persons + parrent_counter)->father_ = &persons[switch_counter];
+          }
+          parrent_counter++;
+        }       
+        persons[switch_counter + 1] = person_placeholder;
+        parrent_counter = 0;
+        while((persons + parrent_counter)->gender_ != 3)
+        {
+          if((persons + parrent_counter)->mother_ == &person_placeholder)
+          {
+            (persons + parrent_counter)->mother_ = &persons[switch_counter + 1];
+          }
+          if((persons + parrent_counter)->father_ == &person_placeholder)
+          {
+            (persons + parrent_counter)->father_ = &persons[switch_counter + 1];
+          }
+          parrent_counter++;
+        }      
+      }
       //TODO: check length of name
     }
   }
@@ -856,7 +896,7 @@ Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *fat
 Person *findPerson(Person *persons, char *name, BOOL gender)
 {
   int counter = 0;
-  while((persons+counter)->gender_ != 3)
+  while((persons+counter)->gender_ != 3 && (persons+counter) != NULL)
   {
     if(strcmp((persons+counter)->name_,name) == 0 && (persons+counter)->gender_ == gender)
     {

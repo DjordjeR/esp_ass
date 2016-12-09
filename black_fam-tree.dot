@@ -1,5 +1,6 @@
 digraph FamilyTree
 {
+  "Ursula [m]";
   "Arcturus [m]" -> "Hester [f]";
   "Arcturus [m]" -> "Sirius [m]";
   "Cygnus [m]" -> "Phineas [m]";
@@ -10,13 +11,13 @@ digraph FamilyTree
   "Orion [m]" -> "Melania [f]";
   "Orion [m]" -> "Arcturus [m]";
   "Phineas [m]";
+  "Phineas [f]";
   "Pollux [m]" -> "Violetta [f]";
   "Pollux [m]" -> "Cygnus [m]";
   "Sirius [m]" -> "Ursula [f]";
   "Sirius [m]" -> "Phineas [m]";
   "Sirius Jr. [m]" -> "Walburga [f]";
   "Sirius Jr. [m]" -> "Orion [m]";
-  "Ursula [m]";
   "Ursula [f]";
   "Violetta [f]";
   "Walburga [f]" -> "Irma [f]";

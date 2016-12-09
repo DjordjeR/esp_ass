@@ -1,0 +1,24 @@
+Arcturus [m]
+Cygnus [m]
+Hester [f]
+Irma [f]
+Melania [f]
+Orion [m]
+Phineas [f]
+Phineas [m]
+Pollux [m]
+Sirius [m]
+Sirius Jr. [m]
+Ursula [f]
+Ursula [m]
+Violetta [f]
+Walburga [f]
+File parsing successful...
+esp>[ERR] Wrong usage - draw-all <file-name>.
+esp>[ERR] Wrong usage - draw-all <file-name>.
+esp>[ERR] Wrong usage - draw-all <file-name>.
+esp>Creating DOT-file was successful.
+esp>Creating DOT-file was successful.
+esp>[ERR] Could not write file.
+esp>Creating DOT-file was successful.
+esp>
