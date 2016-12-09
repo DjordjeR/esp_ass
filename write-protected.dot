@@ -9,11 +9,12 @@ digraph FamilyTree
   "Melania [f]";
   "Orion [m]" -> "Melania [f]";
   "Orion [m]" -> "Arcturus [m]";
+  "Phineas [f]";
   "Phineas [m]";
   "Pollux [m]" -> "Violetta [f]";
   "Pollux [m]" -> "Cygnus [m]";
   "Sirius [m]" -> "Ursula [f]";
-  "Sirius [m]" -> "Irma [m]";
+  "Sirius [m]" -> "Phineas [m]";
   "Sirius Jr. [m]" -> "Walburga [f]";
   "Sirius Jr. [m]" -> "Orion [m]";
   "Ursula [f]";

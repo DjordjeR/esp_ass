@@ -168,7 +168,7 @@ Person *parseDotFile(char *file_content)
   BOOL parrent_gender;
   int number_of_persons = 0;
 
-  Person *array_of_persons = (Person*)malloc(sizeof(Person)*lines_separated_counter); //This will be reallocated later
+  Person *array_of_persons = (Person*)malloc(sizeof(Person)*(lines_separated_counter*2)); //This will be reallocated later
   array_of_persons[lines_separated_counter].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
@@ -786,9 +786,16 @@ char *storeFileIntoMemory(const char *file_name)
 {
   char *file_content = NULL;
   FILE *file_stream = fopen(file_name,"r");
-
+  int size;
   if(file_stream != NULL)
   {
+      fseek (file_stream, 0, SEEK_END);
+      size = ftell(file_stream);
+      if(size == 0)
+      {
+        showError(ERROR_FILE_COULD_NOT_BE_READ);
+        exit(ERROR_FILE_COULD_NOT_BE_READ);
+      }
       if(fseek(file_stream,0L,SEEK_END) == 0)
       {
           long buffer_size = ftell(file_stream);
@@ -952,7 +959,7 @@ BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
     printf("%s %s\n", (persons+counter)->name_,((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
     counter++;
   }
-  if(counter <= 1)
+  if(counter < 1)
   {
     return FALSE;
   }
