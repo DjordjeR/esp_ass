@@ -1,0 +1,13 @@
+list 
+list all
+list nesto drugo tamo vamo
+list
+list 54134
+listlist
+ list list
+  list
+ list
+\n
+list eof
+list EOF
+list [EOF]

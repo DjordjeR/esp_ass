@@ -1,0 +1,32 @@
+Arcturus [m]
+Cygnus [m]
+Hester [f]
+Irma [f]
+Melania [f]
+Orion [m]
+Phineas [m]
+Pollux [m]
+Sirius [m]
+Sirius Jr. [m]
+Ursula [f]
+Ursula [m]
+Violetta [f]
+Walburga [f]
+File parsing successful...
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
+esp>

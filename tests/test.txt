@@ -1,0 +1,31 @@
+list 
+list all
+list nesto drugo tamo vamo
+list
+add
+add 
+add  
+add marija magdalena
+add marija[f] mfg dragan[m]
+add marija [f] mfg dragan[m]
+add marija[f] mfg dragan [m]
+add marija[f mfg dragan[m]
+add marijaf] mfg dragan[m]
+add marija f] mfg dragan[m]
+add marija[f] mfg draganm]
+add marija[f] mfg dragan[m
+add marija[f] mfgdragan[m]
+add marija[f]mfg dragan[m]
+add marija[fmfg dragan[m]
+add marija[f] mfg dragan[m]
+add marija [f] mfg nesto [f]
+draw-all
+draw-all 
+draw-all  
+draw-all test-file-1
+draw-all test-file-2
+draw-all write-protected
+draw-all test-file-1
+draw-all write-protected
+quit
+test

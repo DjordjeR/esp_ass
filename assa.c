@@ -1,8 +1,8 @@
-#include <stdio.h> // Standardna biblioteka
-#include <stdlib.h> // Trebaće nam za 
-#include <string.h> // Everything has to be done with strings
-#include <ctype.h> // Treba nam za isAlpha
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <unistd.h> // access()
 //TODO Provjeriti trebamo li staviti ?1 ako neko nema roditelja kada ucitavamo fajl
 
 //Substitute for BOOL
@@ -16,21 +16,20 @@ typedef short BOOL;
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
 #define MSG_SUCCESS_DOT_FILE_PARSING 10
 #define MSG_SUCCESS_CREATING_DOT_FILE 11
-
-//Return values
-#define ERROR_FILE_COULD_NOT_BE_READ 3
+//ERRORS
 #define ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE 1
 #define ERROR_OUT_OF_MEMORY 2
-#define ERROR_NO_ENTRIES_AVAILABLE 8
-#define ERROR_WRONG_LIST_USAGE 7
-#define ERROR_WRONG_ADD_USAGE 6
+#define ERROR_FILE_COULD_NOT_BE_READ 3
+#define ERROR_FILE_COULD_NOT_BE_WRITTEN 4
 #define ERROR_WRONG_DRAW_ALL_USAGE 5
-
+#define ERROR_WRONG_ADD_USAGE 6
+#define ERROR_WRONG_LIST_USAGE 7
+#define ERROR_NO_ENTRIES_AVAILABLE 8
 //String lenghts
-#define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 
+#define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 530
 #define MAX_NAME_LENGHT 257
-
 //Msc
+
 typedef struct _Person_ 
 {
   char name_[MAX_NAME_LENGHT];
@@ -74,7 +73,7 @@ void parseDrawInput(char *input_command);
 
 void parseRelationshipInput(char *input_command);
 
-BOOL parseDrawAllInput(char *input_command,Person *persons);
+char *parseDrawAllInput(char *input_command,Person *persons);
 
 BOOL sortPersons(Person *persons);
 
@@ -394,9 +393,24 @@ void parseInput(char *input_command, Person *persons_array)
     }
     if(strcmp(command,"draw-all") == 0)
     {
-      if(!parseDrawAllInput(input_command,persons_array))
+      char *file_name = parseDrawAllInput(input_command,persons_array);
+      if(file_name == NULL)
       {
         showError(ERROR_WRONG_DRAW_ALL_USAGE);
+      }
+      else
+      {
+        if(numberOfPersons(persons_array) <= 1)
+        {
+          showError(ERROR_NO_ENTRIES_AVAILABLE);
+        }
+        else
+        {
+          if(!writePersonToFile(file_name,persons_array))
+          {
+            showError(ERROR_FILE_COULD_NOT_BE_WRITTEN);
+          }
+        }
       }
     }
     if(strcmp(command,"relationship") == 0)
@@ -439,7 +453,7 @@ BOOL parseAddInput(char *input_command)
   BOOL first_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
   counter+=3;
   char *relationship = input_command + (counter);
-  while(*(input_command + counter) != ' ' && *(input_command + counter) != '\0')
+  while(*(input_command + counter) != ' ')
   {
     if(*(input_command + counter) == '\n' || *(input_command + counter) == '[' || *(input_command + counter) == ']')
     {
@@ -452,7 +466,7 @@ BOOL parseAddInput(char *input_command)
   {
     return FALSE;
   }
-  while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
+  while(*(input_command + counter) != '[')
   {
     counter++;
     if(*(input_command + counter) == '\n')
@@ -491,27 +505,28 @@ void parseDrawInput(char *input_command)
  * [parseDrawAllInput description]
  * @param input_command [description]
  */
-BOOL parseDrawAllInput(char *input_command, Person *persons)
+char *parseDrawAllInput(char *input_command, Person *persons)
 {
   int counter = 0;
   char *file_name = input_command + 9;
-  printf("%s\n", file_name);
+  if(strlen(file_name) <= 1)
+  {
+    return NULL;
+  }
+  if(*(file_name + counter) == ' ')
+  {
+    return NULL;
+  }
   while(*(file_name + counter) != '\n' && *(file_name + counter) != '\0')
   {
     if(counter > INPUT_COMMAND_LENGHT)
     {
-      return FALSE;
+      return NULL;
     }
     counter++;
   }
-  *(file_name + counter) = '\0';
-  file_name = strcat(file_name, ".dot");
-  if(numberOfPersons(persons) <= 1)
-  {
-    return FALSE;
-  }
-  writePersonToFile(file_name,persons);
-  return TRUE;
+  *(file_name + counter) = '\0'; 
+  return strcat(file_name,".dot");
 }
 /**
  * [parseRelationshipInput description]
@@ -552,11 +567,9 @@ void waitForInput(Person *persons_array)
  */
 BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji 
 {
-  FILE *file_stream;
-  if((file_stream = fopen(file_name,"r")))
+  if(access (file_name, F_OK | R_OK) == 0)
   {
-      fclose(file_stream);
-      return TRUE;
+    return TRUE;
   }
   return FALSE;
 }
@@ -567,16 +580,18 @@ BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji
  */
 BOOL fileIsWritable(const char *file_name) // TODO: Izgleda da je nepotrebno
 {
-  FILE *file_stream;
-  if((file_stream = fopen(file_name,"rw")))
+  if(access (file_name, F_OK | R_OK | W_OK) == 0)
   {
-      fclose(file_stream);
-      return TRUE;
+    return TRUE;
   }
   return FALSE; 
 }
 BOOL writePersonToFile(char *file_name,Person *persons_to_write)
 {
+  if(fileExists(file_name) && !fileIsWritable(file_name))
+  {
+    return FALSE;
+  }
   if(fileExists(file_name) && fileIsWritable(file_name))
   {
     FILE *file_stream;
@@ -603,16 +618,42 @@ BOOL writePersonToFile(char *file_name,Person *persons_to_write)
       }
       counter++;
     }
-    fprintf(file_stream, "}\n");
+    fprintf(file_stream, "}");
     showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
     fclose(file_stream);
     return TRUE;
   }
-  else
+  else if(!fileExists(file_name))
   {
-    //TODO: Create file
+    FILE *file_stream;
+    int counter = 0;
+    file_stream = fopen(file_name, "wb");
+    fprintf(file_stream, "digraph FamilyTree\n");
+    fprintf(file_stream, "{\n");
+    sortPersons(persons_to_write);
+    while((persons_to_write + counter)->gender_ != 3)
+    {
+      if((persons_to_write + counter)->mother_ != NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n",(persons_to_write + counter)->name_,((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm',
+          ((persons_to_write + counter)->mother_)->name_,'f');
+      }
+      if((persons_to_write + counter)->father_ != NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n",(persons_to_write + counter)->name_,
+          (((persons_to_write + counter)->gender_) == TRUE) ? 'f' : 'm',((persons_to_write + counter)->father_)->name_,'m');
+      }
+      if((persons_to_write + counter)->father_ == NULL && (persons_to_write + counter)->mother_ == NULL)
+      {
+        fprintf(file_stream, "  \"%s [%c]\";\n",(persons_to_write + counter)->name_,((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm');
+      }
+      counter++;
+    }
+    fprintf(file_stream, "}");
+    showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
+    fclose(file_stream);
+    return TRUE;
   }
-
   return FALSE;
 }
 /**
@@ -748,9 +789,8 @@ BOOL listPersons(Person *persons) // TODO: Provjeriti da li ovdje moramo sortira
   sortPersons(persons);
   while((persons+counter)->gender_  != 3)
   {
-    printf("%s - ", (persons+counter)->name_);
-    printf("%s - mother : %s father : %s \n", ((persons+counter)->gender_ == 1) ? "[f]" : "[m]",((persons+counter)->mother_)->name_,((persons+counter)->father_)->name_);
-    ++counter;
+    printf("%s %s\n", (persons+counter)->name_,((persons+counter)->gender_ == 1) ? "[f]" : "[m]");
+    counter++;
   }
   if(counter <= 1)
   {
@@ -854,6 +894,9 @@ void showError(short error_code)
     break;
     case ERROR_WRONG_DRAW_ALL_USAGE:
     printf("[ERR] Wrong usage - draw-all <file-name>.\n");
+    break;
+    case ERROR_FILE_COULD_NOT_BE_WRITTEN:
+    printf("[ERR] Could not write file.\n");
     break;
   }
 }

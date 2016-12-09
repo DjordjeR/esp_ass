@@ -1,0 +1,8 @@
+draw-all
+draw-all 
+draw-all  
+draw-all test-file-1
+draw-all test-file-2
+draw-all write-protected
+draw-all test-file-1
+draw-all write-protected
