@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h> // access()
 //TODO Provjeriti trebamo li staviti ?1 ako neko nema roditelja kada ucitavamo fajl
 
 //Substitute for BOOL
@@ -25,6 +24,9 @@ typedef short BOOL;
 #define ERROR_WRONG_ADD_USAGE 6
 #define ERROR_WRONG_LIST_USAGE 7
 #define ERROR_NO_ENTRIES_AVAILABLE 8
+#define ERROR_BOTH_PEOPLE_ARE_THE_SAME 9
+#define ERROR_SEX_DOES_NOT_MATCH 10
+#define ERROR_RELATION_NOT_POSSIBLE 11
 //String lenghts
 #define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 530
 #define MAX_NAME_LENGHT 257
@@ -65,7 +67,7 @@ void parseInput(char *input_command, Person *persons_array);
 
 void waitForInput(Person *persons_array);
 
-BOOL parseAddInput(char *input_command);
+BOOL parseAddInput(char *input_command, Person *array_of_persons);
 
 BOOL copyPerson(Person *first_person, Person *second_person);
 
@@ -80,6 +82,8 @@ BOOL sortPersons(Person *persons);
 int numberOfPersons(Person *persons);
 
 BOOL writePersonToFile(char *file_name,Person *persons_to_write);
+
+void addRelationship(char *first_person_name, BOOL first_person_gender, char *second_person_name, BOOL second_person_gender, char *relationship, Person *array_of_persons);
 
 /**
  * [main description]
@@ -331,8 +335,10 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name,BOOL *gender_b, char *p
     return FALSE;
   }
   *parrent_gender_b = (*(line_to_parse+(counter-1)) == 'f') ? TRUE : FALSE;
+
  return TRUE;
 }
+
 /**
  * nameIsUnknown description]
  * @param  name [description]
@@ -382,7 +388,7 @@ void parseInput(char *input_command, Person *persons_array)
     }
     if(strcmp(command,"add") == 0)
     {
-      if(!parseAddInput(input_command))
+      if(!parseAddInput(input_command,persons_array))
       {
         showError(ERROR_WRONG_ADD_USAGE);
       }
@@ -424,7 +430,7 @@ void parseInput(char *input_command, Person *persons_array)
  * [parseAddInput description]
  * @param input_command [description]
  */
-BOOL parseAddInput(char *input_command)
+BOOL parseAddInput(char *input_command, Person *array_of_persons)
 {
   int counter = 4;
   while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
@@ -491,8 +497,118 @@ BOOL parseAddInput(char *input_command)
     return FALSE;
   }
   BOOL second_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
+
+  if(strcmp(relationship,"mother") != 0 && strcmp(relationship,"father") != 0 && strcmp(relationship,"mgm") != 0 && strcmp(relationship,"fgm") != 0 && strcmp(relationship,"mgf") != 0 && strcmp(relationship,"fgf") != 0)
+  {
+    return FALSE;
+  }
+
+  addRelationship(first_person_name, first_person_gender, second_person_name, second_person_gender, relationship,array_of_persons);
+
   return TRUE;
   //memset(input_command,0,INPUT_COMMAND_LENGHT);
+}
+void addRelationship(char *first_person_name, BOOL first_person_gender, char *second_person_name, BOOL second_person_gender, char *relationship, Person *array_of_persons)
+{
+  if(strcmp(first_person_name,second_person_name) == 0 && first_person_gender == second_person_gender)
+  {
+    showError(ERROR_BOTH_PEOPLE_ARE_THE_SAME);
+  }
+  else
+  {
+    if(strcmp(relationship,"mother") == 0)
+    {
+      if(first_person_gender != 1)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        if(findPerson(array_of_persons, second_person_name, second_person_gender) != NULL)
+        {
+          Person *child = findPerson(array_of_persons, second_person_name, second_person_gender);
+          if(child->mother_ == NULL)
+          {
+            if(findPerson(array_of_persons, first_person_name, first_person_gender) != NULL)
+            {
+              child->mother_ = findPerson(array_of_persons, first_person_name, first_person_gender);
+            }
+            else
+            {
+              int number_of_persons = numberOfPersons(array_of_persons);
+              array_of_persons = realloc(array_of_persons, sizeof(Person)*(number_of_persons+2));
+              strcpy(array_of_persons[number_of_persons].name_,first_person_name);
+              array_of_persons[number_of_persons].gender_ = second_person_gender;
+              array_of_persons[number_of_persons].mother_ = NULL;
+              array_of_persons[number_of_persons].father_ = NULL;
+              array_of_persons[number_of_persons+1].gender_ = 3;
+
+              child->mother_ = &array_of_persons[number_of_persons];
+            }
+          }
+          else
+          {
+            showError(ERROR_RELATION_NOT_POSSIBLE);
+          }
+        }
+      }
+    }
+    if(strcmp(relationship,"father") == 0)
+    {
+      if(first_person_gender != 0)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        //NOTE:: add father
+      }
+    }
+    if(strcmp(relationship,"mgm") == 0)
+    {
+      if(first_person_gender != 1)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        //NOTE: add grandmother from mothers side
+      }
+    }
+    if(strcmp(relationship,"fgm") == 0)
+    {
+      if(first_person_gender != 1)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        //NOTE: add grandmother from fathers side
+      }
+    }
+    if(strcmp(relationship, "mgf") == 0)
+    {
+      if(first_person_gender != 0)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        //NOTE: add grandfather from mothers side
+      }
+    }
+    if(strcmp(relationship, "fgf") == 0)
+    {
+      if(first_person_gender != 0)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        //NOTE: add grandfather fathers side
+      }
+    }
+  }
 }
 /**
  * [parseDrawInput description]
@@ -568,9 +684,11 @@ void waitForInput(Person *persons_array)
  */
 BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji 
 {
-  if(access (file_name, F_OK | R_OK) == 0)
+  FILE *file_stream;
+  if((file_stream = fopen(file_name,"r")))
   {
-    return TRUE;
+      fclose(file_stream);
+      return TRUE;
   }
   return FALSE;
 }
@@ -581,9 +699,11 @@ BOOL fileExists(const char *file_name) // Provjeravamo da li fajl postoji
  */
 BOOL fileIsWritable(const char *file_name) // TODO: Izgleda da je nepotrebno
 {
-  if(access (file_name, F_OK | R_OK | W_OK) == 0)
+  FILE *file_stream;
+  if((file_stream = fopen(file_name,"w")))
   {
-    return TRUE;
+      fclose(file_stream);
+      return TRUE;
   }
   return FALSE; 
 }
@@ -937,6 +1057,15 @@ void showError(short error_code)
     break;
     case ERROR_FILE_COULD_NOT_BE_WRITTEN:
     printf("[ERR] Could not write file.\n");
+    break;
+    case ERROR_BOTH_PEOPLE_ARE_THE_SAME:
+    printf("[ERR] Both people are the same.\n");
+    break;
+    case ERROR_SEX_DOES_NOT_MATCH:
+    printf("[ERR] Sex does not match with relation.\n");
+    break;
+    case ERROR_RELATION_NOT_POSSIBLE:
+    printf("[ERR] Relation not possible.\n");
     break;
   }
 }
