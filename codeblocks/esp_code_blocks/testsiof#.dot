@@ -1,0 +1,10 @@
+digraph FamilyTree
+{
+  "S [f]" -> "Lj [f]";
+  "S [f]" -> "?1 [m]";
+  "Lj [f]";
+  "?1 [f]" -> "Bog [f]";
+  "Bog [f]";
+  "Drago [m]";
+  "Sofija [f]" -> "Drago [m]";
+}

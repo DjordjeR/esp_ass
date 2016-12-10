@@ -1,0 +1,6 @@
+add Ljilja [f] mother Sofija [f]
+add Bogdana [f] fgm Sofija [f]
+add Drago [m] father Sofija [f]
+draw-all testsofijafgm
+list
+quit

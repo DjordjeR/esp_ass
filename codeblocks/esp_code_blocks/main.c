@@ -53,7 +53,7 @@ BOOL parseSingleFileLine(char *line_to_parse,char *name,BOOL *gender_b, char *pa
 
 Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
 
-Person *findPerson(Person *persons, char *name, BOOL gender);
+Person *findPerson(Person *persons, char const *name, BOOL gender);
 
 void showError(short error_code);
 
@@ -83,7 +83,7 @@ int numberOfPersons(Person *persons);
 
 BOOL writePersonToFile(char *file_name,Person *persons_to_write);
 
-void addRelationship(char *first_person_name, BOOL first_person_gender, char *second_person_name, BOOL second_person_gender, char *relationship, Person *array_of_persons);
+void addRelationship(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person *array_of_persons);
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 
 /**
@@ -511,7 +511,7 @@ BOOL parseAddInput(char *input_command, Person *array_of_persons)
   return TRUE;
   //memset(input_command,0,INPUT_COMMAND_LENGHT);
 }
-void addRelationship(char *first_person_name, BOOL first_person_gender, char *second_person_name, BOOL second_person_gender, char *relationship, Person *array_of_persons)
+void addRelationship(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person *array_of_persons)
 {
   if(strcmp(first_person_name,second_person_name) == 0 && first_person_gender == second_person_gender)
   {
@@ -607,6 +607,7 @@ void addRelationship(char *first_person_name, BOOL first_person_gender, char *se
     }
     if(strcmp(relationship,"father") == 0)
     {
+      printf("%s\n",first_person_name );
       if(first_person_gender != 0)
       {
         showError(ERROR_SEX_DOES_NOT_MATCH);
@@ -1381,7 +1382,7 @@ Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *fat
  * @param  gender_           [description]
  * @return                   [description]
  */
-Person *findPerson(Person *persons, char *name, BOOL gender)
+Person *findPerson(Person *persons, char const  *name, BOOL gender)
 {
   int counter = 0;
   while((persons+counter)->gender_ != 3 && (persons+counter) != NULL)
