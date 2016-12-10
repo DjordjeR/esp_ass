@@ -2,5 +2,6 @@ digraph FamilyTree
 {
   "?1 [f]" -> "Rosa [f]";
   "Angela [f]" -> "?1 [f]";
-  "Rosa [f]";
+  "Marija [f]";
+  "Rosa [f]" -> "Rosa [f]";
 }

@@ -1,37 +1,13 @@
-Arcturus [m]
-Cygnus [m]
-Hester [f]
-Irma [f]
-Melania [f]
-Orion [m]
-Phineas [f]
-Phineas [m]
-Pollux [m]
-Sirius [m]
-Sirius Jr. [m]
-Ursula [f]
-Ursula [m]
-Violetta [f]
-Walburga [f]
+?1 [f]
+Angela [f]
+Rosa [f]
 File parsing successful...
 esp>[ERR] Wrong usage - list.
 esp>[ERR] Wrong usage - list.
 esp>[ERR] Wrong usage - list.
-esp>Arcturus [m]
-Cygnus [m]
-Hester [f]
-Irma [f]
-Melania [f]
-Orion [m]
-Phineas [f]
-Phineas [m]
-Pollux [m]
-Sirius [m]
-Sirius Jr. [m]
-Ursula [f]
-Ursula [m]
-Violetta [f]
-Walburga [f]
+esp>?1 [f]
+Angela [f]
+Rosa [f]
 esp>[ERR] Wrong usage - list.
 esp>esp>esp>esp>esp>esp>[ERR] Wrong usage - list.
 esp>[ERR] Wrong usage - list.
