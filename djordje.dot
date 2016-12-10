@@ -1,13 +1,30 @@
 digraph FamilyTree
 {
-  "Kristina [f]" -> "Vesna [f]";
-  "Kristina [f]" -> "Miodrag [m]";
+  "Djordje [m]" -> "Vesna [f]";
+  "Djordje [m]" -> "Miodrag [m]";
   "Vesna [f]" -> "Milena [f]";
   "Vesna [f]" -> "Zivko [m]";
   "Miodrag [m]";
-  "Djordje [m]" -> "Vesna [f]";
-  "Djordje [m]" -> "Miodrag [m]";
   "Milena [f]";
   "Zivko [m]" -> "Vid [m]";
   "Vid [m]";
+  "Kristina [f]" -> "Vesna [f]";
+  "Kristina [f]" -> "Miodrag [m]";
+  "Vidosav [m]" -> "Milena [f]";
+  "Vidosav [m]" -> "Zivko [m]";
+  "Nemanja [m]" -> "Suzana [f]";
+  "Nemanja [m]" -> "Vidosav [m]";
+  "Suzana [f]" -> "Ilija [m]";
+  "Ilija [m]";
+  "Luka [m]" -> "Suzana [f]";
+  "Luka [m]" -> "Vidosav [m]";
+  "Sofija [f]" -> "Suzana [f]";
+  "Sofija [f]" -> "Vidosav [m]";
+  "Bozana [f]" -> "Milena [f]";
+  "Bozana [f]" -> "Zivko [m]";
+  "Danilo [m]" -> "Bozana [f]";
+  "Danilo [m]" -> "Perica [m]";
+  "Mihajlo [m]" -> "Bozana [f]";
+  "Mihajlo [m]" -> "Perica [m]";
+  "Perica [m]";
 }

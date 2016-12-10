@@ -954,7 +954,6 @@ void addRelationship(char *first_person_name, BOOL first_person_gender, char *se
  */
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
 {
-
   static unsigned long unknown_person_count = 1;
   int number_of_persons = numberOfPersons(array_of_persons);
   char buffer[MAX_NAME_LENGHT-1];
