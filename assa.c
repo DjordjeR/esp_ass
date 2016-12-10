@@ -31,7 +31,7 @@ typedef short BOOL;
 #define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 530
 #define MAX_NAME_LENGHT 257
 //Msc
-#define INIT_PERSONS_ARRAY_SIZE 10
+#define INIT_PERSONS_ARRAY_SIZE 100
 typedef struct _Person_
 {
   char name_[MAX_NAME_LENGHT];

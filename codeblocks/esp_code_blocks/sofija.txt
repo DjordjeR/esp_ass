@@ -1,0 +1,12 @@
+list
+add Ljilja [f] mother Sofija [f]
+add Ljilja [f] mother Natalija [f]
+add Ljilja [f] mother Emilija [f]
+add Drago [m] father Sofija [f]
+add Drago [m] father Natalija [f]
+add Drago [m] father Emilija [f]
+add Dusan [m] father Drago [m]
+add Bosko [m] father Ljilja [f]
+add Zorka [f] mother Ljilja [f]
+add Bogdana [f] mother Drago [m]
+add Zorka [f] mother Milica [f]

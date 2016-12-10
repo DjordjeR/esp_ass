@@ -1,0 +1,25 @@
+digraph FamilyTree
+{
+  "Sofija [f]" -> "Ljilja [f]";
+  "Sofija [f]" -> "Drago [m]";
+  "Ljilja [f]" -> "Zorka [f]";
+  "Ljilja [f]" -> "Bosko [m]";
+  "Natalija [f]" -> "Ljilja [f]";
+  "Natalija [f]" -> "Drago [m]";
+  "Ljulja [f]";
+  "Emilija [f]" -> "Ljulja [f]";
+  "Emilija [f]" -> "Drago [m]";
+  "Drago [m]" -> "Bogdana [f]";
+  "Dusan [m]";
+  "Drage [m]" -> "Dusan [m]";
+  "Bosko [m]";
+  "Zorka [f]";
+  "Bogdana [f]";
+  "Milica [f]" -> "Zorka [f]";
+  "Branka [f]" -> "Zorka [f]";
+  "Branka [f]" -> "Bosko [m]";
+  "Bozana [f]" -> "Zorka [f]";
+  "Slavko [f]" -> "Zorka [f]";
+  "Slavko [m]" -> "Bosko [m]";
+  "Milica [m]" -> "Bosko [m]";
+}

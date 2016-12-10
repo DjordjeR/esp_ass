@@ -1,0 +1,47 @@
+digraph FamilyTree
+{
+  "Sofija [f]" -> "Ljilja [f]";
+  "Sofija [f]" -> "Drago [m]";
+  "Ljilja [f]" -> "Zorka [f]";
+  "Ljilja [f]" -> "Bosko [m]";
+  "Natalija [f]" -> "Ljilja [f]";
+  "Natalija [f]" -> "Drago [m]";
+  "Emilija [f]" -> "Ljilja [f]";
+  "Emilija [f]" -> "Drago [m]";
+  "Drago [m]" -> "Bogdana [f]";
+  "Drago [m]" -> "Dusan [m]";
+  "Dusan [m]" -> "Desanka1 [f]";
+  "Dusan [m]" -> "Dragan [m]";
+  "Bosko [m]";
+  "Zorka [f]";
+  "Bogdana [f]" -> "Desanka [f]";
+  "Bogdana [f]" -> "Cedomir [m]";
+  "Milica [f]" -> "Zorka [f]";
+  "Milica [f]" -> "Bosko [m]";
+  "Branka [f]" -> "Zorka [f]";
+  "Branka [f]" -> "Bosko [m]";
+  "Bozana [f]" -> "Zorka [f]";
+  "Bozana [f]" -> "Bosko [m]";
+  "Slavko [f]" -> "Zorka [f]";
+  "Slavko [f]" -> "Bosko [m]";
+  "Biljana [f]" -> "Bogdana [f]";
+  "Biljana [f]" -> "Dusan [m]";
+  "Dragan [m]";
+  "Cedomir [m]";
+  "Desanka [f]";
+  "Desanka1 [f]";
+  "Gojko [f]" -> "Desanka [f]";
+  "Bozo [f]" -> "Desanka [f]";
+  "Ruzica [f]" -> "Desanka [f]";
+  "Ruzica [f]" -> "Cedomir [m]";
+  "Smiljana [f]" -> "Desanka [f]";
+  "Smiljana [f]" -> "Cedomir [m]";
+  "Petra [f]" -> "Desanka [f]";
+  "Vukasin [f]" -> "Desanka1 [f]";
+  "Andjelka [f]" -> "Desanka1 [f]";
+  "Petraa [m]" -> "Cedomir [m]";
+  "Bozo [m]" -> "Cedomir [m]";
+  "Gojko [m]" -> "Cedomir [m]";
+  "Jelena [m]" -> "Cedomir [m]";
+  "Jelena [f]" -> "Desanka [f]";
+}
