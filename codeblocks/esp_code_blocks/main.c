@@ -95,8 +95,9 @@ int main(int argc, char **argv)
 {
   if(argc == 1)
   {
-    Person *persons_array = (Person*)malloc(sizeof(Person));
+    Person *persons_array = (Person*)malloc(sizeof(Person)*2);
     (persons_array)->gender_ = 3;
+    printf("%d\n", numberOfPersons(persons_array));
     waitForInput(persons_array);
   }
   else if(argc == 2)
@@ -527,28 +528,66 @@ void addRelationship(char *first_person_name, BOOL first_person_gender, char *se
         if(findPerson(array_of_persons, second_person_name, second_person_gender) != NULL)
         {
           Person *child = findPerson(array_of_persons, second_person_name, second_person_gender);
-          if(child->mother_ == NULL)
+          if(child->mother_ == NULL || nameIsUnknown(child->mother_->name_))
           {
-            if(findPerson(array_of_persons, first_person_name, first_person_gender) != NULL)
+            if(child->mother_ != NULL && nameIsUnknown(child->mother_->name_))
             {
-              child->mother_ = findPerson(array_of_persons, first_person_name, first_person_gender);
+              Person *mother = findPerson(array_of_persons,child->mother_->name_,1);
+              strcpy(mother->name_,first_person_name);
             }
             else
             {
-              int number_of_persons = numberOfPersons(array_of_persons);
-              array_of_persons = realloc(array_of_persons, sizeof(Person)*(number_of_persons+2));
-              strcpy(array_of_persons[number_of_persons].name_,first_person_name);
-              array_of_persons[number_of_persons].gender_ = second_person_gender;
-              array_of_persons[number_of_persons].mother_ = NULL;
-              array_of_persons[number_of_persons].father_ = NULL;
-              array_of_persons[number_of_persons+1].gender_ = 3;
+              if(findPerson(array_of_persons, first_person_name, first_person_gender) != NULL)
+              {
+                child->mother_ = findPerson(array_of_persons, first_person_name, first_person_gender);
+              }
+              else
+              {
+                int number_of_persons = numberOfPersons(array_of_persons);
+                array_of_persons = realloc(array_of_persons, sizeof(Person)*(number_of_persons+2));
+                strcpy(array_of_persons[number_of_persons].name_,first_person_name);
+                array_of_persons[number_of_persons+1].gender_ = second_person_gender;
+                array_of_persons[number_of_persons+1].mother_ = NULL;
+                array_of_persons[number_of_persons+1].father_ = NULL;
+                array_of_persons[number_of_persons+2].gender_ = 3;
 
-              child->mother_ = &array_of_persons[number_of_persons];
+                child->mother_ = &array_of_persons[number_of_persons];
+              }
             }
           }
           else
           {
             showError(ERROR_RELATION_NOT_POSSIBLE);
+          }
+        }
+        else
+        {
+          int number_of_persons = numberOfPersons(array_of_persons);
+          if (number_of_persons == 0)
+          {
+            if(findPerson(array_of_persons,first_person_name,1) != NULL)
+            {
+              array_of_persons = realloc(array_of_persons,sizeof(Person)*(number_of_persons+2));
+              strcpy(array_of_persons[0].name_,second_person_name);
+              array_of_persons[0].gender_ = second_person_gender;
+              array_of_persons[0].father_ = NULL;
+              array_of_persons[0].mother_  = findPerson(array_of_persons,first_person_name,1);
+              array_of_persons[1].gender_ = 3;
+            }
+            else
+            {
+              printf("Ovde smo stigli\n");
+              array_of_persons = realloc(array_of_persons,sizeof(Person)*(number_of_persons+5));
+              strcpy(array_of_persons[0].name_,second_person_name);
+              array_of_persons[0].gender_ = second_person_gender;
+              array_of_persons[0].father_ = NULL;
+              strcpy(array_of_persons[1].name_,first_person_name);
+              array_of_persons[1].gender_ = 1;
+              array_of_persons[1].mother_ = NULL;
+              array_of_persons[1].father_ = NULL;
+              array_of_persons[0].mother_ = &array_of_persons[1];
+              array_of_persons[2].gender_ = 3;
+            }
           }
         }
       }
