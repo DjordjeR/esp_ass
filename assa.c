@@ -142,6 +142,16 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
  Person **array_of_persons);
 
 // forward declaration
+void addMgf(char const *first_person_name, BOOL first_person_gender, char const
+ *second_person_name, BOOL second_person_gender, char const *relationship,
+ Person **array_of_persons);
+
+// forward declaration
+void addFgf(char const *first_person_name, BOOL first_person_gender, char const
+ *second_person_name, BOOL second_person_gender, char const *relationship,
+ Person **array_of_persons);
+
+// forward declaration
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 
 //------------------------------------------------------------------------------
@@ -160,6 +170,11 @@ int main(int argc, char **argv)
   if(argc == 1)
   {
     Person *persons_array = malloc(INIT_PERSONS_ARRAY_SIZE*sizeof(Person));
+    if(persons_array == NULL)
+    {
+    	showError(ERROR_OUT_OF_MEMORY);
+    	exit(ERROR_OUT_OF_MEMORY);
+    }
     (persons_array)->gender_ = 3;
     Person **persons_array_ptr = &persons_array;
     waitForInput(persons_array_ptr);
@@ -243,6 +258,11 @@ Person *parseDotFile(char *file_content)
   (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE),sizeof(Person)); //Big chunk of memory for
   // persons, it'll be
   // reallocated later
+  if(array_of_persons == NULL)
+  {
+  	showError(ERROR_OUT_OF_MEMORY);
+  	exit(ERROR_OUT_OF_MEMORY);
+  }
   array_of_persons[(lines_separated_counter*10)-1].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
@@ -423,7 +443,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *
 ///
 /// Check if name is Unknown
 ///
-/// @param name name of person for checking
+/// @param name, name of person for checking
 ///
 /// @return TRUE or FALSE
 //
@@ -687,10 +707,48 @@ void addRelationship(char const *first_person_name, BOOL first_person_gender, ch
         addFgm(first_person_name, first_person_gender, second_person_name,
         second_person_gender, relationship, array_of_persons);
       }
+    }
+    if(strcmp(relationship, "mgf" ) == 0)
+    {
+      if(first_person_gender != 0)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        addMgf(first_person_name, first_person_gender, second_person_name,
+        second_person_gender, relationship, array_of_persons);
+      }
+    }
+    if(strcmp(relationship, "fgf" ) == 0)
+    {
+      if(first_person_gender != 0)
+      {
+        showError(ERROR_SEX_DOES_NOT_MATCH);
+      }
+      else
+      {
+        addFgf(first_person_name, first_person_gender, second_person_name,
+        second_person_gender, relationship, array_of_persons);
+      }
     }   
   }
 }
 
+//------------------------------------------------------------------------------
+///
+/// addMother
+/// Add person and persons mother
+///
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// @param relationship
+/// @param array_of_persons
+///
+/// @return 
+//
 void addMother(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
 {
   if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
@@ -802,6 +860,20 @@ void addMother(char const *first_person_name, BOOL first_person_gender, char con
   }
 }
 
+//------------------------------------------------------------------------------
+///
+/// addFather
+/// Add person and persons father
+///
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// @param relationship
+/// @param array_of_persons
+///
+/// @return 
+//
 void addFather(char const *first_person_name, BOOL first_person_gender, char
  const *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
 {
@@ -914,6 +986,20 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
   }
 }
 
+//------------------------------------------------------------------------------
+///
+/// addMgm
+/// Add person and persons mother-grandmother
+///
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// @param relationship
+/// @param array_of_persons
+///
+/// @return 
+//
 void addMgm(char const *first_person_name, BOOL first_person_gender, char const
  *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
 {
@@ -1006,6 +1092,20 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
     } 
 }
 
+//------------------------------------------------------------------------------
+///
+/// addFgm
+/// Add person and persons father-grandmother
+///
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// @param relationship
+/// @param array_of_persons
+///
+/// @return 
+//
 void addFgm(char const *first_person_name, BOOL first_person_gender, char const
  *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
 {
@@ -1096,6 +1196,218 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
       (*array_of_persons + (number_of_persons + 2))->gender_ = 3;
       (*array_of_persons + number_of_persons)->father_ = father;
       (*array_of_persons + (number_of_persons + 1))->father_->mother_ = (*array_of_persons + (number_of_persons + 1));
+    } 
+}
+
+//------------------------------------------------------------------------------
+///
+/// addMgf
+/// Add person and persons mother-grandfather
+///
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// @param relationship
+/// @param array_of_persons
+///
+/// @return 
+//
+void addMgf(char const *first_person_name, BOOL first_person_gender, char const
+ *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+{
+    if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
+    {
+      Person *child = findPerson(*array_of_persons, second_person_name, second_person_gender);
+      if(child->mother_ != NULL)
+      {
+        if(child->mother_->father_ == NULL)
+        {
+          int number_of_persons = numberOfPersons(*array_of_persons);
+          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          {
+            Person *buffer = realloc(*array_of_persons, sizeof(Person)*
+              (number_of_persons * 5));
+            if(buffer == NULL)
+            {
+              showError(ERROR_OUT_OF_MEMORY);
+              exit(ERROR_OUT_OF_MEMORY);
+            }
+            *array_of_persons = buffer;
+          } 
+          strcpy((*array_of_persons + number_of_persons)->name_,
+          first_person_name);
+          (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+          (*array_of_persons + number_of_persons)->mother_ = NULL;
+          (*array_of_persons + number_of_persons)->father_ = NULL;
+          (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+          child->mother_->father_ = (*array_of_persons + number_of_persons);
+        }
+        else if(child->mother_->father_ != NULL && nameIsUnknown(child->mother_->father_->name_))
+        {
+          strcpy(child->mother_->father_->name_, first_person_name);
+        }
+        else
+        {
+          showError(ERROR_RELATION_NOT_POSSIBLE);
+        }
+      }
+      else if(child->mother_ == NULL)
+      {
+        int number_of_persons = numberOfPersons(*array_of_persons);
+        child->mother_ = addUnknownPerson(*array_of_persons, first_person_gender);
+        number_of_persons++;
+        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        {
+          Person *buffer = realloc(*array_of_persons, sizeof(Person)*
+            (number_of_persons * 5));
+          if(buffer == NULL)
+          {
+            showError(ERROR_OUT_OF_MEMORY);
+            exit(ERROR_OUT_OF_MEMORY);
+          }
+          *array_of_persons = buffer;
+        } 
+        strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+        (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+        (*array_of_persons + number_of_persons)->father_ = NULL;
+        (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+        child->mother_->father_ = (*array_of_persons + number_of_persons);
+      }
+    }
+    else
+    {
+      int number_of_persons = numberOfPersons(*array_of_persons);
+      Person *mother = addUnknownPerson(*array_of_persons, 1);
+      number_of_persons++;
+      if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+      {
+        Person *buffer = realloc(*array_of_persons, sizeof(Person)*
+          (number_of_persons * 5));
+        if(buffer == NULL)
+        {
+          showError(ERROR_OUT_OF_MEMORY);
+          exit(ERROR_OUT_OF_MEMORY);
+        }
+        *array_of_persons = buffer;
+      }      
+      strcpy((*array_of_persons + number_of_persons)->name_, second_person_name);
+      (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
+      (*array_of_persons + number_of_persons)->father_ = NULL;
+      strcpy((*array_of_persons + (number_of_persons + 1))->name_,
+       first_person_name);
+      (*array_of_persons + (number_of_persons + 1))->gender_ = first_person_gender;
+      (*array_of_persons + (number_of_persons + 1))->father_ = NULL; 
+      (*array_of_persons + (number_of_persons + 1))->mother_ = NULL;
+      (*array_of_persons + (number_of_persons + 2))->gender_ = 3;
+      (*array_of_persons + number_of_persons)->mother_ = mother;
+      mother->father_ = (*array_of_persons + (number_of_persons + 1));
+    } 
+}
+
+//------------------------------------------------------------------------------
+///
+/// addFgf
+/// Add person and persons father-grandfather
+///
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// @param relationship
+/// @param array_of_persons
+///
+/// @return 
+//
+void addFgf(char const *first_person_name, BOOL first_person_gender, char const
+ *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+{
+    if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
+    {
+      Person *child = findPerson(*array_of_persons, second_person_name, second_person_gender);
+      if(child->father_ != NULL)
+      {
+        if(child->father_->father_ == NULL)
+        {
+          int number_of_persons = numberOfPersons(*array_of_persons);
+          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          {
+            Person *buffer = realloc(*array_of_persons, sizeof(Person)*
+              (number_of_persons * 5));
+            if(buffer == NULL)
+            {
+              showError(ERROR_OUT_OF_MEMORY);
+              exit(ERROR_OUT_OF_MEMORY);
+            }
+            *array_of_persons = buffer;
+          } 
+          strcpy((*array_of_persons + number_of_persons)->name_,
+          first_person_name);
+          (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+          (*array_of_persons + number_of_persons)->mother_ = NULL;
+          (*array_of_persons + number_of_persons)->father_ = NULL;
+          (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+          child->father_->father_ = (*array_of_persons + number_of_persons);
+        }
+        else if(child->father_->father_ != NULL && nameIsUnknown(child->father_->father_->name_))
+        {
+          strcpy(child->father_->father_->name_, first_person_name);
+        }
+        else
+        {
+          showError(ERROR_RELATION_NOT_POSSIBLE);
+        }
+      }
+      else if(child->father_ == NULL)
+      {
+        int number_of_persons = numberOfPersons(*array_of_persons);
+        child->father_ = addUnknownPerson(*array_of_persons, first_person_gender);
+        number_of_persons++;
+        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        {
+          Person *buffer = realloc(*array_of_persons, sizeof(Person)*
+            (number_of_persons * 5));
+          if(buffer == NULL)
+          {
+            showError(ERROR_OUT_OF_MEMORY);
+            exit(ERROR_OUT_OF_MEMORY);
+          }
+          *array_of_persons = buffer;
+        } 
+        strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+        (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+        (*array_of_persons + number_of_persons)->mother_ = NULL;
+        (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+        child->father_->father_ = (*array_of_persons + number_of_persons);
+      }
+    }
+    else
+    {
+      int number_of_persons = numberOfPersons(*array_of_persons);
+      Person *father = addUnknownPerson(*array_of_persons, 0);
+      number_of_persons++;
+      if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+      {
+        Person *buffer = realloc(*array_of_persons, sizeof(Person)*
+          (number_of_persons * 5));
+        if(buffer == NULL)
+        {
+          showError(ERROR_OUT_OF_MEMORY);
+          exit(ERROR_OUT_OF_MEMORY);
+        }
+        *array_of_persons = buffer;
+      }      
+      strcpy((*array_of_persons + number_of_persons)->name_, second_person_name);
+      (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
+      (*array_of_persons + number_of_persons)->mother_ = NULL;
+      strcpy((*array_of_persons + (number_of_persons + 1))->name_,
+       first_person_name);
+      (*array_of_persons + (number_of_persons + 1))->gender_ = first_person_gender;
+      (*array_of_persons + (number_of_persons + 1))->father_ = NULL; 
+      (*array_of_persons + (number_of_persons + 1))->mother_ = NULL;
+      (*array_of_persons + (number_of_persons + 2))->gender_ = 3;
+      (*array_of_persons + number_of_persons)->father_ = father;
+      father->father_ = (*array_of_persons + (number_of_persons + 1));
     } 
 }
 

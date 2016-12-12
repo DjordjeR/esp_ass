@@ -1,8 +1,6 @@
 digraph FamilyTree
 {
-  "?1 [f]" -> "baba [f]";
-  "unuk [m]" -> "?1 [f]";
-  "baba [f]" -> "?2 [f]";
-  "?2 [f]" -> "bbb [f]";
-  "bbb [f]";
+  "ko [m]" -> "stefan [m]";
+  "ku [m]" -> "ko [m]";
+  "stefan [m]";
 }
