@@ -1,22 +1,19 @@
 //-----------------------------------------------------------------------------
 // assa.c
 //
-// Program take releationships in family tree and put it in memory, by wish 
+// Program take releationships in family tree and put it in memory, by wish
 // program can print list or new documet with whole or part tree.
 //
 // Group: 3 study assistant Lorenz Kofler
 //
-// Authors: Djordje Rajic  TODO:<Matriculum Number>
-// Stefan Rajinovic 1431905
+// Authors: Djordje Rajic  TODO:<Matriculum Number> Stefan Rajinovic 1431905
 //
 //-----------------------------------------------------------------------------
 //
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-//TODO Provjeriti trebamo li staviti ?1 ako neko nema roditelja kada ucitavamo fajl
 
 //Substitute for BOOL
 typedef short BOOL;
@@ -42,8 +39,9 @@ typedef short BOOL;
 #define ERROR_SEX_DOES_NOT_MATCH 10
 #define ERROR_RELATION_NOT_POSSIBLE 11
 //String lenghts
-#define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 6 for genders + some whitespaces + longest command for longest command = 530
-#define MAX_NAME_LENGHT 257
+#define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 
+// 6 for genders + some whitespaces + longest command = around 530
+#define MAX_NAME_LENGHT 257 // +1 for \0
 //Msc
 #define INIT_PERSONS_ARRAY_SIZE 100
 
@@ -56,80 +54,84 @@ typedef struct _Person_
 }Person;
 
 
-// forward declarations
+// forward declaration
 Person *parseDotFile(char *file_content);
 
-// forward declarations
+// forward declaration
 BOOL nameIsUnknown(const char *name);
 
-// forward declarations
+// forward declaration
 BOOL fileExists(const char *file_name);
 
-// forward declarations
+// forward declaration
 BOOL fileIsWritable(const char *file_name);
 
-// forward declarations
-BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b);
+// forward declaration
+BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
+*parrent_name, BOOL *parrent_gender_b);
 
-// forward declarations
-Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father);
+// forward declaration
+Person createPersonInstance(char *name, BOOL gender, Person *mother, Person
+*father);
 
-// forward declarations
+// forward declaration
 Person *findPerson(Person *persons, char const *name, BOOL gender);
 
-// forward declarations
+// forward declaration
 void showError(short error_code);
 
-// forward declarations
+// forward declaration
 void showSuccessMessage(short msg_code);
 
-// forward declarations
+// forward declaration
 char *storeFileIntoMemory(const char *file_name);
 
-// forward declarations
+// forward declaration
 BOOL listPersons(Person *persons);
 
-// forward declarations
+// forward declaration
 void parseInput(char *input_command, Person *persons_array);
 
-// forward declarations
+// forward declaration
 void waitForInput(Person *persons_array);
 
-// forward declarations
+// forward declaration
 BOOL parseAddInput(char *input_command, Person *array_of_persons);
 
-// forward declarations
+// forward declaration
 BOOL copyPerson(Person *first_person, Person *second_person);
 
-// forward declarations
+// forward declaration
 void parseDrawInput(char *input_command);
 
-// forward declarations
+// forward declaration
 void parseRelationshipInput(char *input_command);
 
-// forward declarations
+// forward declaration
 char *parseDrawAllInput(char *input_command, Person *persons);
 
-// forward declarations
+// forward declaration
 BOOL sortPersons(Person *persons);
 
-// forward declarations
+// forward declaration
 int numberOfPersons(Person *persons);
 
-// forward declarations
+// forward declaration
 BOOL writePersonToFile(char *file_name, Person *persons_to_write);
 
-// forward declarations
-void addRelationship(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person *array_of_persons);
+// forward declaration
+void addRelationship(char const *first_person_name, BOOL first_person_gender,
+char const *second_person_name, BOOL second_person_gender, char const
+*relationship, Person *array_of_persons);
 
-// forward declarations
+// forward declaration
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 
 //------------------------------------------------------------------------------
 ///
 /// The main program.
-/// Is allocate memory on heap for array of people, and it call command 
-/// wait for input. And check number of arguments.
+/// Checking the number of parameters, giving the necessary errors, passing the
+/// data to right function for further processing.
 ///
 /// @param argc check that must be exactly 2 argumments
 /// @param argv is used to describe file_name
@@ -165,11 +167,13 @@ int main(int argc, char **argv)
 
 //------------------------------------------------------------------------------
 ///
-/// Parse dot file, given by user, check if file is correct
+/// We are parsing the file contents that have been loaded into memory, into
+/// string
 ///
-/// @param file_content is array of persons
+/// @param file_content string, with dot file data to be parsed
 ///
-/// @return array_of_persons
+/// @return array_of_persons, array of persons and their data, dynamicly
+/// allocated
 //
 Person *parseDotFile(char *file_content)
 {
@@ -191,7 +195,8 @@ Person *parseDotFile(char *file_content)
   {
     if(*(file_content + counter) == '\n')
     {
-      *(file_content + counter) = '\0'; //Puting null byte insted of newline so the string is later valid for string functions
+      *(file_content + counter) = '\0'; //Puting null byte insted of newline so
+      // the string is later valid for use with function from string.h
       lines_separated[lines_separated_counter] = file_content + file_content_counter;
 
       file_content_counter = counter + 1;
@@ -199,8 +204,9 @@ Person *parseDotFile(char *file_content)
     }
     ++counter;
   }
-  // Provjeravamo da li je pocetak i da li zagrade odgovaraju
-  if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp(lines_separated[1],"{") != 0 || file_content[counter-1] != '}')
+  // Checking if file format is valid, otherwise give error acordingly
+  if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp
+    (lines_separated[1],"{") != 0 || file_content[counter-1] != '}')
   {
     free(file_content);
     showError(ERROR_FILE_COULD_NOT_BE_READ);
@@ -212,7 +218,9 @@ Person *parseDotFile(char *file_content)
   BOOL parrent_gender;
   int number_of_persons = 0;
 
-  Person *array_of_persons = (Person*)malloc(sizeof(Person)*(lines_separated_counter*10)); //This will be reallocated later
+  Person *array_of_persons = (Person*)malloc(sizeof(Person)*
+  (lines_separated_counter*10)); //Big chunk of memory for persons, it'll be
+  // reallocated later
   array_of_persons[(lines_separated_counter*10)-1].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
@@ -221,7 +229,7 @@ Person *parseDotFile(char *file_content)
       showError(ERROR_FILE_COULD_NOT_BE_READ);
       exit(ERROR_FILE_COULD_NOT_BE_READ);
     }
-    name[strlen(name)-1] = '\0'; // NOTE: Ovo se rješava zadnjeg praznog mjesta u stringu u imenu, provjeriti da li postoji bolje rješenje.
+    name[strlen(name)-1] = '\0'; // NOTE: Getting rid of last empty space
     if(findPerson(array_of_persons,name,gender) == NULL)
     {
       strcpy(array_of_persons[number_of_persons].name_,name);
@@ -309,7 +317,7 @@ Person *parseDotFile(char *file_content)
 
 //------------------------------------------------------------------------------
 ///
-/// Check if file content of file is correct and parse it
+/// Parsing a signle line from dot file, storing data into pointers
 ///
 /// @param line_to_parse which line line is check
 /// @param name check correctes of name 
@@ -317,7 +325,8 @@ Person *parseDotFile(char *file_content)
 /// @param parrant_name check name of second person
 /// @param parrant_gender_b check gender of second person
 ///
-/// @return TRUE or FALSE
+/// @return TRUE or FALSE, FALSE if an error occured, meaning line is not valid
+/// TRUE if everything went okay and the line from file is valid
 //
 BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b)
 {
@@ -390,7 +399,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *
 ///
 /// Check if name is Unknown
 ///
-/// @param name name of person
+/// @param name name of person for checking
 ///
 /// @return TRUE or FALSE
 //
@@ -1170,7 +1179,7 @@ BOOL fileExists(const char *file_name)
 ///
 /// @return TRUE/FALSE
 //
-BOOL fileIsWritable(const char *file_name) // TODO: Izgleda da je nepotrebno
+BOOL fileIsWritable(const char *file_name)
 {
   FILE *file_stream;
   if((file_stream = fopen(file_name, "w")))
@@ -1441,7 +1450,6 @@ BOOL sortPersons(Person *persons)
   }
   return TRUE;
 }
-
 //------------------------------------------------------------------------------
 ///
 /// List of Persons
@@ -1457,7 +1465,8 @@ BOOL listPersons(Person *persons)
   //sortPersons(persons);
   while((persons+counter)->gender_  != 3)
   {
-    printf("%s %s\n", (persons + counter)->name_, ((persons + counter)->gender_ == 1) ? "[f]" : "[m]");
+    printf("%s %s\n", (persons + counter)->name_, ((persons + counter)->gender_
+    == 1) ? "[f]" : "[m]");
     counter++;
   }
   if(counter < 1)

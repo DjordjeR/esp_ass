@@ -1,6 +1,6 @@
 ?1 [f]
-Angela [f]
 Rosa [f]
+Angela [f]
 File parsing successful...
 esp>[ERR] Wrong usage - draw-all <file-name>.
 esp>[ERR] Wrong usage - draw-all <file-name>.

@@ -1,6 +1,6 @@
 ?1 [f]
-Angela [f]
 Rosa [f]
+Angela [f]
 File parsing successful...
 esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
 esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
@@ -26,5 +26,4 @@ esp>[ERR] Sex does not match with relation.
 esp>[ERR] Sex does not match with relation.
 esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
 esp>[ERR] Sex does not match with relation.
-esp>esp>[ERR] Sex does not match with relation.
-esp>esp>Bye.
+esp>

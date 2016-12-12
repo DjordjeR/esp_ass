@@ -1,13 +1,13 @@
 ?1 [f]
-Angela [f]
 Rosa [f]
+Angela [f]
 File parsing successful...
 esp>[ERR] Wrong usage - list.
 esp>[ERR] Wrong usage - list.
 esp>[ERR] Wrong usage - list.
 esp>?1 [f]
-Angela [f]
 Rosa [f]
+Angela [f]
 esp>[ERR] Wrong usage - list.
 esp>esp>esp>esp>esp>esp>[ERR] Wrong usage - list.
 esp>[ERR] Wrong usage - list.
