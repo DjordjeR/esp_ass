@@ -1,0 +1,1 @@
+/usr/bin/cc  -g   CMakeFiles/esp_ass.dir/assa.c.o  -o esp_ass 
