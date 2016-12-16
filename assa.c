@@ -1,12 +1,17 @@
 //-----------------------------------------------------------------------------
 // assa.c
 //
-// Program take releationships in family tree and put it in memory, by wish
-// program can print list or new documet with whole or part tree.
-//
+// The program takes in the members of family either by the command line or
+// from the already made documents. All necessary checks are being made in an
+// attempt to ensure file and data validity. After all family members are
+// successfully loaded or manually written, program gives a possibility
+// to store acquired data in a .dot file format for further use. Dot file is
+// properly formatted, so it can be used to create an image of family a tree.
+// 
 // Group: 3 study assistant Lorenz Kofler
 //
-// Authors: Djordje Rajic  TODO:<Matriculum Number> Stefan Rajinovic 1431905
+// Authors: Djordje Rajic 1431564
+// Stefan Rajinovic 1431905
 //
 //-----------------------------------------------------------------------------
 //
@@ -45,6 +50,7 @@ typedef short BOOL;
 //Msc
 #define INIT_PERSONS_ARRAY_SIZE 100
 
+// Structure for storing every familly member
 typedef struct _Person_
 {
   char name_[MAX_NAME_LENGHT];
@@ -155,10 +161,10 @@ BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
 ///
 /// The main program.
 /// Checking the number of parameters, giving the necessary errors, passing the
-/// data to right function for further processing.
+/// data to right functions for further processing.
 ///
-/// @param argc check that must be exactly 2 argumments
-/// @param argv is used to describe file_name
+/// @param argc used for checking the number of parameters
+/// @param argv all command line parameters are stred here
 ///
 /// @return success program closed
 //
@@ -188,7 +194,7 @@ int main(int argc, char **argv)
     char *file_contetnt = storeFileIntoMemory(file_name);
     Person *persons_array = parseDotFile(file_contetnt);
     Person **persons_array_ptr = &persons_array;
-    waitForInput(persons_array_ptr); //NOTE: ovo mozda ljepse napisati
+    waitForInput(persons_array_ptr);
   }
   else
   {
@@ -203,7 +209,8 @@ int main(int argc, char **argv)
 /// We are parsing the file contents that have been loaded into memory, into
 /// string
 ///
-/// @param file_content string, with dot file data to be parsed
+/// @param file_content string, with dot file data to be parsed. Essentially a
+/// very long string whit all data from .dot file.
 ///
 /// @return array_of_persons, array of persons and their data, dynamicly
 /// allocated
@@ -252,10 +259,9 @@ Person *parseDotFile(char *file_content)
   int number_of_persons = 0;
 
   Person *array_of_persons = calloc(
-  (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE),sizeof(Person)); //Big chunk of memory for
-  // persons, it'll be
-  // reallocated later
-  if(array_of_persons == NULL)
+  (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE),sizeof(Person)); // Bit
+  // more then we need, but is's okay to have more.
+  if(array_of_persons == NULL) 
   {
     free(file_content);
   	showError(ERROR_OUT_OF_MEMORY);
@@ -265,7 +271,8 @@ Person *parseDotFile(char *file_content)
    INIT_PERSONS_ARRAY_SIZE)-1].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
-    if(parseSingleFileLine(lines_separated[counter], name, &gender, parrent_name, &parrent_gender) == FALSE)
+    if(parseSingleFileLine(lines_separated[counter], name, &gender, 
+    parrent_name, &parrent_gender) == FALSE)
     {
       free(file_content);
       free(array_of_persons);
@@ -285,17 +292,20 @@ Person *parseDotFile(char *file_content)
           array_of_persons[number_of_persons+1].gender_ = parrent_gender;
           if(parrent_gender == TRUE)
           {
-            array_of_persons[number_of_persons].mother_ = &array_of_persons[number_of_persons+1];
+            array_of_persons[number_of_persons].mother_ =  &array_of_persons
+            [number_of_persons+1];
           }
           else if(parrent_gender == FALSE)
           {
-            array_of_persons[number_of_persons].father_ = &array_of_persons[number_of_persons+1];
+            array_of_persons[number_of_persons].father_ = &array_of_persons
+            [number_of_persons+1];
           }
           number_of_persons++;
         }
         else
         {
-          Person *parrent = findPerson(array_of_persons,parrent_name,parrent_gender);
+          Person *parrent = findPerson(array_of_persons, parrent_name, 
+          parrent_gender);
           if(parrent_gender == TRUE)
           {
             array_of_persons[number_of_persons].mother_ = parrent;
@@ -316,7 +326,8 @@ Person *parseDotFile(char *file_content)
         Person *new_temp_person = findPerson(array_of_persons,name,gender);
         if(parrent_gender == TRUE && new_temp_person->mother_ == NULL)
         {
-          Person *temp_parrent_mother = findPerson(array_of_persons,parrent_name,parrent_gender);
+          Person *temp_parrent_mother = findPerson(array_of_persons,
+           parrent_name, parrent_gender);
           if(temp_parrent_mother == NULL)
           {
             strcpy(array_of_persons[number_of_persons].name_,parrent_name);
@@ -331,7 +342,8 @@ Person *parseDotFile(char *file_content)
         }
         else if(parrent_gender == FALSE && new_temp_person->father_ == NULL)
         {
-          Person *temp_parrent_father = findPerson(array_of_persons,parrent_name,parrent_gender);
+          Person *temp_parrent_father = findPerson(array_of_persons,  
+          parrent_name, parrent_gender);
           if(temp_parrent_father == NULL)
           {
             strcpy(array_of_persons[number_of_persons].name_,parrent_name);
@@ -347,14 +359,13 @@ Person *parseDotFile(char *file_content)
       }
     }
   }
-  array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string so we know where our array ends
-  //array_of_persons = realloc(array_of_persons,sizeof(Person)*
-  // (number_of_persons+1));
+  array_of_persons[number_of_persons].gender_ = 3; // This is like \0 in string
   if(!listPersons(array_of_persons))
   {
     showError(ERROR_NO_ENTRIES_AVAILABLE);
   }
-  showSuccessMessage(MSG_SUCCESS_DOT_FILE_PARSING);
+  showSuccessMessage(MSG_SUCCESS_DOT_FILE_PARSING); // Printing out all personst
+  // that have been loaded, and giving succes message
   free(file_content);
 
   return array_of_persons;
@@ -362,20 +373,25 @@ Person *parseDotFile(char *file_content)
 
 //------------------------------------------------------------------------------
 ///
-/// Parsing a signle line from dot file, storing data into pointers
+/// Parsing each line in a dot file, checking for mistakes, or misformated .dot
+/// file
 ///
-/// @param line_to_parse which line line is check
-/// @param name check correctes of name 
-/// @param gender_b check gender of first person
-/// @param parrant_name check name of second person
-/// @param parrant_gender_b check gender of second person
+/// @param line_to_parse line in a form of a string
+/// @param name referece so we can change it and use it in a another function
+/// @param gender_b referece so we can change it and use it in a another
+/// function
+/// @param parrant_name referece so we can change it and use it in a another 
+/// function
+/// @param parrant_gender_b referece so we can change it and use it in a another
+/// function
 ///
 /// @return TRUE or FALSE, FALSE if an error occured, meaning line is not valid
 /// TRUE if everything went okay and the line from file is valid
 //
 BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b)
 {
-  if(*(line_to_parse) != ' ' || *(line_to_parse + 1) != ' ' || *(line_to_parse + 2) != '"')
+  if(*(line_to_parse) != ' ' || *(line_to_parse + 1) != ' ' ||  *(line_to_parse
+   + 2) != '"')
   {
     return FALSE;
   }
@@ -386,7 +402,9 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *
     *(name+null_counter) = *(line_to_parse + counter);
     counter++;
     null_counter++;
-    if(counter >= MAX_NAME_LENGHT || *(line_to_parse + counter) == ']' || *(line_to_parse + counter) == '>' || *(line_to_parse + counter) == ';' || *(line_to_parse + counter) == '"')
+    if(counter >= MAX_NAME_LENGHT || *(line_to_parse + counter) == ']' ||  *
+      (line_to_parse + counter) == '>' || *(line_to_parse + counter) == ';' || 
+      *(line_to_parse + counter) == '"')
     {
       return FALSE;
     }
@@ -397,19 +415,23 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *
   {
     return FALSE;
   }
-  if(*(line_to_parse + (counter - 1)) != 'f' && *(line_to_parse + (counter - 1)) != 'm')
+  if(*(line_to_parse + (counter - 1)) != 'f' && *(line_to_parse + (counter - 1))
+    != 'm')
   {
     return FALSE;
   }
   *gender_b = (*(line_to_parse + (counter - 1)) == 'f') ? TRUE : FALSE;
   ++counter;
-  if(*(line_to_parse + counter) == ' ' || *(line_to_parse + (counter + 1)) == ';')
+  if(*(line_to_parse + counter) == ' ' || *(line_to_parse + (counter + 1)) == 
+   ';')
   {
     *parrent_name = '\0';
     return TRUE;
   }
   counter += 2;
-  if(*(line_to_parse + (counter)) != '-' || *(line_to_parse + (counter + 1)) != '>' || *(line_to_parse + (counter + 2)) != ' ' || *(line_to_parse + (counter + 3)) != '"')
+  if(*(line_to_parse + (counter)) != '-' || *(line_to_parse + (counter + 1)) != 
+    '>' || *(line_to_parse + (counter + 2)) != ' ' || *(line_to_parse +  
+      (counter + 3)) != '"')
   {
     return FALSE;
   }
@@ -420,18 +442,22 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *
     *(parrent_name + null_counter) = *(line_to_parse + counter);
     counter++;
     null_counter++;
-    if(counter >= MAX_NAME_LENGHT || *(line_to_parse + counter) == ']' || *(line_to_parse + counter) == '>' || *(line_to_parse + counter) == ';' || *(line_to_parse + counter) == '"')
+    if(counter >= MAX_NAME_LENGHT || *(line_to_parse + counter) == ']' || *
+      (line_to_parse + counter) == '>' || *(line_to_parse + counter) == ';' ||
+      *(line_to_parse + counter) == '"')
     {
       return FALSE;
     }
   }
   *(parrent_name + (null_counter - 1)) = '\0';
   counter += 2; // We are skipping [
-  if(*(line_to_parse + counter) != ']' || *(line_to_parse + (counter + 1)) != '"' || *(line_to_parse + (counter + 2)) != ';')
+  if(*(line_to_parse + counter) != ']' || *(line_to_parse + (counter + 1)) !=  
+   '"' || *(line_to_parse + (counter + 2)) != ';')
   {
     return FALSE;
   }
-  if(*(line_to_parse + (counter - 1)) != 'f' && *(line_to_parse + (counter - 1)) != 'm')
+  if(*(line_to_parse + (counter - 1)) != 'f' && *(line_to_parse + (counter -
+   1)) != 'm')
   {
     return FALSE;
   }
@@ -470,7 +496,7 @@ BOOL nameIsUnknown(const char *name)
 //------------------------------------------------------------------------------
 ///
 /// Parse the input command 
-/// check command input and parse it
+/// check command input and call the coresponding function
 ///
 /// @param input_command, name of command 
 /// @param pesons_array is array of persons
@@ -553,10 +579,10 @@ void parseInput(char *input_command, Person **persons_array)
 //------------------------------------------------------------------------------
 ///
 /// Parse add input
-/// check if correct format of input relationship is, and parse it
+/// check if the format is right, and extract values from input line
 ///
-/// @param input_command, name of command 
-/// @param pesons_array is array of persons
+/// @param input_command, string for parsing
+/// @param pesons_array our array of persons
 ///
 /// @return TRUE/FALSE
 //
@@ -577,7 +603,8 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons)
   }
   *(input_command + (counter - 1)) = '\0';
   char *first_person_name = input_command + 4;
-  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) != ']' || *(input_command + (counter + 3)) != ' ')
+  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) !=
+   ']' || *(input_command + (counter + 3)) != ' ')
   {
     return FALSE;
   }
@@ -591,7 +618,8 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons)
   char *relationship = input_command + (counter);
   while(*(input_command + counter) != ' ')
   {
-    if(*(input_command + counter) == '\n' || *(input_command + counter) == '[' || *(input_command + counter) == ']')
+    if(*(input_command + counter) == '\n' || *(input_command + counter) == '['
+     || *(input_command + counter) == ']')
     {
       return FALSE;
     }
@@ -617,7 +645,8 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons)
   }
   *(input_command + (counter - 1)) = '\0';
 
-  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) != ']' || *(input_command + (counter + 3)) != '\n')
+  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) !=
+   ']' || *(input_command + (counter + 3)) != '\n')
   {
     return FALSE;
   }
@@ -628,22 +657,24 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons)
   }
   BOOL second_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
 
-  if(strcmp(relationship, "mother") != 0 && strcmp(relationship, "father") != 0 && strcmp(relationship, "mgm") != 0 && strcmp(relationship, "fgm") != 0 && strcmp(relationship, "mgf") != 0 && strcmp(relationship, "fgf") != 0)
+  if(strcmp(relationship, "mother") != 0 && strcmp(relationship, "father") != 0 
+   && strcmp(relationship, "mgm") != 0 && strcmp(relationship, "fgm") != 0 && 
+   strcmp(relationship, "mgf") != 0 && strcmp(relationship, "fgf") != 0)
   {
     return FALSE;
   }
 
-  addRelationship(first_person_name, first_person_gender, second_person_name, second_person_gender, relationship, array_of_persons);
+  addRelationship(first_person_name, first_person_gender, second_person_name,
+   second_person_gender, relationship, array_of_persons); //TODO: probably 
+   //should not be called from here ?
 
   return TRUE;
-  //memset(input_command,0,INPUT_COMMAND_LENGHT);
 }
 
 //------------------------------------------------------------------------------
 ///
-/// Add Relation ship 
-/// Store the person in struct, person perent, 
-/// and person grandmother/grandfather
+/// Add Relationship, call coresponding functions for every possible
+/// realtionship that can be registerd by our programm
 ///
 /// @param first_person_name 
 /// @param first_person_gender
@@ -654,9 +685,12 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons)
 ///
 /// @return 
 //
-void addRelationship(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+void addRelationship(char const *first_person_name, BOOL first_person_gender, 
+  char const *second_person_name, BOOL second_person_gender, char const
+  *relationship, Person **array_of_persons)
 {
-  if(strcmp(first_person_name, second_person_name) == 0 && first_person_gender == second_person_gender)
+  if(strcmp(first_person_name, second_person_name) == 0 && first_person_gender
+   == second_person_gender)
   {
     showError(ERROR_BOTH_PEOPLE_ARE_THE_SAME);
   }
@@ -670,7 +704,8 @@ void addRelationship(char const *first_person_name, BOOL first_person_gender, ch
       }
       else
       {
-        addMother(first_person_name, first_person_gender, second_person_name, second_person_gender, relationship, array_of_persons);
+        addMother(first_person_name, first_person_gender, second_person_name,
+         second_person_gender, relationship, array_of_persons);
       }
     }
     if(strcmp(relationship, "father" ) == 0)
@@ -735,7 +770,6 @@ void addRelationship(char const *first_person_name, BOOL first_person_gender, ch
     }   
   }
 }
-
 //------------------------------------------------------------------------------
 ///
 /// addMother
