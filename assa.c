@@ -126,7 +126,9 @@ char const *second_person_name, BOOL second_person_gender, char const
 *relationship, Person **array_of_persons);
 
 // forward declaration
-void addMother(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons);
+void addMother(char const *first_person_name, BOOL first_person_gender, char
+ const *second_person_name, BOOL second_person_gender, char const *relationship, 
+ Person **array_of_persons);
 
 // forward declaration
 void addFather(char const *first_person_name, BOOL first_person_gender, char
@@ -135,7 +137,8 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
 
 // forward declaration
 void addMgm(char const *first_person_name, BOOL first_person_gender, char const
- *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons);
+ *second_person_name, BOOL second_person_gender, char const *relationship, 
+ Person **array_of_persons);
 
 // forward declaration
 void addFgm(char const *first_person_name, BOOL first_person_gender, char const
@@ -210,7 +213,7 @@ int main(int argc, char **argv)
 /// string
 ///
 /// @param file_content string, with dot file data to be parsed. Essentially a
-/// very long string whit all data from .dot file.
+///  very long string whit all data from .dot file.
 ///
 /// @return array_of_persons, array of persons and their data, dynamicly
 /// allocated
@@ -231,13 +234,15 @@ Person *parseDotFile(char *file_content)
   int lines_separated_counter = 0;
   int file_content_counter = 0;
   counter = 0;
-  while(*(file_content + counter) != '\0') // Extrating values from single string to array of pointers to the specific adresses withing the string
+  while(*(file_content + counter) != '\0') // Extrating values from single 
+    //string to array of pointers to the specific adresses withing the string
   {
     if(*(file_content + counter) == '\n')
     {
       *(file_content + counter) = '\0'; //Puting null byte insted of newline so
       // the string is later valid for use with function from string.h
-      lines_separated[lines_separated_counter] = file_content + file_content_counter;
+      lines_separated[lines_separated_counter] = file_content + 
+      file_content_counter;
 
       file_content_counter = counter + 1;
       lines_separated_counter++;
@@ -388,7 +393,8 @@ Person *parseDotFile(char *file_content)
 /// @return TRUE or FALSE, FALSE if an error occured, meaning line is not valid
 /// TRUE if everything went okay and the line from file is valid
 //
-BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char *parrent_name, BOOL *parrent_gender_b)
+BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char 
+  *parrent_name, BOOL *parrent_gender_b)
 {
   if(*(line_to_parse) != ' ' || *(line_to_parse + 1) != ' ' ||  *(line_to_parse
    + 2) != '"')
@@ -1554,7 +1560,6 @@ char *parseDrawAllInput(char *input_command, Person *persons)
   *(file_name + counter) = '\0';
   return strcat(file_name,".dot");
 }
-
 //------------------------------------------------------------------------------
 ///
 /// TODO:
@@ -1580,7 +1585,8 @@ void parseRelationshipInput(char *input_command)
 //
 void waitForInput(Person **persons_array)
 {
-  char input_command[INPUT_COMMAND_LENGHT] = "init";
+  char input_command[INPUT_COMMAND_LENGHT] = "init"; // Just initalisation in
+  // order to make sure that our variable is there
   while(TRUE)
   {
     printf("esp>");
@@ -1641,7 +1647,7 @@ BOOL fileIsWritable(const char *file_name)
 //------------------------------------------------------------------------------
 ///
 /// Write person to file
-/// Is function in which we put/write persons in file
+/// Use array of persons, sort it and write persons to the file in right format
 ///
 /// @param file_name
 /// @param persons_to_write
@@ -1666,17 +1672,24 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
     {
       if((persons_sorted + counter)->mother_ != NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f' : 'm',
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted 
+         + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ?
+        'f' : 'm',
           ((persons_sorted + counter)->mother_)->name_, 'f');
       }
       if((persons_sorted + counter)->father_ != NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted + counter)->name_,
-          (((persons_sorted + counter)->gender_) == TRUE) ? 'f' : 'm', ((persons_sorted + counter)->father_)->name_, 'm');
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", 
+          (persons_sorted + counter)->name_,
+          (((persons_sorted + counter)->gender_) == TRUE) ? 'f' : 'm', 
+          ((persons_sorted + counter)->father_)->name_, 'm');
       }
-      if((persons_sorted + counter)->father_ == NULL && (persons_sorted + counter)->mother_ == NULL)
+      if((persons_sorted + counter)->father_ == NULL && (persons_sorted + 
+        counter)->mother_ == NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\";\n", (persons_sorted + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f' : 'm');
+        fprintf(file_stream, "  \"%s [%c]\";\n", (persons_sorted + 
+          counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ?
+           'f' : 'm');
       }
       counter++;
     }
@@ -1698,17 +1711,23 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
     {
       if((persons_sorted + counter)->mother_ != NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted  + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f' : 'm',
-          ((persons_sorted + counter)->mother_)->name_, 'f');
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted
+          + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f'
+        : 'm', ((persons_sorted + counter)->mother_)->name_, 'f');
       }
       if((persons_sorted + counter)->father_ != NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted + counter)->name_, 
-          (((persons_sorted + counter)->gender_) == TRUE) ? 'f' : 'm', ((persons_sorted + counter)->father_)->name_, 'm');
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted
+         + counter)->name_, 
+          (((persons_sorted + counter)->gender_) == TRUE) ? 'f' : 'm', 
+          ((persons_sorted + counter)->father_)->name_, 'm');
       }
-      if((persons_sorted + counter)->father_ == NULL && (persons_sorted + counter)->mother_ == NULL)
+      if((persons_sorted + counter)->father_ == NULL && (persons_sorted + 
+        counter)->mother_ == NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\";\n",(persons_sorted + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f' : 'm');
+        fprintf(file_stream, "  \"%s [%c]\";\n",(persons_sorted + 
+          counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 
+        'f' : 'm');
       }
       counter++;
     }
@@ -1724,7 +1743,7 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
 //------------------------------------------------------------------------------
 ///
 /// Store file into memory
-/// TODO:
+/// Convert .dot file content into long string
 ///
 /// @param file_name
 ///
@@ -1842,7 +1861,16 @@ Person *sortPersons(Person *persons)
   free(person_placeholder);
   return persons_sorted;
 }
-
+//------------------------------------------------------------------------------
+///
+/// Check if two persons have the same name untill " "(whitspaces)
+/// function needed for sorting
+/// 
+/// @param first_name
+/// @param second_name
+/// 
+/// @return TRUE/FALSE
+//
 BOOL namesArePartiallyEqual(char const *first_name, char const *second_name)
 {
   char first_name_placeholder[MAX_NAME_LENGHT]; //This had to be done, due to
@@ -1865,12 +1893,12 @@ BOOL namesArePartiallyEqual(char const *first_name, char const *second_name)
 
 //------------------------------------------------------------------------------
 ///
-/// List of Persons
-/// with command list get we all person stored in memory
+/// List Persons
+/// list all persons from given array
 ///
 /// @param persons
 ///
-/// @return TRUE/FALSE
+/// @return TRUE/FALSE (false if no person has been found)
 //
 BOOL listPersons(Person *persons)
 {
@@ -1898,7 +1926,8 @@ BOOL listPersons(Person *persons)
 /// @param first_person
 /// @param second_person
 ///
-/// @return TRUE, could've been void function
+/// @return TRUE
+/// NOTE: could've been void function ? 
 //
 BOOL copyPerson(Person *first_person, Person *second_person)
 {
@@ -1913,7 +1942,7 @@ BOOL copyPerson(Person *first_person, Person *second_person)
 //------------------------------------------------------------------------------
 ///
 /// Number of persons
-/// count the person in array
+/// count the number of persons in a given array
 ///
 /// @param persons
 ///
@@ -1931,7 +1960,7 @@ int numberOfPersons(Person *persons)
 //------------------------------------------------------------------------------
 ///
 /// Find person
-/// search for person
+/// find person in an array
 ///
 /// @param persons
 /// @param name
@@ -1960,7 +1989,6 @@ Person *findPerson(Person *persons, char const  *name, BOOL gender)
 ///
 /// @param error_code
 ///
-/// @return 
 //
 void showError(short error_code)
 {
@@ -2009,7 +2037,6 @@ void showError(short error_code)
 ///
 /// @param msg_code
 ///
-/// @return 
 //
 void showSuccessMessage(short msg_code)
 {
