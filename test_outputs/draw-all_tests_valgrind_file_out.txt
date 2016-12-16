@@ -1,6 +1,16 @@
-?1 [f]
-Rosa [f]
-Angela [f]
+Arcturus [m]
+Cygnus [m]
+Hester [f]
+Irma [f]
+Melania [f]
+Orion [m]
+Phineas [m]
+Pollux [m]
+Sirius Jr. [m]
+Sirius [m]
+Ursula [f]
+Violetta [f]
+Walburga [f]
 File parsing successful...
 esp>[ERR] Wrong usage - draw-all <file-name>.
 esp>[ERR] Wrong usage - draw-all <file-name>.

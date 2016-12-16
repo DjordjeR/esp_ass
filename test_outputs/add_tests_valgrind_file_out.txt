@@ -1,6 +1,16 @@
-?1 [f]
-Rosa [f]
-Angela [f]
+Arcturus [m]
+Cygnus [m]
+Hester [f]
+Irma [f]
+Melania [f]
+Orion [m]
+Phineas [m]
+Pollux [m]
+Sirius Jr. [m]
+Sirius [m]
+Ursula [f]
+Violetta [f]
+Walburga [f]
 File parsing successful...
 esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
 esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
@@ -26,4 +36,5 @@ esp>[ERR] Sex does not match with relation.
 esp>[ERR] Sex does not match with relation.
 esp>[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].
 esp>[ERR] Sex does not match with relation.
-esp>
+esp>esp>[ERR] Sex does not match with relation.
+esp>esp>Bye.

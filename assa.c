@@ -43,7 +43,7 @@ typedef short BOOL;
 // 6 for genders + some whitespaces + longest command = around 530
 #define MAX_NAME_LENGHT 257 // +1 for \0
 //Msc
-#define INIT_PERSONS_ARRAY_SIZE 1000
+#define INIT_PERSONS_ARRAY_SIZE 100
 
 typedef struct _Person_
 {
@@ -69,10 +69,6 @@ BOOL fileIsWritable(const char *file_name);
 // forward declaration
 BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
 *parrent_name, BOOL *parrent_gender_b);
-
-// forward declaration
-Person createPersonInstance(char *name, BOOL gender, Person *mother, Person
-*father);
 
 // forward declaration
 Person *findPerson(Person *persons, char const *name, BOOL gender);
@@ -152,6 +148,8 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 
 // forward declaration
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
+// forward declaration
+BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
 
 //------------------------------------------------------------------------------
 ///
@@ -259,14 +257,18 @@ Person *parseDotFile(char *file_content)
   // reallocated later
   if(array_of_persons == NULL)
   {
+    free(file_content);
   	showError(ERROR_OUT_OF_MEMORY);
   	exit(ERROR_OUT_OF_MEMORY);
   }
-  array_of_persons[(lines_separated_counter*10)-1].gender_ = 3;
+  array_of_persons[(lines_separated_counter +
+   INIT_PERSONS_ARRAY_SIZE)-1].gender_ = 3;
   for(counter = 2; counter < lines_separated_counter; counter++ )
   {
     if(parseSingleFileLine(lines_separated[counter], name, &gender, parrent_name, &parrent_gender) == FALSE)
     {
+      free(file_content);
+      free(array_of_persons);
       showError(ERROR_FILE_COULD_NOT_BE_READ);
       exit(ERROR_FILE_COULD_NOT_BE_READ);
     }
@@ -748,7 +750,9 @@ void addRelationship(char const *first_person_name, BOOL first_person_gender, ch
 ///
 /// @return 
 //
-void addMother(char const *first_person_name, BOOL first_person_gender, char const *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+void addMother(char const *first_person_name, BOOL first_person_gender, char 
+const *second_person_name, BOOL second_person_gender, char const *relationship,
+Person **array_of_persons)
 {
   if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
   {
@@ -775,6 +779,7 @@ void addMother(char const *first_person_name, BOOL first_person_gender, char con
               (number_of_persons * 5));
             if(buffer == NULL)
             {
+              free(*array_of_persons);
               showError(ERROR_OUT_OF_MEMORY);
               exit(ERROR_OUT_OF_MEMORY);
             }
@@ -820,13 +825,14 @@ void addMother(char const *first_person_name, BOOL first_person_gender, char con
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, second_person_name);
-        (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+        (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
         (*array_of_persons + number_of_persons)->father_ = NULL;
         (*array_of_persons + number_of_persons)->mother_ = findPerson(*array_of_persons, first_person_name, first_person_gender);
         (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
@@ -840,6 +846,7 @@ void addMother(char const *first_person_name, BOOL first_person_gender, char con
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
@@ -874,8 +881,8 @@ void addMother(char const *first_person_name, BOOL first_person_gender, char con
 /// @return 
 //
 void addFather(char const *first_person_name, BOOL first_person_gender, char
- const *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
-{
+ const *second_person_name, BOOL second_person_gender, char const *relationship,
+ Person **array_of_persons) {
   if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
   {
     Person *child = findPerson(*array_of_persons, second_person_name, second_person_gender);
@@ -901,6 +908,7 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
               (number_of_persons * 5));
             if(buffer == NULL)
             {
+              free(*array_of_persons);
               showError(ERROR_OUT_OF_MEMORY);
               exit(ERROR_OUT_OF_MEMORY);
             }
@@ -946,13 +954,14 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, second_person_name);
-        (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+        (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = findPerson(*array_of_persons, first_person_name, first_person_gender);
         (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
@@ -966,6 +975,7 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
@@ -1016,6 +1026,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
               (number_of_persons * 5));
             if(buffer == NULL)
             {
+              free(*array_of_persons);
               showError(ERROR_OUT_OF_MEMORY);
               exit(ERROR_OUT_OF_MEMORY);
             }
@@ -1049,6 +1060,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
@@ -1072,6 +1084,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
           (number_of_persons * 5));
         if(buffer == NULL)
         {
+          free(*array_of_persons);
           showError(ERROR_OUT_OF_MEMORY);
           exit(ERROR_OUT_OF_MEMORY);
         }
@@ -1106,7 +1119,8 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
 /// @return 
 //
 void addFgm(char const *first_person_name, BOOL first_person_gender, char const
- *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+ *second_person_name, BOOL second_person_gender, char const *relationship,
+ Person **array_of_persons)
 {
     if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
     {
@@ -1122,6 +1136,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
               (number_of_persons * 5));
             if(buffer == NULL)
             {
+              free(*array_of_persons);
               showError(ERROR_OUT_OF_MEMORY);
               exit(ERROR_OUT_OF_MEMORY);
             }
@@ -1157,6 +1172,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
@@ -1179,6 +1195,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
           (number_of_persons * 5));
         if(buffer == NULL)
         {
+          free(*array_of_persons);
           showError(ERROR_OUT_OF_MEMORY);
           exit(ERROR_OUT_OF_MEMORY);
         }
@@ -1213,7 +1230,8 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
 /// @return 
 //
 void addMgf(char const *first_person_name, BOOL first_person_gender, char const
- *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+ *second_person_name, BOOL second_person_gender, char const *relationship, 
+ Person **array_of_persons)
 {
     if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
     {
@@ -1229,6 +1247,7 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
               (number_of_persons * 5));
             if(buffer == NULL)
             {
+              free(*array_of_persons);
               showError(ERROR_OUT_OF_MEMORY);
               exit(ERROR_OUT_OF_MEMORY);
             }
@@ -1262,6 +1281,7 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
@@ -1285,6 +1305,7 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
           (number_of_persons * 5));
         if(buffer == NULL)
         {
+          free(*array_of_persons);
           showError(ERROR_OUT_OF_MEMORY);
           exit(ERROR_OUT_OF_MEMORY);
         }
@@ -1319,7 +1340,8 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
 /// @return 
 //
 void addFgf(char const *first_person_name, BOOL first_person_gender, char const
- *second_person_name, BOOL second_person_gender, char const *relationship, Person **array_of_persons)
+ *second_person_name, BOOL second_person_gender, char const *relationship,
+ Person **array_of_persons)
 {
     if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
     {
@@ -1335,6 +1357,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
               (number_of_persons * 5));
             if(buffer == NULL)
             {
+              free(*array_of_persons);
               showError(ERROR_OUT_OF_MEMORY);
               exit(ERROR_OUT_OF_MEMORY);
             }
@@ -1368,6 +1391,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
             (number_of_persons * 5));
           if(buffer == NULL)
           {
+            free(*array_of_persons);
             showError(ERROR_OUT_OF_MEMORY);
             exit(ERROR_OUT_OF_MEMORY);
           }
@@ -1391,6 +1415,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
           (number_of_persons * 5));
         if(buffer == NULL)
         {
+          free(*array_of_persons);
           showError(ERROR_OUT_OF_MEMORY);
           exit(ERROR_OUT_OF_MEMORY);
         }
@@ -1434,6 +1459,7 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
       (number_of_persons * 5));
     if(buffer == NULL)
     {
+      free(array_of_persons);
       showError(ERROR_OUT_OF_MEMORY);
       exit(ERROR_OUT_OF_MEMORY);
     }
@@ -1622,6 +1648,7 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
     }
     fprintf(file_stream, "}");
     fclose(file_stream);
+    free(persons_sorted);
     showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
     return TRUE;
   }
@@ -1632,27 +1659,28 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
     file_stream = fopen(file_name, "wb");
     fprintf(file_stream, "digraph FamilyTree\n");
     fprintf(file_stream, "{\n");
-    //sortPersons(persons_to_write);
-    while((persons_to_write + counter)->gender_ != 3)
+    Person *persons_sorted = sortPersons(persons_to_write);
+    while((persons_sorted + counter)->gender_ != 3)
     {
-      if((persons_to_write + counter)->mother_ != NULL)
+      if((persons_sorted + counter)->mother_ != NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_to_write + counter)->name_, ((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm',
-          ((persons_to_write + counter)->mother_)->name_, 'f');
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted  + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f' : 'm',
+          ((persons_sorted + counter)->mother_)->name_, 'f');
       }
-      if((persons_to_write + counter)->father_ != NULL)
+      if((persons_sorted + counter)->father_ != NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_to_write + counter)->name_, 
-          (((persons_to_write + counter)->gender_) == TRUE) ? 'f' : 'm', ((persons_to_write + counter)->father_)->name_, 'm');
+        fprintf(file_stream, "  \"%s [%c]\" -> \"%s [%c]\";\n", (persons_sorted + counter)->name_, 
+          (((persons_sorted + counter)->gender_) == TRUE) ? 'f' : 'm', ((persons_sorted + counter)->father_)->name_, 'm');
       }
-      if((persons_to_write + counter)->father_ == NULL && (persons_to_write + counter)->mother_ == NULL)
+      if((persons_sorted + counter)->father_ == NULL && (persons_sorted + counter)->mother_ == NULL)
       {
-        fprintf(file_stream, "  \"%s [%c]\";\n",(persons_to_write + counter)->name_, ((persons_to_write + counter)->gender_ == TRUE) ? 'f' : 'm');
+        fprintf(file_stream, "  \"%s [%c]\";\n",(persons_sorted + counter)->name_, ((persons_sorted + counter)->gender_ == TRUE) ? 'f' : 'm');
       }
       counter++;
     }
     fprintf(file_stream, "}");
     showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
+    free(persons_sorted);
     fclose(file_stream);
     return TRUE;
   }
@@ -1680,6 +1708,7 @@ char *storeFileIntoMemory(const char *file_name)
       if(size == 0)
       {
         showError(ERROR_FILE_COULD_NOT_BE_READ);
+        fclose(file_stream);
         exit(ERROR_FILE_COULD_NOT_BE_READ);
       }
       if(fseek(file_stream, 0L, SEEK_END) == 0)
@@ -1688,18 +1717,21 @@ char *storeFileIntoMemory(const char *file_name)
           if(buffer_size == -1)
           {
             showError(ERROR_OUT_OF_MEMORY);
+            fclose(file_stream);
             exit(ERROR_OUT_OF_MEMORY);
           }
           file_content = (char*)malloc(sizeof(char)*(buffer_size + 1));
           if(file_content == NULL)
           {
             showError(ERROR_OUT_OF_MEMORY);
+            fclose(file_stream);
             exit(ERROR_OUT_OF_MEMORY);
           }
           if(fseek(file_stream, 0L, SEEK_SET) != 0)
           {
             free(file_content);
             showError(ERROR_FILE_COULD_NOT_BE_READ);
+            fclose(file_stream);
             exit(ERROR_FILE_COULD_NOT_BE_READ);
           }
           size_t new_lenght = fread(file_content, sizeof(char), buffer_size, file_stream);
@@ -1707,6 +1739,7 @@ char *storeFileIntoMemory(const char *file_name)
           {
             free(file_content);
             showError(ERROR_FILE_COULD_NOT_BE_READ);
+            fclose(file_stream);
             exit(ERROR_FILE_COULD_NOT_BE_READ);
           }
           else
@@ -1721,17 +1754,16 @@ char *storeFileIntoMemory(const char *file_name)
 
 //------------------------------------------------------------------------------
 ///
-/// Sort Persons
+/// We are sorting array of persons, and giving new sorted array back
 ///
 /// @param persons
 ///
-/// @return TRUE/FALSE
+/// @return new sorted array
 //
 Person *sortPersons(Person *persons)
 {
   int number_of_persons = numberOfPersons(persons);
   int counter;
-  printf("%d\n", number_of_persons);
   Person *person_placeholder = malloc(sizeof(Person));
   int switch_counter;
   Person *persons_sorted = malloc(sizeof(Person)*(number_of_persons + 1));
@@ -1762,11 +1794,41 @@ Person *sortPersons(Person *persons)
         copyPerson(persons_sorted + counter, persons_sorted + switch_counter);
         copyPerson(persons_sorted + switch_counter, person_placeholder);
       }
+      else if(namesArePartiallyEqual((persons_sorted + counter)->name_,
+        (persons_sorted + switch_counter)->name_) && (strlen((persons_sorted +
+         counter)->name_) > strlen((persons_sorted + switch_counter)->name_)))
+      {
+        copyPerson(person_placeholder, persons_sorted + counter);
+        copyPerson(persons_sorted + counter, persons_sorted + switch_counter);
+        copyPerson(persons_sorted + switch_counter, person_placeholder);
+      }
     }
   }
+
   free(person_placeholder);
   return persons_sorted;
 }
+
+BOOL namesArePartiallyEqual(char const *first_name, char const *second_name)
+{
+  char first_name_placeholder[MAX_NAME_LENGHT]; //This had to be done, due to
+  // strtok changing the original string
+  char second_name_placeholder[MAX_NAME_LENGHT];
+  char *first_name_token;
+  char *second_name_token;
+  strcpy(first_name_placeholder,first_name);
+  strcpy(second_name_placeholder,second_name);
+
+  first_name_token = strtok(first_name_placeholder," ");
+  second_name_token = strtok(second_name_placeholder," ");
+
+  if(strcmp(first_name_token, second_name_token) == 0)
+  {
+    return TRUE;
+  }
+  return FALSE;
+}
+
 //------------------------------------------------------------------------------
 ///
 /// List of Persons
@@ -1797,12 +1859,12 @@ BOOL listPersons(Person *persons)
 //------------------------------------------------------------------------------
 ///
 /// Copy person
-/// switch frist and second person
+/// copy person from one location to another
 ///
 /// @param first_person
 /// @param second_person
 ///
-/// @return TRUE
+/// @return TRUE, could've been void function
 //
 BOOL copyPerson(Person *first_person, Person *second_person)
 {
@@ -1832,28 +1894,6 @@ int numberOfPersons(Person *persons)
   }
   return number_of_persons;
 }
-
-//------------------------------------------------------------------------------
-///
-/// Create Person Instance
-///
-/// @param name
-/// @param gender
-/// @param mother
-/// @param father
-///
-/// @return new_person;
-//
-Person createPersonInstance(char *name, BOOL gender, Person *mother, Person *father)
-{
-  Person new_person;
-  strcpy(new_person.name_,name);
-  new_person.gender_ = gender;
-  new_person.father_ = father;
-  new_person.mother_ = mother;
-  return new_person;
-}
-
 //------------------------------------------------------------------------------
 ///
 /// Find person

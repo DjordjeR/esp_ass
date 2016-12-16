@@ -1,4 +1,3 @@
-list
 add Ljilja [f] mother Sofija [f]
 add Ljilja [f] mother Natalija [f]
 add Ljilja [f] mother Emilija [f]
@@ -16,7 +15,7 @@ add Zorka [f] mother Slavko [m]
 add Bosko [m] father Milica [f]
 add Bosko [m] father Branka [f]
 add Bosko [m] father Bozana [f]
-add Bosko [m] father Slavko [f]
+add Bosko [m] father Slavko [m]
 add Bogdana [f] mother Biljana [f]
 add Dusan [m] father Biljana [f]
 add Dragan [m] father Dusan [m]
@@ -32,12 +31,12 @@ add Desanka1 [f] mother Vukasin [f]
 add Desanka1 [f] mother Andjelka [f]
 add Cedomir [m] father Ruzica [f]
 add Cedomir [m] father Smiljana [f]
-add Cedomir [m] father Petraa [f]
+add Cedomir [m] father Petra [f]
 add Cedomir [m] father Bozo [m]
 add Cedomir [m] father Gojko [m]
 add Cedomir [m] father Jelena [f]
 add Desanka [f] mother Jelena [f]
-add Mika [m] father Dusan [m]
+add Mika [m] father Dragan [m]
 list
 draw-all sofija
 quit
