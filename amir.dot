@@ -1,0 +1,13 @@
+digraph FamilyTree
+{
+  "Namik [m]";
+  "Mustafa [m]";
+  "Mersija [f]" -> "Devlija [f]";
+  "Devlija [f]";
+  "Amir [m]" -> "Aida [f]";
+  "Amir [m]" -> "Namik [m]";
+  "Aida [f]" -> "Mersija [f]";
+  "Aida [f]" -> "Mustafa [m]";
+  "Aida [m]";
+  "Aida Znje [m]";
+}
