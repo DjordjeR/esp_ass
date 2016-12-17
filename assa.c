@@ -47,6 +47,8 @@ typedef short BOOL;
 #define ERROR_WRONG_RELATIONSHIP_USAGE 12
 #define ERROR_RELATIONSHIP_PERSON_DOES_NOT_EXISTS 13
 #define ERROR_RELATION_NOT_RELATED 14
+#define ERROR_WRONG_DRAW_USAGE 15
+#define ERROR_PERSON_DOES_NOT_EXIST 16
 // Relation defines
 #define RELATION_SISTER 1
 #define RELATION_BROTHER 2
@@ -117,7 +119,7 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons);
 BOOL copyPerson(Person *first_person, Person *second_person);
 
 // forward declaration
-void parseDrawInput(char *input_command);
+BOOL parseDrawInput(Person *array_of_persons, char *input_command);
 
 // forward declaration
 BOOL parseRelationshipInput(char *input_command, Person *array_of_persons);
@@ -172,10 +174,15 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 // forward declaration
 BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
+
 int checkRelation(Person *first_person, Person *second_person);
+
 void showRelationship(Person *persons_array, char const *first_person_name, BOOL
  first_person_gender, char const *second_person_name, BOOL
  second_person_gender);
+
+void drawPersonTreeToFile(Person *array_of_persons, char const 
+  *first_person_name, BOOL first_person_gender, char const *file_name);
 //------------------------------------------------------------------------------
 ///
 /// The main program.
@@ -201,10 +208,24 @@ int main(int argc, char **argv)
     Person **persons_array_ptr = &persons_array;
     waitForInput(persons_array_ptr);
   }
-  else if(argc == 2)
+  else if(argc >= 2)
   {
+    char file_name[INPUT_COMMAND_LENGHT]; //Maybe some other lenght ?
 
-    char *file_name = argv[1];
+    if(argc == 2)
+    {
+      strcpy(file_name,argv[1]);
+    }
+    else if( argc > 2)
+    { 
+      int counter;
+      strcpy(file_name,argv[1]);
+      for(counter = 2; counter < argc; counter++)
+      {
+        strcat(file_name," ");
+        strcat(file_name, argv[counter]);
+      }
+    }
     if(!fileExists(file_name))
     {
       showError(ERROR_FILE_COULD_NOT_BE_READ);
@@ -567,7 +588,10 @@ void parseInput(char *input_command, Person **persons_array)
     }
     if(strcmp(command, "draw") == 0)
     {
-      parseDrawInput(input_command);
+      if(!parseDrawInput(*persons_array, input_command))
+      {
+        showError(ERROR_WRONG_DRAW_USAGE);
+      }
     }
     if(strcmp(command, "draw-all") == 0)
     {
@@ -1759,9 +1783,54 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
 ///
 /// @return 
 //
-void parseDrawInput(char *input_command)
+BOOL parseDrawInput(Person *array_of_persons, char *input_command)
 {
-  printf("Parse draw input ...\n");
+  int counter = 5;
+  while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
+  {
+    counter++;
+    if(*(input_command + counter) == '\n')
+    {
+      return FALSE;
+    }
+  }
+  if(*(input_command + (counter - 1)) != ' ')
+  {
+    return FALSE;
+  }
+  *(input_command + (counter - 1)) = '\0';
+  char *first_person_name = input_command + 5;
+  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) !=
+   ']' || *(input_command + (counter + 3)) != ' ')
+  {
+    return FALSE;
+  }
+  counter++;
+  if(*(input_command + counter) != 'f' && *(input_command + counter) != 'm')
+  {
+    return FALSE;
+  }
+  BOOL first_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
+  counter+=2;
+  char *file_name = input_command + (counter + 1);
+  while(*(input_command + counter) != '\n' && *(input_command + counter) != '\0') 
+  {
+    counter++;
+  }
+  *(input_command + counter) = '\0';
+
+  drawPersonTreeToFile(array_of_persons, first_person_name, first_person_gender, file_name);
+
+  return TRUE;
+}
+
+void drawPersonTreeToFile(Person *array_of_persons, char const *first_person_name, BOOL first_person_gender, char const *file_name)
+{
+  Person *person = findPerson(array_of_persons, first_person_name, first_person_gender);
+  if(person == NULL)
+  {
+    showError(ERROR_PERSON_DOES_NOT_EXIST);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2266,6 +2335,12 @@ void showError(short error_code)
     break;
     case ERROR_RELATION_NOT_RELATED:
     printf("There is no relationship between them.\n");
+    case ERROR_WRONG_DRAW_USAGE:
+    printf("[ERR] Wrong usage - draw <name> [m/f] <file-name>.\n");
+    break;
+    case ERROR_PERSON_DOES_NOT_EXIST:
+    printf("[ERR] This person does not exist.\n");
+    break;
   }
 }
 
