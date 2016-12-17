@@ -31,6 +31,7 @@ typedef short BOOL;
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
 #define MSG_SUCCESS_DOT_FILE_PARSING 10
 #define MSG_SUCCESS_CREATING_DOT_FILE 11
+#define MSG_RELATION_PEOPLE_ARE_RELATED 12
 //ERRORS
 #define ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE 1
 #define ERROR_OUT_OF_MEMORY 2
@@ -43,6 +44,18 @@ typedef short BOOL;
 #define ERROR_BOTH_PEOPLE_ARE_THE_SAME 9
 #define ERROR_SEX_DOES_NOT_MATCH 10
 #define ERROR_RELATION_NOT_POSSIBLE 11
+#define ERROR_WRONG_RELATIONSHIP_USAGE 12
+#define ERROR_RELATIONSHIP_PERSON_DOES_NOT_EXISTS 13
+#define ERROR_RELATION_NOT_RELATED 14
+// Relation defines
+#define RELATION_SISTER 1
+#define RELATION_BROTHER 2
+#define RELATION_MOTHER 3
+#define RELATION_FATHER 4
+#define RELATION_GRANDMOTHER_FIRST_PERSON 5
+#define RELATION_GRANDMOTHER_SECOND_PERSON 6
+#define RELATION_GRANDFATHER_FIRST_PERSON 7
+#define RELATION_GRANDFATHER_SECOND_PERSON 8 
 //String lenghts
 #define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 
 // 6 for genders + some whitespaces + longest command = around 530
@@ -107,7 +120,7 @@ BOOL copyPerson(Person *first_person, Person *second_person);
 void parseDrawInput(char *input_command);
 
 // forward declaration
-void parseRelationshipInput(char *input_command);
+BOOL parseRelationshipInput(char *input_command, Person *array_of_persons);
 
 // forward declaration
 char *parseDrawAllInput(char *input_command, Person *persons);
@@ -159,7 +172,10 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 // forward declaration
 BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
-
+int checkRelation(Person *first_person, Person *second_person);
+void showRelationship(Person *persons_array, char const *first_person_name, BOOL
+ first_person_gender, char const *second_person_name, BOOL
+ second_person_gender);
 //------------------------------------------------------------------------------
 ///
 /// The main program.
@@ -394,7 +410,7 @@ Person *parseDotFile(char *file_content)
 /// TRUE if everything went okay and the line from file is valid
 //
 BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char 
-  *parrent_name, BOOL *parrent_gender_b)
+    *parrent_name, BOOL *parrent_gender_b)
 {
   if(*(line_to_parse) != ' ' || *(line_to_parse + 1) != ' ' ||  *(line_to_parse
    + 2) != '"')
@@ -536,7 +552,7 @@ void parseInput(char *input_command, Person **persons_array)
     counter++;
     }
     *(input_command + counter) = '\0';
-    counter += 1;
+    counter++;
     char *command = input_command;
     if(strcmp(command, "list") == 0)
     {
@@ -577,7 +593,10 @@ void parseInput(char *input_command, Person **persons_array)
     }
     if(strcmp(command, "relationship") == 0)
     {
-      parseRelationshipInput(input_command);
+      if(!parseRelationshipInput(input_command, *persons_array))
+      {
+        showError(ERROR_WRONG_RELATIONSHIP_USAGE);
+      }
     }
   }
 }
@@ -671,10 +690,228 @@ BOOL parseAddInput(char *input_command, Person **array_of_persons)
   }
 
   addRelationship(first_person_name, first_person_gender, second_person_name,
-   second_person_gender, relationship, array_of_persons); //TODO: probably 
-   //should not be called from here ?
+   second_person_gender, relationship, array_of_persons);
 
   return TRUE;
+}
+
+//------------------------------------------------------------------------------
+///
+/// Parse relationship input
+/// check if the format is right, and extract values from input line 
+///
+/// @param input_command, string for parsing
+/// @param pesons_array our array of persons
+///
+/// @return TRUE/FALSE
+//
+BOOL parseRelationshipInput(char *input_command, Person *array_of_persons)
+{
+  int counter = 13;
+  while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
+  {
+    counter++;
+    if(*(input_command + counter) == '\n')
+    {
+      return FALSE;
+    }
+  }
+  if(*(input_command + (counter - 1)) != ' ')
+  {
+    return FALSE;
+  }
+  *(input_command + (counter - 1)) = '\0';
+  char *first_person_name = input_command + 13;
+  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) !=
+   ']' || *(input_command + (counter + 3)) != ' ')
+  {
+    return FALSE;
+  }
+  counter++;
+  if(*(input_command + counter) != 'f' && *(input_command + counter) != 'm')
+  {
+    return FALSE;
+  }
+  BOOL first_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
+  counter += 2;
+  char *second_person_name = input_command + (counter + 1);
+  while(*(input_command + counter) != '[')
+  {
+    counter++;
+    if(*(input_command + counter) == '\n')
+    {
+      return FALSE;
+    }
+  }
+  if(*(input_command + (counter - 1)) != ' ')
+  {
+    return FALSE;
+  }
+  *(input_command + (counter - 1)) = '\0';
+
+  if(*(input_command + counter) != '[' || *(input_command + (counter + 2)) !=
+   ']' || *(input_command + (counter + 3)) != '\n')
+  {
+    return FALSE;
+  }
+  counter++;
+  if(*(input_command + counter) != 'f' && *(input_command + counter) != 'm')
+  {
+    return FALSE;
+  }
+  BOOL second_person_gender = (*(input_command + counter) == 'f') ? TRUE : FALSE;
+  
+  showRelationship(array_of_persons, first_person_name, first_person_gender,
+    second_person_name, second_person_gender);
+
+  return TRUE;
+}
+
+//------------------------------------------------------------------------------
+/// TODO:
+///
+///
+/// @return 
+//
+void showRelationship(Person *persons_array, char const *first_person_name, BOOL
+ first_person_gender, char const *second_person_name, BOOL second_person_gender)
+{
+  Person *first_person = findPerson(persons_array, first_person_name, 
+    first_person_gender);
+  Person *second_person = findPerson(persons_array, second_person_name,
+    second_person_gender); 
+  if(first_person == NULL || second_person == NULL)
+  {
+    showError(ERROR_RELATIONSHIP_PERSON_DOES_NOT_EXISTS);
+  }
+  else if(first_person == second_person)
+  {
+    showError(ERROR_BOTH_PEOPLE_ARE_THE_SAME);
+  }
+  else
+  {
+    switch (checkRelation(first_person, second_person))
+    {
+      case RELATION_SISTER:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the sister of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_BROTHER:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the brother of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_MOTHER:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      if(first_person->mother_ != second_person)
+      {
+        printf("%s [%c] is the mother of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+      }
+      else
+      {
+        printf("%s [%c] is the mother of %s [%c].\n", second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm');
+      }
+      break;
+      case RELATION_FATHER:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      if(first_person->father_ != second_person)
+      {
+        printf("%s [%c] is the father of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+      }
+      else
+      {
+        printf("%s [%c] is the father of %s [%c].\n", second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm');
+      }
+      break;
+      case RELATION_GRANDMOTHER_FIRST_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the grandmother of %s [%c].\n", first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_GRANDMOTHER_SECOND_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the grandmother of %s [%c].\n", second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_GRANDFATHER_FIRST_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the grandfather of %s [%c].\n", first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_GRANDFATHER_SECOND_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the grandfather of %s [%c].\n", second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case ERROR_RELATION_NOT_RELATED:
+      showError(ERROR_RELATION_NOT_RELATED);
+      break;
+      default:
+      showError(ERROR_RELATION_NOT_RELATED);
+      break;
+    }
+  }
+}
+
+int checkRelation(Person *first_person, Person *second_person)
+{
+  if((first_person->mother_ == NULL && first_person->father_ == NULL) && (second_person->mother_ == NULL && second_person->father_ == NULL))
+  {
+    return ERROR_RELATION_NOT_RELATED;
+  }
+
+  if(first_person->gender_ == 1 && ((first_person->mother_ != NULL && second_person->mother_ != NULL && first_person->mother_ == second_person->mother_) || (first_person->father_ != NULL && second_person->father_ != NULL && first_person->father_ == second_person->father_)))
+  {
+    return RELATION_SISTER;
+  }
+  else if(first_person->gender_ == 0 && ((first_person->mother_ != NULL && second_person->mother_ != NULL && first_person->mother_ == second_person->mother_) || (first_person->father_ != NULL && second_person->father_ != NULL && first_person->father_ == second_person->father_)))
+  {
+    return RELATION_BROTHER;
+  }
+  else if((first_person->gender_ == 1 && second_person->mother_ != NULL && first_person == second_person->mother_) || (second_person->gender_ == 1 && first_person->mother_ != NULL && second_person == first_person->mother_))
+  {
+    return RELATION_MOTHER;
+  }
+  else if((first_person->gender_ == 0 && second_person->father_ != NULL && first_person == second_person->father_) || (second_person->gender_ == 0 && first_person->father_ != NULL && second_person == first_person->father_))
+  {
+    return RELATION_FATHER;
+  }
+  else if((first_person->gender_ == 1 && second_person->mother_ != NULL && second_person->mother_->mother_ != NULL  && first_person == second_person->mother_->mother_) || (first_person->gender_ == 1 && second_person->father_ != NULL && second_person->father_->mother_ != NULL && first_person == second_person->father_->mother_))
+  {
+    return RELATION_GRANDMOTHER_FIRST_PERSON;
+  }
+  else if((second_person->gender_ == 1 && first_person->mother_ != NULL && first_person->mother_->mother_ != NULL && second_person == first_person->mother_->mother_) 
+    || (second_person->gender_ == 1 && first_person->father_ != NULL && first_person->father_->mother_ != NULL && second_person == first_person->father_->mother_))
+  {
+    return RELATION_GRANDMOTHER_SECOND_PERSON;
+  }
+  else if((first_person->gender_ == 0 && second_person->mother_ != NULL && second_person->mother_->father_ != NULL && first_person == second_person->mother_->father_) || 
+    (first_person->gender_ == 0 && second_person->father_ != NULL && second_person->father_->father_ != NULL && first_person == second_person->father_->father_))
+  {
+    return RELATION_GRANDFATHER_FIRST_PERSON;
+  }
+  else if((second_person->gender_ == 0 && first_person->mother_ != NULL && first_person->mother_->father_ != NULL && second_person == first_person->mother_->father_) || 
+    (second_person->gender_ == 0 && first_person->father_ != NULL && first_person->father_->father_ != NULL && second_person == first_person->father_->father_))
+  {
+    return RELATION_GRANDFATHER_SECOND_PERSON;
+  }
+
+  return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1560,18 +1797,6 @@ char *parseDrawAllInput(char *input_command, Person *persons)
   *(file_name + counter) = '\0';
   return strcat(file_name,".dot");
 }
-//------------------------------------------------------------------------------
-///
-/// TODO:
-///
-/// @param input_command
-///
-/// @return 
-//
-void parseRelationshipInput(char *input_command)
-{
-  printf("Parse elationship input ...\n");
-}
 
 //------------------------------------------------------------------------------
 ///
@@ -1589,7 +1814,7 @@ void waitForInput(Person **persons_array)
   // order to make sure that our variable is there
   while(TRUE)
   {
-    printf("esp>");
+    printf("esp> ");
     fgets(input_command,INPUT_COMMAND_LENGHT, stdin);
     if(strlen(input_command) != 1 && !feof(stdin))
     {
@@ -1787,7 +2012,8 @@ char *storeFileIntoMemory(const char *file_name)
             fclose(file_stream);
             exit(ERROR_FILE_COULD_NOT_BE_READ);
           }
-          size_t new_lenght = fread(file_content, sizeof(char), buffer_size, file_stream);
+          size_t new_lenght = fread(file_content, sizeof(char), buffer_size, 
+            file_stream);
           if(ferror(file_stream) != 0)
           {
             free(file_content);
@@ -1906,7 +2132,8 @@ BOOL listPersons(Person *persons)
   Person *persons_sorted = sortPersons(persons);
   while((persons_sorted + counter)->gender_  != 3)
   {
-    printf("%s %s\n", (persons_sorted + counter)->name_, ((persons_sorted + counter)->gender_
+    printf("%s %s\n", (persons_sorted + counter)->name_, ((persons_sorted + 
+      counter)->gender_
     == 1) ? "[f]" : "[m]");
     counter++;
   }
@@ -1957,6 +2184,7 @@ int numberOfPersons(Person *persons)
   }
   return number_of_persons;
 }
+
 //------------------------------------------------------------------------------
 ///
 /// Find person
@@ -1973,7 +2201,8 @@ Person *findPerson(Person *persons, char const  *name, BOOL gender)
   int counter = 0;
   while((persons + counter)->gender_ != 3 && (persons + counter) != NULL)
   {
-    if(strcmp((persons + counter)->name_, name) == 0 && (persons + counter)->gender_ == gender)
+    if(strcmp((persons + counter)->name_, name) == 0 && (persons + counter)->
+      gender_ == gender)
     {
       return persons + counter;
     }
@@ -2010,7 +2239,8 @@ void showError(short error_code)
     printf("[ERR] Wrong usage - list.\n");
     break;
     case ERROR_WRONG_ADD_USAGE:
-    printf("[ERR] Wrong usage - add <namePerson1> [m/f] <relation> <namePerson2> [m/f].\n");
+    printf("[ERR] Wrong usage - add <namePerson1> [m/f] "
+      "<relation> <namePerson2>[m/f].\n");
     break;
     case ERROR_WRONG_DRAW_ALL_USAGE:
     printf("[ERR] Wrong usage - draw-all <file-name>.\n");
@@ -2027,6 +2257,15 @@ void showError(short error_code)
     case ERROR_RELATION_NOT_POSSIBLE:
     printf("[ERR] Relation not possible.\n");
     break;
+    case ERROR_WRONG_RELATIONSHIP_USAGE:
+    printf("[ERR] Wrong usage - relationship <namePerson1> [m/f] <namePerson2>"
+    " [m/f].\n");
+    break;
+    case ERROR_RELATIONSHIP_PERSON_DOES_NOT_EXISTS:
+    printf("[ERR] At least one person does not exist yet.\n");
+    break;
+    case ERROR_RELATION_NOT_RELATED:
+    printf("There is no relationship between them.\n");
   }
 }
 
@@ -2053,6 +2292,9 @@ void showSuccessMessage(short msg_code)
     break;
     case MSG_SUCCESS_CREATING_DOT_FILE:
     printf("Creating DOT-file was successful.\n");
+    break;
+    case MSG_RELATION_PEOPLE_ARE_RELATED:
+    printf("The two people are related.\n");
     break;
   }
 }

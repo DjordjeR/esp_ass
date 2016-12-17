@@ -1,14 +1,7 @@
 digraph FamilyTree
 {
-  "Alois [m]";
-  "Angela [f]" -> "Christine [f]";
-  "Angela [f]" -> "Manfred [m]";
-  "Christine [f]" -> "Rosa [f]";
-  "Christine [f]" -> "Alois [m]";
-  "Johann [m]";
-  "Manfred [m]" -> "Theresia [f]";
-  "Manfred [m]" -> "Johann [m]";
-  "Rosa [f]";
-  "Theresia [f]" -> "Theresia Sr. [f]";
-  "Theresia Sr. [f]";
+  "Djordje [m]" -> "Vesna [f]";
+  "Mirjana [f]";
+  "Stefan [m]" -> "Mirjana [f]";
+  "Vesna [f]";
 }

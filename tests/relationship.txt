@@ -1,0 +1,11 @@
+list
+relationship Sirius Jr. [m] Arcturus [m]
+relationship Arcturus [m] Sirius Jr. [m] 
+relationship Sirius Jr. [m] Orion [m]
+relationship Orion [m] Sirius Jr. [m]
+relationship Hester [f] Irma [f]
+relationship Melania [f] Phineas [m]
+relationship Sirius [m] Cygnus [m]
+relationship Cygnus [m] Sirius [m]
+relationship Ursula [f] Arcturus [m]
+list
