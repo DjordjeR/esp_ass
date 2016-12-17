@@ -292,7 +292,8 @@ Person *parseDotFile(char *file_content)
   }
   // Checking if file format is valid, otherwise give error acordingly
   if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp
-    (lines_separated[1],"{") != 0 || file_content[counter] != '}')
+    (lines_separated[1],"{") != 0 || file_content[counter] != '}') // TODO: Is
+    //a an error if we have two newlines after the }
   {
     free(file_content);
     showError(ERROR_FILE_COULD_NOT_BE_READ);
