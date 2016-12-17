@@ -274,6 +274,10 @@ Person *parseDotFile(char *file_content)
   while(*(file_content + counter) != '\0') // Extrating values from single 
     //string to array of pointers to the specific adresses withing the string
   {
+    if(*(file_content + counter) == '}')
+    {
+      break;
+    }
     if(*(file_content + counter) == '\n')
     {
       *(file_content + counter) = '\0'; //Puting null byte insted of newline so
@@ -288,7 +292,7 @@ Person *parseDotFile(char *file_content)
   }
   // Checking if file format is valid, otherwise give error acordingly
   if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp
-    (lines_separated[1],"{") != 0 || file_content[counter-1] != '}')
+    (lines_separated[1],"{") != 0 || file_content[counter] != '}')
   {
     free(file_content);
     showError(ERROR_FILE_COULD_NOT_BE_READ);
@@ -465,6 +469,10 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
   }
   *gender_b = (*(line_to_parse + (counter - 1)) == 'f') ? TRUE : FALSE;
   ++counter;
+  if(*(line_to_parse + (counter + 2)) != '-' && *(line_to_parse + (counter + 2)) != '\0')
+  {
+    return FALSE;
+  }
   if(*(line_to_parse + counter) == ' ' || *(line_to_parse + (counter + 1)) == 
    ';')
   {
@@ -472,6 +480,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
     return TRUE;
   }
   counter += 2;
+
   if(*(line_to_parse + (counter)) != '-' || *(line_to_parse + (counter + 1)) != 
     '>' || *(line_to_parse + (counter + 2)) != ' ' || *(line_to_parse +  
       (counter + 3)) != '"')
@@ -505,6 +514,10 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
     return FALSE;
   }
   *parrent_gender_b = (*(line_to_parse + (counter - 1)) == 'f') ? TRUE : FALSE;
+  if(*(line_to_parse + (counter + 3)) != '\0')
+  {
+    return FALSE;
+  }
 
  return TRUE;
 }
@@ -586,6 +599,7 @@ void parseInput(char *input_command, Person **persons_array)
         showError(ERROR_WRONG_ADD_USAGE);
       }
     }
+
     if(strcmp(command, "draw") == 0)
     {
       if(!parseDrawInput(*persons_array, input_command))
@@ -1283,7 +1297,7 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
           *array_of_persons = buffer;
         }  
         strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
-        (*array_of_persons + number_of_persons)->gender_ = 1;
+        (*array_of_persons + number_of_persons)->gender_ = 0;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = NULL;
         strcpy((*array_of_persons + (number_of_persons + 1))->name_, second_person_name);
@@ -1892,7 +1906,6 @@ void waitForInput(Person **persons_array)
     if (feof(stdin))
     {
       free(*persons_array);
-      showSuccessMessage(MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF);
       exit(SUCCESS_PROGRAM_CLOSED);
     }
   }
@@ -2309,7 +2322,7 @@ void showError(short error_code)
     break;
     case ERROR_WRONG_ADD_USAGE:
     printf("[ERR] Wrong usage - add <namePerson1> [m/f] "
-      "<relation> <namePerson2>[m/f].\n");
+      "<relation> <namePerson2> [m/f].\n");
     break;
     case ERROR_WRONG_DRAW_ALL_USAGE:
     printf("[ERR] Wrong usage - draw-all <file-name>.\n");
@@ -2335,6 +2348,7 @@ void showError(short error_code)
     break;
     case ERROR_RELATION_NOT_RELATED:
     printf("There is no relationship between them.\n");
+    break;
     case ERROR_WRONG_DRAW_USAGE:
     printf("[ERR] Wrong usage - draw <name> [m/f] <file-name>.\n");
     break;

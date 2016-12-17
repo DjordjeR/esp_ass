@@ -1,0 +1,7 @@
+digraph FamilyTree
+{
+  "Andrea [f]" -> "Andrea [m]";
+  "Andrea [m]";
+  "Andrea Jr. [f]";
+  "Andrea Jr. [m]" -> "Andrea Jr. [f]";
+}

@@ -1,6 +1,6 @@
 list
 relationship Sirius Jr. [m] Arcturus [m]
-relationship Arcturus [m] Sirius Jr. [m] 
+relationship Arcturus [m] Sirius Jr. [m]
 relationship Sirius Jr. [m] Orion [m]
 relationship Orion [m] Sirius Jr. [m]
 relationship Hester [f] Irma [f]

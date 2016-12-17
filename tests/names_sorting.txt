@@ -1,0 +1,4 @@
+add Andrea Jr. [f] mother Andrea Jr. [m]
+add Andrea [m] father Andrea [f]
+list
+draw-all test
