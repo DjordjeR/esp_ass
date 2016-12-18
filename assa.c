@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
 // assa.c
 //
-// The program takes in the members of family either by the command line or
-// from the already made documents. All necessary checks are being made in an
-// attempt to ensure file and data validity. After all family members are
-// successfully loaded or manually written, program gives a possibility
-// to store acquired data in a .dot file format for further use. Dot file is
-// properly formatted, so it can be used to create an image of family a tree.
+// The program takes in the members of family either by the command line or from
+// the already made documents. All necessary checks are being made in an attempt
+// to ensure file and data validity. After all family members are successfully
+// loaded or manually written, program gives a possibility to store acquired
+// data in a .dot file format for further use. Dot file is properly formatted,
+// so it can be used to create an image of family a tree.  
 // 
 // Group: 3 study assistant Lorenz Kofler
 //
@@ -61,17 +61,17 @@ typedef short BOOL;
 #define RELATION_UNCLE_SECOND_PERSON 10
 #define RELATION_AUNT_FIRST_PERSON 11
 #define RELATION_AUNT_SECOND_PERSON 12
-//String lenghts
-#define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 
+//String lengths
+#define INPUT_COMMAND_LENGTH 530 //NOTE: 256 for one name + 256 second name + 
 // 6 for genders + some whitespaces + longest command = around 530
-#define MAX_NAME_LENGHT 257 // +1 for \0
+#define MAX_NAME_LENGTH 257 // +1 for \0
 //Msc
 #define INIT_PERSONS_ARRAY_SIZE 100
 
-// Structure for storing every familly member
+// Structure for storing every family member
 typedef struct _Person_
 {
-  char name_[MAX_NAME_LENGHT];
+  char name_[MAX_NAME_LENGTH];
   BOOL gender_;
   struct _Person_ *mother_;
   struct _Person_ *father_;
@@ -224,7 +224,7 @@ BOOL findPersonTree(Person **array_of_person_persons, Person *person);
 /// data to right functions for further processing.
 ///
 /// @param argc used for checking the number of parameters
-/// @param argv all command line parameters are stred here
+/// @param argv all command line parameters are stored here
 ///
 /// @return success program closed
 //
@@ -245,7 +245,7 @@ int main(int argc, char **argv)
   }
   else if(argc >= 2)
   {
-    char file_name[INPUT_COMMAND_LENGHT]; //Maybe some other lenght ?
+    char file_name[INPUT_COMMAND_LENGTH]; //Maybe some other length ?
 
     if(argc == 2)
     {
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 /// @param file_content string, with dot file data to be parsed. Essentially a
 ///  very long string whit all data from .dot file.
 ///
-/// @return array_of_persons, array of persons and their data, dynamicly
+/// @return array_of_persons, array of persons and their data, dynamically
 /// allocated
 //
 Person *parseDotFile(char *file_content)
@@ -306,12 +306,12 @@ Person *parseDotFile(char *file_content)
   int lines_separated_counter = 0;
   int file_content_counter = 0;
   counter = 0;
-  while(*(file_content + counter) != '\0') // Extrating values from single 
-    //string to array of pointers to the specific adresses withing the string
+  while(*(file_content + counter) != '\0') // Extracting values from single 
+    //string to array of pointers to the specific addresses withing the string
   {
     if(*(file_content + counter) == '\n')
     {
-      *(file_content + counter) = '\0'; //Puting null byte insted of newline so
+      *(file_content + counter) = '\0'; //Putting null byte instead of newline so
       // the string is later valid for use with function from string.h
       lines_separated[lines_separated_counter] = file_content + 
       file_content_counter;
@@ -321,7 +321,7 @@ Person *parseDotFile(char *file_content)
     }
     ++counter;
   }
-  // Checking if file format is valid, otherwise give error acordingly
+  // Checking if file format is valid, otherwise give error accordingly
   if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp
     (lines_separated[1],"{") != 0 || file_content[counter - 2] != '}' || 
     file_content[counter - 1] != '\0') // TODO: Is
@@ -331,15 +331,15 @@ Person *parseDotFile(char *file_content)
     showError(ERROR_FILE_COULD_NOT_BE_READ);
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
-  char name[MAX_NAME_LENGHT];
-  char parrent_name[MAX_NAME_LENGHT];
+  char name[MAX_NAME_LENGTH];
+  char parrent_name[MAX_NAME_LENGTH];
   BOOL gender;
   BOOL parrent_gender;
   int number_of_persons = 0;
 
   Person *array_of_persons = calloc(
   (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE),sizeof(Person)); // Bit
-  // more then we need, but is's okay to have more.
+  // more then we need, but it's okay to have more.
   if(array_of_persons == NULL) 
   {
     free(file_content);
@@ -447,8 +447,8 @@ Person *parseDotFile(char *file_content)
   {
     showError(ERROR_NO_ENTRIES_AVAILABLE);
   }
-  showSuccessMessage(MSG_SUCCESS_DOT_FILE_PARSING); // Printing out all personst
-  // that have been loaded, and giving succes message
+  showSuccessMessage(MSG_SUCCESS_DOT_FILE_PARSING); // Printing out all persons
+  // that have been loaded, and giving success message
   free(file_content);
 
   return array_of_persons;
@@ -456,19 +456,19 @@ Person *parseDotFile(char *file_content)
 
 //------------------------------------------------------------------------------
 ///
-/// Parsing each line in a dot file, checking for mistakes, or misformated .dot
+/// Parsing each line in a dot file, checking for mistakes, or misformatted .dot
 /// file
 ///
 /// @param line_to_parse line in a form of a string
-/// @param name referece so we can change it and use it in a another function
-/// @param gender_b referece so we can change it and use it in a another
+/// @param name reference so we can change it and use it in a another function
+/// @param gender_b reference so we can change it and use it in a another
 /// function
-/// @param parrant_name referece so we can change it and use it in a another 
+/// @param parrant_name reference so we can change it and use it in a another 
 /// function
-/// @param parrant_gender_b referece so we can change it and use it in a another
+/// @param parrant_gender_b reference so we can change it and use it in a another
 /// function
 ///
-/// @return TRUE or FALSE, FALSE if an error occured, meaning line is not valid
+/// @return TRUE or FALSE, FALSE if an error occurred, meaning line is not valid
 /// TRUE if everything went okay and the line from file is valid
 //
 BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char 
@@ -486,7 +486,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
     *(name+null_counter) = *(line_to_parse + counter);
     counter++;
     null_counter++;
-    if(counter >= MAX_NAME_LENGHT || *(line_to_parse + counter) == ']' ||  *
+    if(counter >= MAX_NAME_LENGTH || *(line_to_parse + counter) == ']' ||  *
       (line_to_parse + counter) == '>' || *(line_to_parse + counter) == ';' || 
       *(line_to_parse + counter) == '"')
     {
@@ -532,7 +532,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
     *(parrent_name + null_counter) = *(line_to_parse + counter);
     counter++;
     null_counter++;
-    if(counter >= MAX_NAME_LENGHT || *(line_to_parse + counter) == ']' || *
+    if(counter >= MAX_NAME_LENGTH || *(line_to_parse + counter) == ']' || *
       (line_to_parse + counter) == '>' || *(line_to_parse + counter) == ';' ||
       *(line_to_parse + counter) == '"')
     {
@@ -570,13 +570,13 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
 //
 BOOL nameIsUnknown(const char *name)
 {
-  int name_lenght = strlen(name);
+  int name_LENGTH = strlen(name);
   int name_counter;
-  if(name_lenght < 2 )
+  if(name_LENGTH < 2 )
   {
     return FALSE;
   }
-  for(name_counter = 1; name_counter < name_lenght; name_counter++)
+  for(name_counter = 1; name_counter < name_LENGTH; name_counter++)
   {
     if(isdigit(name[name_counter]) == 0)
     {
@@ -590,7 +590,7 @@ BOOL nameIsUnknown(const char *name)
 //------------------------------------------------------------------------------
 ///
 /// Parse the input command 
-/// check command input and call the coresponding function
+/// check command input and call the corresponding function
 ///
 /// @param input_command, name of command 
 /// @param pesons_array is array of persons
@@ -1027,7 +1027,7 @@ int checkRelation(Person *first_person, Person *second_person)
 
 //------------------------------------------------------------------------------
 ///
-/// Check if one person is granfather to another
+/// Check if one person is grandfather to another
 ///
 /// @param first_person
 /// @param second_person
@@ -1265,8 +1265,8 @@ BOOL isAunt(Person *first_person, Person *second_person)
 
 //------------------------------------------------------------------------------
 ///
-/// Add Relationship, call coresponding functions for every possible
-/// realtionship that can be registerd by our programm
+/// Add Relationship, call corresponding functions for every possible
+/// relationship that can be registered by our program.
 ///
 /// @param first_person_name 
 /// @param first_person_gender
@@ -1494,8 +1494,8 @@ Person **array_of_persons)
 
 //------------------------------------------------------------------------------
 ///
-/// addFather
-/// Add person and persons father
+/// Add a relationship between son and father, check for existence of both
+/// persons, and add/modify them.
 ///
 /// @param first_person_name
 /// @param first_person_gender
@@ -1623,8 +1623,8 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
 
 //------------------------------------------------------------------------------
 ///
-/// addMgm
-/// Add person and persons mother-grandmother
+/// Add a relationship "mgm", grandmother from mothers side. Checks for
+/// existence of all three persons, add/modify them.
 ///
 /// @param first_person_name
 /// @param first_person_gender
@@ -1732,8 +1732,8 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
 
 //------------------------------------------------------------------------------
 ///
-/// addFgm
-/// Add person and persons father-grandmother
+/// Add a relationship "fgm", grandmother from fathers side. Checks for
+/// existence of all three persons, add/modify them.
 ///
 /// @param first_person_name
 /// @param first_person_gender
@@ -1845,9 +1845,9 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
 
 //------------------------------------------------------------------------------
 ///
-/// addMgf
-/// Add person and persons mother-grandfather
-///
+/// Add a relationship "mgf", grandfather from mothers side. Checks for
+/// existence of all three persons, add/modify them.
+/// 
 /// @param first_person_name
 /// @param first_person_gender
 /// @param second_person_name
@@ -1955,8 +1955,8 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
 
 //------------------------------------------------------------------------------
 ///
-/// addFgf
-/// Add person and persons father-grandfather
+/// Add a relationship "fgf", grandfather from fathers side. Checks for
+/// existence of all three persons, add/modify them.
 ///
 /// @param first_person_name
 /// @param first_person_gender
@@ -2066,7 +2066,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 //------------------------------------------------------------------------------
 ///
 /// Add Relation  unknown person 
-/// Add person which we dont't know "?1 [m/f]"
+/// Add person which we don't know "?1 [m/f]"
 ///
 /// @param array_of_person
 /// @param gender
@@ -2079,8 +2079,8 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
   if(gender == 1 || gender == 0)
   {
   int number_of_persons = numberOfPersons(array_of_persons);
-  char buffer[MAX_NAME_LENGHT - 1];
-  char unknown[MAX_NAME_LENGHT] = "?";
+  char buffer[MAX_NAME_LENGTH - 1];
+  char unknown[MAX_NAME_LENGTH] = "?";
   snprintf(buffer, 10, "%lu", unknown_person_count);
   strcat(unknown, buffer);
   if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
@@ -2113,11 +2113,12 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
 
 //------------------------------------------------------------------------------
 ///
-/// TODO:
+/// Parse draw input from command line, and call corresponding function
 ///
+/// @param array_of_persons
 /// @param input_command
-///
-/// @return 
+/// 
+/// @return TRUE/FALSE 
 //
 BOOL parseDrawInput(Person *array_of_persons, char *input_command)
 {
@@ -2159,11 +2160,21 @@ BOOL parseDrawInput(Person *array_of_persons, char *input_command)
 
   return TRUE;
 }
-
+//------------------------------------------------------------------------------
+///
+/// Find a tree of person and write it to a file
+///
+/// @param array_of_persons
+/// @param first_person_name
+/// @param first_person_gender
+/// @param file_name
+///
+/// @return
+//
 void drawPersonTreeToFile(Person *array_of_persons, char const *first_person_name, BOOL first_person_gender, char const *file_name)
 {
   Person *person = findPerson(array_of_persons, first_person_name, first_person_gender);
-  char file_name_with_dot[INPUT_COMMAND_LENGHT];
+  char file_name_with_dot[INPUT_COMMAND_LENGTH];
   strcpy(file_name_with_dot, file_name);
   strcat(file_name_with_dot, ".dot");
 
@@ -2189,7 +2200,15 @@ void drawPersonTreeToFile(Person *array_of_persons, char const *first_person_nam
   }
 }
 
-
+//------------------------------------------------------------------------------
+///
+/// Find a tree of person and put it in an array given by reference
+///
+/// @param array_of_person_persons
+/// @param person 
+///
+/// @return TRUE/FALSE
+//
 BOOL findPersonTree(Person **array_of_person_persons, Person *person)
 {
   static int counter = 1;
@@ -2239,7 +2258,7 @@ char *parseDrawAllInput(char *input_command, Person *persons)
   }
   while(*(file_name + counter) != '\n' && *(file_name + counter) != '\0')
   {
-    if(counter > INPUT_COMMAND_LENGHT)
+    if(counter > INPUT_COMMAND_LENGTH)
     {
       return NULL;
     }
@@ -2261,12 +2280,12 @@ char *parseDrawAllInput(char *input_command, Person *persons)
 //
 void waitForInput(Person **persons_array)
 {
-  char input_command[INPUT_COMMAND_LENGHT] = "init"; // Just initalisation in
-  // order to make sure that our variable is there
+  char input_command[INPUT_COMMAND_LENGTH] = "init"; // Just initialization in
+  // order to make sure that our variable is there,and no error can occur
   while(TRUE)
   {
     printf("esp> ");
-    fgets(input_command,INPUT_COMMAND_LENGHT, stdin);
+    fgets(input_command,INPUT_COMMAND_LENGTH, stdin);
     if(strlen(input_command) != 1 && !feof(stdin))
     {
         parseInput(input_command, persons_array);
@@ -2462,7 +2481,7 @@ char *storeFileIntoMemory(const char *file_name)
             fclose(file_stream);
             exit(ERROR_FILE_COULD_NOT_BE_READ);
           }
-          size_t new_lenght = fread(file_content, sizeof(char), buffer_size, 
+          size_t new_LENGTH = fread(file_content, sizeof(char), buffer_size, 
             file_stream);
           if(ferror(file_stream) != 0)
           {
@@ -2473,7 +2492,7 @@ char *storeFileIntoMemory(const char *file_name)
           }
           else
           {
-              file_content[new_lenght] = '\0';
+              file_content[new_LENGTH] = '\0';
           }
       }
       fclose(file_stream);
@@ -2539,7 +2558,7 @@ Person *sortPersons(Person *persons)
 }
 //------------------------------------------------------------------------------
 ///
-/// Check if two persons have the same name untill " "(whitspaces)
+/// Check if two persons have the same name until " "(whitespaces)
 /// function needed for sorting
 /// 
 /// @param first_name
@@ -2549,9 +2568,9 @@ Person *sortPersons(Person *persons)
 //
 BOOL namesArePartiallyEqual(char const *first_name, char const *second_name)
 {
-  char first_name_placeholder[MAX_NAME_LENGHT]; //This had to be done, due to
+  char first_name_placeholder[MAX_NAME_LENGTH]; //This had to be done, due to
   // strtok changing the original string
-  char second_name_placeholder[MAX_NAME_LENGHT];
+  char second_name_placeholder[MAX_NAME_LENGTH];
   char *first_name_token;
   char *second_name_token;
   strcpy(first_name_placeholder,first_name);
@@ -2644,7 +2663,7 @@ int numberOfPersons(Person *persons)
 /// @param name
 /// @param gender
 ///
-/// @return finded person or NULL
+/// @return found person or NULL
 //
 Person *findPerson(Person *persons, char const  *name, BOOL gender)
 {
@@ -2664,7 +2683,7 @@ Person *findPerson(Person *persons, char const  *name, BOOL gender)
 //------------------------------------------------------------------------------
 ///
 /// Show error
-/// print error messege
+/// print error message
 ///
 /// @param error_code
 ///
