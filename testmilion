@@ -2,12 +2,18 @@ digraph FamilyTree
 {
   "Arcturus [m]" -> "Hester [f]";
   "Arcturus [m]" -> "Sirius [m]";
+  "Arcturus [m]" -> "Hester [f]";
+  "Arcturus [m]" -> "Sirius [m]";
+  "Hester [f]";
   "Hester [f]";
   "Melania [f]";
-  "Orion [m]" -> "Melania [f]";
-  "Orion [m]" -> "Arcturus [m]";
+  "Melania [f]";
+  "Phineas [m]";
   "Phineas [m]";
   "Sirius [m]" -> "Ursula [f]";
   "Sirius [m]" -> "Phineas [m]";
+  "Sirius [m]" -> "Ursula [f]";
+  "Sirius [m]" -> "Phineas [m]";
+  "Ursula [f]";
   "Ursula [f]";
 }

@@ -57,7 +57,11 @@ typedef short BOOL;
 #define RELATION_GRANDMOTHER_FIRST_PERSON 5
 #define RELATION_GRANDMOTHER_SECOND_PERSON 6
 #define RELATION_GRANDFATHER_FIRST_PERSON 7
-#define RELATION_GRANDFATHER_SECOND_PERSON 8 
+#define RELATION_GRANDFATHER_SECOND_PERSON 8
+#define RELATION_UNCLE_FIRST_PERSON 9
+#define RELATION_UNCLE_SECOND_PERSON 10
+#define RELATION_AUNT_FIRST_PERSON 11
+#define RELATION_AUNT_SECOND_PERSON 12
 //String lenghts
 #define INPUT_COMMAND_LENGHT 530 //NOTE: 256 for one name + 256 second name + 
 // 6 for genders + some whitespaces + longest command = around 530
@@ -133,7 +137,7 @@ Person *sortPersons(Person *persons);
 int numberOfPersons(Person *persons);
 
 // forward declaration
-BOOL writePersonToFile(char *file_name, Person *persons_to_write);
+BOOL writePersonToFile(char const *file_name, Person *persons_to_write);
 
 // forward declaration
 void addRelationship(char const *first_person_name, BOOL first_person_gender,
@@ -175,14 +179,44 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 // forward declaration
 BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
 
+// forward declaration
 int checkRelation(Person *first_person, Person *second_person);
 
+// forward declaration
 void showRelationship(Person *persons_array, char const *first_person_name, BOOL
  first_person_gender, char const *second_person_name, BOOL
  second_person_gender);
 
+// forward declaration
 void drawPersonTreeToFile(Person *array_of_persons, char const 
   *first_person_name, BOOL first_person_gender, char const *file_name);
+
+// forward declaration
+BOOL isSister(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isBrother(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isMother(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isFather(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isGrandmother(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isGrandfather(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isUncle(Person *first_person, Person *second_person);
+
+// forward declaration
+BOOL isAunt(Person *first_person, Person *second_person);
+
+BOOL findPersonTree(Person **array_of_person_persons, Person *person);
+
 //------------------------------------------------------------------------------
 ///
 /// The main program.
@@ -193,6 +227,7 @@ void drawPersonTreeToFile(Person *array_of_persons, char const
 /// @param argv all command line parameters are stred here
 ///
 /// @return success program closed
+//
 //
 int main(int argc, char **argv)
 {
@@ -274,10 +309,6 @@ Person *parseDotFile(char *file_content)
   while(*(file_content + counter) != '\0') // Extrating values from single 
     //string to array of pointers to the specific adresses withing the string
   {
-    if(*(file_content + counter) == '}')
-    {
-      break;
-    }
     if(*(file_content + counter) == '\n')
     {
       *(file_content + counter) = '\0'; //Puting null byte insted of newline so
@@ -292,7 +323,8 @@ Person *parseDotFile(char *file_content)
   }
   // Checking if file format is valid, otherwise give error acordingly
   if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp
-    (lines_separated[1],"{") != 0 || file_content[counter] != '}') // TODO: Is
+    (lines_separated[1],"{") != 0 || file_content[counter - 2] != '}' || 
+    file_content[counter - 1] != '\0') // TODO: Is
     //a an error if we have two newlines after the }
   {
     free(file_content);
@@ -315,8 +347,8 @@ Person *parseDotFile(char *file_content)
   	exit(ERROR_OUT_OF_MEMORY);
   }
   array_of_persons[(lines_separated_counter +
-   INIT_PERSONS_ARRAY_SIZE)-1].gender_ = 3;
-  for(counter = 2; counter < lines_separated_counter; counter++ )
+   INIT_PERSONS_ARRAY_SIZE) - 1].gender_ = 3;
+  for(counter = 2; counter < (lines_separated_counter - 1); counter++ )
   {
     if(parseSingleFileLine(lines_separated[counter], name, &gender, 
     parrent_name, &parrent_gender) == FALSE)
@@ -329,6 +361,10 @@ Person *parseDotFile(char *file_content)
     name[strlen(name)-1] = '\0'; // NOTE: Getting rid of last empty space
     if(findPerson(array_of_persons, name, gender) == NULL)
     {
+      if(nameIsUnknown(name))
+      {
+        addUnknownPerson(&array_of_persons[number_of_persons], 3);
+      }
       strcpy(array_of_persons[number_of_persons].name_,name);
       array_of_persons[number_of_persons].gender_ = gender;
       if(parrent_name[0] != '\0')
@@ -807,9 +843,14 @@ BOOL parseRelationshipInput(char *input_command, Person *array_of_persons)
 }
 
 //------------------------------------------------------------------------------
-/// TODO:
-///
-///
+/// Find and print relationship between two people
+/// 
+/// @param persons_array
+/// @param first_person_name
+/// @param first_person_gender
+/// @param second_person_name
+/// @param second_person_gender
+/// 
 /// @return 
 //
 void showRelationship(Person *persons_array, char const *first_person_name, BOOL
@@ -897,6 +938,30 @@ void showRelationship(Person *persons_array, char const *first_person_name, BOOL
       (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
       (first_person->gender_ == 1) ? 'f' : 'm');
       break;
+      case RELATION_UNCLE_FIRST_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the uncle of %s [%c].\n", first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_UNCLE_SECOND_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the uncle of %s [%c].\n", second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_AUNT_FIRST_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the aunt of %s [%c].\n", first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm');
+      break;
+      case RELATION_AUNT_SECOND_PERSON:
+      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+      printf("%s [%c] is the aunt of %s [%c].\n", second_person->name_,
+      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+      (first_person->gender_ == 1) ? 'f' : 'm');
+      break;
       case ERROR_RELATION_NOT_RELATED:
       showError(ERROR_RELATION_NOT_RELATED);
       break;
@@ -907,50 +972,294 @@ void showRelationship(Person *persons_array, char const *first_person_name, BOOL
   }
 }
 
+//------------------------------------------------------------------------------
+///
+/// Determine type of relation between two people
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return type of relation/no relation
+//
 int checkRelation(Person *first_person, Person *second_person)
 {
-  if((first_person->mother_ == NULL && first_person->father_ == NULL) && (second_person->mother_ == NULL && second_person->father_ == NULL))
+  if((first_person->mother_ == NULL && first_person->father_ == NULL) &&
+    (second_person->mother_ == NULL && second_person->father_ == NULL))
   {
     return ERROR_RELATION_NOT_RELATED;
   }
 
-  if(first_person->gender_ == 1 && ((first_person->mother_ != NULL && second_person->mother_ != NULL && first_person->mother_ == second_person->mother_) || (first_person->father_ != NULL && second_person->father_ != NULL && first_person->father_ == second_person->father_)))
+  if(isSister(first_person, second_person))
   {
     return RELATION_SISTER;
   }
-  else if(first_person->gender_ == 0 && ((first_person->mother_ != NULL && second_person->mother_ != NULL && first_person->mother_ == second_person->mother_) || (first_person->father_ != NULL && second_person->father_ != NULL && first_person->father_ == second_person->father_)))
+  else if(isBrother(first_person, second_person))
   {
     return RELATION_BROTHER;
   }
-  else if((first_person->gender_ == 1 && second_person->mother_ != NULL && first_person == second_person->mother_) || (second_person->gender_ == 1 && first_person->mother_ != NULL && second_person == first_person->mother_))
+  else if(isMother(first_person, second_person))
   {
     return RELATION_MOTHER;
   }
-  else if((first_person->gender_ == 0 && second_person->father_ != NULL && first_person == second_person->father_) || (second_person->gender_ == 0 && first_person->father_ != NULL && second_person == first_person->father_))
+  else if(isFather(first_person, second_person))
   {
     return RELATION_FATHER;
   }
-  else if((first_person->gender_ == 1 && second_person->mother_ != NULL && second_person->mother_->mother_ != NULL  && first_person == second_person->mother_->mother_) || (first_person->gender_ == 1 && second_person->father_ != NULL && second_person->father_->mother_ != NULL && first_person == second_person->father_->mother_))
+  else if(isGrandmother(first_person, second_person) != FALSE)
   {
-    return RELATION_GRANDMOTHER_FIRST_PERSON;
+    return isGrandmother(first_person, second_person);
   }
-  else if((second_person->gender_ == 1 && first_person->mother_ != NULL && first_person->mother_->mother_ != NULL && second_person == first_person->mother_->mother_) 
-    || (second_person->gender_ == 1 && first_person->father_ != NULL && first_person->father_->mother_ != NULL && second_person == first_person->father_->mother_))
+  else if(isGrandfather(first_person, second_person) != FALSE)
   {
-    return RELATION_GRANDMOTHER_SECOND_PERSON;
+    return isGrandfather(first_person, second_person);
   }
-  else if((first_person->gender_ == 0 && second_person->mother_ != NULL && second_person->mother_->father_ != NULL && first_person == second_person->mother_->father_) || 
-    (first_person->gender_ == 0 && second_person->father_ != NULL && second_person->father_->father_ != NULL && first_person == second_person->father_->father_))
+  else if(isUncle(first_person, second_person) != FALSE)
+  {
+    return isUncle(first_person, second_person);
+  }
+  else if(isAunt(first_person, second_person) != FALSE)
+  {
+    return isAunt(first_person, second_person);
+  }
+  return ERROR_RELATION_NOT_RELATED;
+}
+
+//------------------------------------------------------------------------------
+///
+/// Check if one person is granfather to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE (order of persons) /FALSE
+//
+BOOL isGrandfather(Person *first_person, Person *second_person)
+{
+  if((first_person->gender_ == 0 && second_person->mother_ != NULL && 
+    second_person->mother_->father_ != NULL && first_person == second_person->
+    mother_->father_) || (first_person->gender_ == 0 && second_person->father_ 
+    != NULL && second_person->father_->father_ != NULL && first_person == 
+    second_person->father_->father_))
   {
     return RELATION_GRANDFATHER_FIRST_PERSON;
   }
-  else if((second_person->gender_ == 0 && first_person->mother_ != NULL && first_person->mother_->father_ != NULL && second_person == first_person->mother_->father_) || 
-    (second_person->gender_ == 0 && first_person->father_ != NULL && first_person->father_->father_ != NULL && second_person == first_person->father_->father_))
+  else if((second_person->gender_ == 0 && first_person->mother_ != NULL && 
+    first_person->mother_->father_ != NULL && second_person == first_person->
+    mother_->father_) || (second_person->gender_ == 0 && first_person->father_ 
+    != NULL && first_person->father_->father_ != NULL && second_person == 
+    first_person->father_->father_))
   {
     return RELATION_GRANDFATHER_SECOND_PERSON;
   }
+  else
+  {
+    return FALSE;
+  }
+}
 
-  return 0;
+//------------------------------------------------------------------------------
+///
+/// Check if one person is grandmother to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE (order of persons)/FALSE
+//
+BOOL isGrandmother(Person *first_person, Person *second_person)
+{
+  if((first_person->gender_ == 1 && second_person->mother_ != NULL && 
+    second_person->mother_->mother_ != NULL  && first_person == second_person->
+    mother_->mother_) || (first_person->gender_ == 1 && second_person->father_ 
+    != NULL && second_person->father_->mother_ != NULL && first_person == 
+    second_person->father_->mother_))
+  {
+    return RELATION_GRANDMOTHER_FIRST_PERSON;
+  }
+  else if((second_person->gender_ == 1 && first_person->mother_ != NULL && 
+    first_person->mother_->mother_ != NULL && second_person == first_person->
+    mother_->mother_) 
+    || (second_person->gender_ == 1 && first_person->father_ != NULL && 
+      first_person->father_->mother_ != NULL && second_person == 
+      first_person->father_->mother_))
+  {
+    return RELATION_GRANDMOTHER_SECOND_PERSON;
+  }
+  else
+  {
+    return FALSE;
+  }
+}
+
+//------------------------------------------------------------------------------
+///
+/// Check one person is father to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE/FALSE
+//
+BOOL isFather(Person *first_person, Person *second_person)
+{
+  if((first_person->gender_ == 0 && second_person->father_ != NULL && 
+      first_person == second_person->father_) || (second_person->gender_ == 0 && 
+      first_person->father_ != NULL && second_person == first_person->father_))
+  {
+    return TRUE;
+  }
+  return FALSE;
+}
+//------------------------------------------------------------------------------
+///
+/// Check one person is mother to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE/FALSE
+//
+BOOL isMother(Person *first_person, Person *second_person)
+{
+  if((first_person->gender_ == 1 && second_person->mother_ != NULL && 
+    first_person == second_person->mother_) || (second_person->gender_ == 1 && 
+    first_person->mother_ != NULL && second_person == first_person->mother_))
+  {
+    return TRUE;
+  }
+  return FALSE;
+}
+//------------------------------------------------------------------------------
+///
+/// Check one person is brother to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE/FALSE
+//
+BOOL isBrother(Person *first_person, Person *second_person)
+{
+  if(first_person->gender_ == 0 && ((first_person->mother_ != NULL && 
+    second_person->mother_ != NULL && first_person->mother_ == second_person->
+    mother_) || (first_person->father_ != NULL && second_person->father_ != NULL
+    && first_person->father_ == second_person->father_)))
+  {
+    return TRUE;
+  }
+  return FALSE;
+}
+//------------------------------------------------------------------------------
+///
+/// Check one person is sister to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE/FALSE
+//
+BOOL isSister(Person *first_person, Person *second_person)
+{
+  if(first_person->gender_ == 1 && ((first_person->mother_ != NULL && 
+    second_person->mother_ != NULL && first_person->mother_ == second_person->
+    mother_) || (first_person->father_ != NULL && second_person->father_ != NULL
+    && first_person->father_ == second_person->father_)))
+  {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+//------------------------------------------------------------------------------
+///
+/// Check one person is uncle to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE/FALSE
+//
+BOOL isUncle(Person *first_person, Person *second_person)
+{
+  if(first_person->gender_ == 1 && second_person->gender_ == 1)
+  {
+    return FALSE;
+  }
+  if(first_person->mother_ != NULL || first_person->father_ != NULL)
+  {
+    if(second_person->mother_ != NULL || second_person->father_ != NULL)
+    {
+      if(second_person->father_ != NULL && isBrother(first_person, second_person->father_) == TRUE)
+      {
+        return RELATION_UNCLE_FIRST_PERSON;
+      }
+      else if(second_person->mother_ != NULL && isBrother(first_person, second_person->mother_) == TRUE)
+      {
+        return RELATION_UNCLE_FIRST_PERSON;
+      }
+    }
+  }
+  if(second_person->mother_ != NULL || second_person->father_ != NULL)
+  {
+    if(first_person->mother_ != NULL || first_person->father_ != NULL)
+    {
+      if(first_person->father_ != NULL && isBrother(second_person, first_person->father_) == TRUE)
+      {
+        return RELATION_UNCLE_SECOND_PERSON;
+      }
+      else if (first_person->mother_ != NULL && isBrother(second_person, first_person->mother_) == TRUE)
+      {
+        return RELATION_UNCLE_SECOND_PERSON;
+      }
+    }
+  }
+  return FALSE;
+}
+
+//------------------------------------------------------------------------------
+///
+/// Check one person is aunt to another
+///
+/// @param first_person
+/// @param second_person
+///
+/// @return TRUE/FALSE
+//
+BOOL isAunt(Person *first_person, Person *second_person)
+{
+  if(first_person->gender_ == 0 && second_person->gender_ == 0)
+  {
+    return FALSE;
+  }
+  if(first_person->mother_ != NULL || first_person->father_ != NULL)
+  {
+    if(second_person->mother_ != NULL || second_person->father_ != NULL)
+    {
+      if(second_person->father_ != NULL && isSister(first_person, second_person->father_) == TRUE)
+      {
+        return RELATION_AUNT_FIRST_PERSON;
+      }
+      else if(second_person->mother_ != NULL && isSister(first_person, second_person->mother_) == TRUE)
+      {
+        return RELATION_AUNT_FIRST_PERSON;
+      }
+    }
+  }
+  if(second_person->mother_ != NULL || second_person->father_ != NULL)
+  {
+    if(first_person->mother_ != NULL || first_person->father_ != NULL)
+    {
+      if(first_person->father_ != NULL && isSister(second_person, first_person->father_) == TRUE)
+      {
+        return RELATION_AUNT_SECOND_PERSON;
+      }
+      else if (first_person->mother_ != NULL && isSister(second_person, first_person->mother_) == TRUE)
+      {
+        return RELATION_AUNT_SECOND_PERSON;
+      }
+    }
+  }
+  return FALSE;
 }
 
 //------------------------------------------------------------------------------
@@ -1438,9 +1747,11 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
  *second_person_name, BOOL second_person_gender, char const *relationship,
  Person **array_of_persons)
 {
-    if(findPerson(*array_of_persons, second_person_name, second_person_gender) != NULL)
+    if(findPerson(*array_of_persons, second_person_name, second_person_gender) 
+      != NULL)
     {
-      Person *child = findPerson(*array_of_persons, second_person_name, second_person_gender);
+      Person *child = findPerson(*array_of_persons, second_person_name, 
+        second_person_gender);
       if(child->father_ != NULL)
       {
         if(child->father_->mother_ == NULL)
@@ -1460,16 +1771,16 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
           } 
           strcpy((*array_of_persons + number_of_persons)->name_,
           first_person_name);
-          (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+          (*array_of_persons + number_of_persons)->gender_ = 
+          first_person_gender;
           (*array_of_persons + number_of_persons)->mother_ = NULL;
           (*array_of_persons + number_of_persons)->father_ = NULL;
           (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
 
           child->father_->mother_ = (*array_of_persons + number_of_persons);
-
-          printf("%s\n", (*array_of_persons + number_of_persons)->name_);
         }
-        else if(child->father_->mother_ != NULL && nameIsUnknown(child->father_->mother_->name_))
+        else if(child->father_->mother_ != NULL && nameIsUnknown(child->father_
+          ->mother_->name_))
         {
           strcpy(child->father_->mother_->name_, first_person_name);
         }
@@ -1764,6 +2075,8 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
 {
   static unsigned long unknown_person_count = 1;
+  if(gender == 1 || gender == 0)
+  {
   int number_of_persons = numberOfPersons(array_of_persons);
   char buffer[MAX_NAME_LENGHT - 1];
   char unknown[MAX_NAME_LENGHT] = "?";
@@ -1788,6 +2101,13 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
   array_of_persons[number_of_persons + 1].gender_ = 3;
   unknown_person_count++;
   return &array_of_persons[number_of_persons];
+  }
+  else
+  {
+    unknown_person_count++;
+    return NULL;
+  }
+  return NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -1842,10 +2162,49 @@ BOOL parseDrawInput(Person *array_of_persons, char *input_command)
 void drawPersonTreeToFile(Person *array_of_persons, char const *first_person_name, BOOL first_person_gender, char const *file_name)
 {
   Person *person = findPerson(array_of_persons, first_person_name, first_person_gender);
-  if(person == NULL)
+  char file_name_with_dot[INPUT_COMMAND_LENGHT];
+  strcpy(file_name_with_dot, file_name);
+  strcat(file_name_with_dot, ".dot");
+
+  if(person != NULL)
+  {
+    Person *person_tree_array = malloc(sizeof(Person)*INIT_PERSONS_ARRAY_SIZE*2);
+    Person **person_tree_array_ptr = &person_tree_array;
+    copyPerson(person_tree_array, person);
+    findPersonTree(person_tree_array_ptr, person);
+    writePersonToFile(file_name_with_dot, *person_tree_array_ptr);
+    free(person_tree_array);
+  }
+  else
   {
     showError(ERROR_PERSON_DOES_NOT_EXIST);
   }
+}
+
+
+BOOL findPersonTree(Person **array_of_person_persons, Person *person)
+{
+  static int counter = 1;
+  if(person == NULL)
+  {
+    counter = 1;
+    return FALSE;
+  }
+  if(person->mother_ != NULL)
+  {
+    copyPerson((*array_of_person_persons + counter), person->mother_);
+    counter++;
+    (*array_of_person_persons + counter)->gender_ = 3;
+    findPersonTree(array_of_person_persons, person->mother_);
+  }
+  if(person->father_ != NULL)
+  {
+    copyPerson((*array_of_person_persons + counter), person->father_);
+    counter++;
+    (*array_of_person_persons + counter)->gender_ = 3;
+    findPersonTree(array_of_person_persons, person->father_);   
+  }
+  return TRUE;
 }
 
 //------------------------------------------------------------------------------
@@ -1962,7 +2321,7 @@ BOOL fileIsWritable(const char *file_name)
 ///
 /// @return TRUE/FALSE
 //
-BOOL writePersonToFile(char *file_name, Person *persons_to_write)
+BOOL writePersonToFile(char const *file_name, Person *persons_to_write)
 {
   if(fileExists(file_name) && !fileIsWritable(file_name))
   {
@@ -2001,7 +2360,7 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
       }
       counter++;
     }
-    fprintf(file_stream, "}");
+    fprintf(file_stream, "}\n");
     fclose(file_stream);
     free(persons_sorted);
     showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
@@ -2039,7 +2398,7 @@ BOOL writePersonToFile(char *file_name, Person *persons_to_write)
       }
       counter++;
     }
-    fprintf(file_stream, "}");
+    fprintf(file_stream, "}\n");
     showSuccessMessage(MSG_SUCCESS_CREATING_DOT_FILE);
     free(persons_sorted);
     fclose(file_stream);
@@ -2301,6 +2660,7 @@ Person *findPerson(Person *persons, char const  *name, BOOL gender)
 ///
 /// @param error_code
 ///
+/// @return 
 //
 void showError(short error_code)
 {
@@ -2365,7 +2725,8 @@ void showError(short error_code)
 /// print success Message
 ///
 /// @param msg_code
-///
+/// 
+/// @return 
 //
 void showSuccessMessage(short msg_code)
 {
