@@ -28,7 +28,6 @@ typedef short BOOL;
 #define SUCCESS_PROGRAM_CLOSED 0
 // Success messages
 #define MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT 1
-#define MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF 2
 #define MSG_SUCCESS_DOT_FILE_PARSING 10
 #define MSG_SUCCESS_CREATING_DOT_FILE 11
 #define MSG_RELATION_PEOPLE_ARE_RELATED 12
@@ -77,7 +76,6 @@ typedef struct _Person_
   struct _Person_ *mother_;
   struct _Person_ *father_;
 }Person;
-
 
 // forward declaration
 Person *parseDotFile(char *file_content);
@@ -176,6 +174,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 
 // forward declaration
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
+
 // forward declaration
 BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
 
@@ -215,6 +214,7 @@ BOOL isUncle(Person *first_person, Person *second_person);
 // forward declaration
 BOOL isAunt(Person *first_person, Person *second_person);
 
+// forward declaration
 BOOL findPersonTree(Person **array_of_person_persons, Person *person);
 
 //------------------------------------------------------------------------------
@@ -506,7 +506,8 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
   }
   *gender_b = (*(line_to_parse + (counter - 1)) == 'f') ? TRUE : FALSE;
   ++counter;
-  if(*(line_to_parse + (counter + 2)) != '-' && *(line_to_parse + (counter + 2)) != '\0')
+  if(*(line_to_parse + (counter + 2)) != '-' && *(line_to_parse + (counter + 2)) 
+    != '\0')
   {
     return FALSE;
   }
@@ -2732,9 +2733,6 @@ void showSuccessMessage(short msg_code)
 {
   switch(msg_code)
   {
-    case MSG_SUCCESS_PROGRAM_CLOSED_WITH_EOF:
-    printf("\n");
-    break;
     case MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT:
     printf("Bye.\n");
     break;
