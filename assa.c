@@ -2169,12 +2169,19 @@ void drawPersonTreeToFile(Person *array_of_persons, char const *first_person_nam
 
   if(person != NULL)
   {
-    Person *person_tree_array = malloc(sizeof(Person)*INIT_PERSONS_ARRAY_SIZE*2);
-    Person **person_tree_array_ptr = &person_tree_array;
-    copyPerson(person_tree_array, person);
-    findPersonTree(person_tree_array_ptr, person);
-    writePersonToFile(file_name_with_dot, *person_tree_array_ptr);
-    free(person_tree_array);
+    if(person->mother_ == NULL && person->father_ == NULL)
+    {
+      showError(ERROR_FILE_COULD_NOT_BE_WRITTEN);
+    }
+    else
+    {
+      Person *person_tree_array = malloc(sizeof(Person)*INIT_PERSONS_ARRAY_SIZE*2);
+      Person **person_tree_array_ptr = &person_tree_array;
+      copyPerson(person_tree_array, person);
+      findPersonTree(person_tree_array_ptr, person);
+      writePersonToFile(file_name_with_dot, *person_tree_array_ptr);
+      free(person_tree_array);
+    }
   }
   else
   {
