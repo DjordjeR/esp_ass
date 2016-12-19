@@ -1,0 +1,6 @@
+digraph FamilyTree
+{
+  "?1 [f]" -> "Baba [f]";
+  "Baba [f]";
+  "Unka [f]" -> "?1 [f]";
+}
