@@ -236,31 +236,18 @@ int main(int argc, char **argv)
     Person *persons_array = malloc(INIT_PERSONS_ARRAY_SIZE*sizeof(Person));
     if(persons_array == NULL)
     {
-    	showError(ERROR_OUT_OF_MEMORY);
-    	exit(ERROR_OUT_OF_MEMORY);
+      showError(ERROR_OUT_OF_MEMORY);
+      exit(ERROR_OUT_OF_MEMORY);
     }
     (persons_array)->gender_ = 3;
     Person **persons_array_ptr = &persons_array;
     waitForInput(persons_array_ptr);
   }
-  else if(argc >= 2)
+  else if(argc == 2)
   {
-    char file_name[INPUT_COMMAND_LENGTH]; //Maybe some other length ?
 
-    if(argc == 2)
-    {
-      strcpy(file_name,argv[1]);
-    }
-    else if( argc > 2)
-    { 
-      int counter;
-      strcpy(file_name,argv[1]);
-      for(counter = 2; counter < argc; counter++)
-      {
-        strcat(file_name," ");
-        strcat(file_name, argv[counter]);
-      }
-    }
+    char *file_name = argv[1];
+    printf("%s\n", file_name);
     if(!fileExists(file_name))
     {
       showError(ERROR_FILE_COULD_NOT_BE_READ);
@@ -358,7 +345,7 @@ Person *parseDotFile(char *file_content)
       showError(ERROR_FILE_COULD_NOT_BE_READ);
       exit(ERROR_FILE_COULD_NOT_BE_READ);
     }
-    name[strlen(name)-1] = '\0'; // NOTE: Getting rid of last empty space
+    name[strlen(name) - 1] = '\0'; // NOTE: Getting rid of last empty space
     if(findPerson(array_of_persons, name, gender) == NULL)
     {
       if(nameIsUnknown(name))
