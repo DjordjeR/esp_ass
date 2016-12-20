@@ -67,7 +67,7 @@ typedef short BOOL;
 #define MAX_NAME_LENGTH 257 // +1 for \0
 //Msc
 #define INIT_PERSONS_ARRAY_SIZE 100
-
+#define INCREMENT_COUNT_OF_UNKNOWN_PERSONS 1
 // Structure for storing every family member
 typedef struct _Person_
 {
@@ -217,6 +217,12 @@ BOOL isAunt(Person *first_person, Person *second_person);
 // forward declaration
 BOOL findPersonTree(Person **array_of_person_persons, Person *person);
 
+// forward declaration
+long unsigned unknownPersonIndex(long unsigned option);
+
+// forward declaration
+long unsigned extractUnknownNameIndex(char const *name);
+
 //------------------------------------------------------------------------------
 ///
 /// The main program.
@@ -245,9 +251,7 @@ int main(int argc, char **argv)
   }
   else if(argc == 2)
   {
-
     char *file_name = argv[1];
-    printf("%s\n", file_name);
     if(!fileExists(file_name))
     {
       showError(ERROR_FILE_COULD_NOT_BE_READ);
@@ -323,7 +327,8 @@ Person *parseDotFile(char *file_content)
   BOOL gender;
   BOOL parrent_gender;
   int number_of_persons = 0;
-
+  unsigned long index = 0;
+  unsigned long currentIndex = 0;
   Person *array_of_persons = calloc(
   (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE),sizeof(Person)); // Bit
   // more then we need, but it's okay to have more.
@@ -350,7 +355,16 @@ Person *parseDotFile(char *file_content)
     {
       if(nameIsUnknown(name))
       {
-        addUnknownPerson(&array_of_persons[number_of_persons], 3);
+        index = extractUnknownNameIndex(name);
+        currentIndex = unknownPersonIndex(INCREMENT_COUNT_OF_UNKNOWN_PERSONS);
+        if(index > (currentIndex - 1))
+        {
+          unknownPersonIndex(index);
+        }
+        else
+        {
+          unknownPersonIndex(currentIndex - 1);
+        }       
       }
       strcpy(array_of_persons[number_of_persons].name_,name);
       array_of_persons[number_of_persons].gender_ = gender;
@@ -2133,9 +2147,8 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 //
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
 {
-  static unsigned long unknown_person_count = 1;
-  if(gender == 1 || gender == 0)
-  {
+  unsigned long unknown_person_count = unknownPersonIndex
+  (INCREMENT_COUNT_OF_UNKNOWN_PERSONS);
   int number_of_persons = numberOfPersons(array_of_persons);
   char buffer[MAX_NAME_LENGTH - 1];
   char unknown[MAX_NAME_LENGTH] = "?";
@@ -2159,16 +2172,47 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
   array_of_persons[number_of_persons].father_ = NULL;
   array_of_persons[number_of_persons + 1].gender_ = 3;
   unknown_person_count++;
+
   return &array_of_persons[number_of_persons];
+}
+
+//------------------------------------------------------------------------------
+///
+/// Keep track of a number of unknown persons, increment or change the number
+/// alltogether accordingly.
+///
+/// @param option
+/// 
+/// @return unknown_person_count
+//
+long unsigned unknownPersonIndex(long unsigned option)
+{
+  static unsigned long unknown_person_count = 0;
+  if(option == INCREMENT_COUNT_OF_UNKNOWN_PERSONS)
+  {
+    unknown_person_count++;
+    return unknown_person_count;
   }
   else
   {
-    unknown_person_count++;
-    return NULL;
+    unknown_person_count = option;
+    return unknown_person_count;
   }
-  return NULL;
+  return unknown_person_count;
 }
-
+//------------------------------------------------------------------------------
+///
+/// Extract index of unknown person from a persons name
+///
+/// @param name
+/// 
+/// @return unknown_person_index
+//
+long unsigned extractUnknownNameIndex(char const *name)
+{
+  long unsigned unknown_person_index = atoi(name + 1);
+  return unknown_person_index;
+}
 //------------------------------------------------------------------------------
 ///
 /// Parse draw input from command line, and call corresponding function
