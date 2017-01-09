@@ -131,6 +131,7 @@ char *parseDrawAllInput(char *input_command, Person *persons);
 
 // forward declaration
 Person *sortPersons(Person *persons);
+
 // forward declaration
 int numberOfPersons(Person *persons);
 
@@ -283,7 +284,7 @@ int main(int argc, char **argv)
 //
 Person *parseDotFile(char *file_content)
 {
-  int number_of_lines = 0;
+  int number_of_lines = INIT_PERSONS_ARRAY_SIZE;
   int counter = 0;
   while(*(file_content + counter) != '\0') // Counting number of lines
   {
