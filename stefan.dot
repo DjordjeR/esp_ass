@@ -1,8 +1,33 @@
 digraph FamilyTree
 {
-  "ve [f]" -> " [f]";
-  "dj [f]" -> "nesto [f]";
-  "mi [f]";
-  "fas [m]" -> "mi [f]";
-  "nesto [f]";
+  "Arcturus [m]" -> "Hester [f]";
+  "Arcturus [m]" -> "Sirius [m]";
+  "Baka [f]" -> "Irma [f]";
+  "Cygnus [m]" -> "Ursula [f]";
+  "Cygnus [m]" -> "Phineas [m]";
+  "Hester [f]";
+  "Irma [f]";
+  "Melania [f]";
+  "Orion [m]" -> "Melania [f]";
+  "Orion [m]" -> "Arcturus [m]";
+  "Phineas [m]";
+  "Pollux [m]" -> "Violetta [f]";
+  "Pollux [m]" -> "Cygnus [m]";
+  "Sirius [m]" -> "Ursula [f]";
+  "Sirius [m]" -> "Phineas [m]";
+  "Sirius Jr. [m]" -> "Walburga [f]";
+  "Sirius Jr. [m]" -> "Orion [m]";
+  "Stefan [m]";
+  "Ursula [f]";
+  "Ursula [f]" -> "baka [f]";
+  "Usrula [f]" -> "Baka [f]";
+  "Violetta [f]";
+  "Walburga [f]" -> "Irma [f]";
+  "Walburga [f]" -> "Pollux [m]";
+  "baka [f]";
+  "dijete [m]" -> "Usrula [f]";
+  "dijete [m]" -> "Stefan [m]";
+  "neko [m]" -> "Ursula [f]";
+  "neko [m]" -> "stefan [m]";
+  "stefan [m]";
 }

@@ -303,8 +303,8 @@ Person *parseDotFile(char *file_content)
   {
     if(*(file_content + counter) == '\n')
     {
-      *(file_content + counter) = '\0'; //Putting null byte instead of newline so
-      // the string is later valid for use with function from string.h
+      *(file_content + counter) = '\0'; //Putting null byte instead of newline
+            // so the string is later valid for use with function from string.h
       lines_separated[lines_separated_counter] = file_content + 
       file_content_counter;
 
@@ -314,10 +314,9 @@ Person *parseDotFile(char *file_content)
     ++counter;
   }
   // Checking if file format is valid, otherwise give error accordingly
-  if(strcmp(lines_separated[0],"digraph FamilyTree") != 0 || strcmp
-    (lines_separated[1],"{") != 0 || file_content[counter - 2] != '}' || 
-    file_content[counter - 1] != '\0') // TODO: Is
-    //a an error if we have two newlines after the }
+  if(strcmp(lines_separated[0], "digraph FamilyTree") != 0 || strcmp
+    (lines_separated[1], "{") != 0 || file_content[counter - 2] != '}' || 
+    file_content[counter - 1] != '\0') 
   {
     free(file_content);
     showError(ERROR_FILE_COULD_NOT_BE_READ);
@@ -331,7 +330,7 @@ Person *parseDotFile(char *file_content)
   unsigned long index = 0;
   unsigned long currentIndex = 0;
   Person *array_of_persons = calloc(
-  (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE),sizeof(Person)); // Bit
+  (lines_separated_counter + INIT_PERSONS_ARRAY_SIZE), sizeof(Person)); // Bit
   // more then we need, but it's okay to have more.
   if(array_of_persons == NULL) 
   {
@@ -367,23 +366,23 @@ Person *parseDotFile(char *file_content)
           unknownPersonIndex(currentIndex - 1);
         }       
       }
-      strcpy(array_of_persons[number_of_persons].name_,name);
+      strcpy(array_of_persons[number_of_persons].name_, name);
       array_of_persons[number_of_persons].gender_ = gender;
       if(parrent_name[0] != '\0')
       {
-        if(findPerson(array_of_persons,parrent_name,parrent_gender) == NULL)
+        if(findPerson(array_of_persons, parrent_name, parrent_gender) == NULL)
         {
-          strcpy(array_of_persons[number_of_persons+1].name_,parrent_name);
-          array_of_persons[number_of_persons+1].gender_ = parrent_gender;
+          strcpy(array_of_persons[number_of_persons + 1].name_, parrent_name);
+          array_of_persons[number_of_persons + 1].gender_ = parrent_gender;
           if(parrent_gender == TRUE)
           {
             array_of_persons[number_of_persons].mother_ =  &array_of_persons
-            [number_of_persons+1];
+            [number_of_persons + 1];
           }
           else if(parrent_gender == FALSE)
           {
             array_of_persons[number_of_persons].father_ = &array_of_persons
-            [number_of_persons+1];
+            [number_of_persons + 1];
           }
           number_of_persons++;
         }
@@ -408,14 +407,14 @@ Person *parseDotFile(char *file_content)
     {
       if(parrent_name[0] != '\0')
       {
-        Person *new_temp_person = findPerson(array_of_persons,name,gender);
+        Person *new_temp_person = findPerson(array_of_persons, name, gender);
         if(parrent_gender == TRUE && new_temp_person->mother_ == NULL)
         {
           Person *temp_parrent_mother = findPerson(array_of_persons,
            parrent_name, parrent_gender);
           if(temp_parrent_mother == NULL)
           {
-            strcpy(array_of_persons[number_of_persons].name_,parrent_name);
+            strcpy(array_of_persons[number_of_persons].name_, parrent_name);
             array_of_persons[number_of_persons].gender_ = parrent_gender;
             new_temp_person->mother_ = &array_of_persons[number_of_persons];
             number_of_persons++;
@@ -431,7 +430,7 @@ Person *parseDotFile(char *file_content)
           parrent_name, parrent_gender);
           if(temp_parrent_father == NULL)
           {
-            strcpy(array_of_persons[number_of_persons].name_,parrent_name);
+            strcpy(array_of_persons[number_of_persons].name_, parrent_name);
             array_of_persons[number_of_persons].gender_ = parrent_gender;
             new_temp_person->father_ = &array_of_persons[number_of_persons];
             number_of_persons++;
