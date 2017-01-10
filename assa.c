@@ -8,7 +8,7 @@
 // data in a .dot file format for further use. Dot file is properly formatted,
 // so it can be used to create an image of family a tree.  
 // 
-// Group: 3 study assistant Lorenz Kofler
+// Group: 15029 study assistant Lorenz Kofler
 //
 // Authors: Djordje Rajic 1431564
 // Stefan Rajinovic 1431905
@@ -494,7 +494,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
     }
   }
   *(name + (null_counter)) = '\0';
-  counter+=2; // We are skipping [
+  counter += 2; // We are skipping [
   if(*(line_to_parse + counter) != ']')
   {
     return FALSE;
@@ -876,101 +876,101 @@ void showRelationship(Person *persons_array, char const *first_person_name, BOOL
     switch (checkRelation(first_person, second_person))
     {
       case RELATION_SISTER:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the sister of %s [%c].\n", first_person->name_,
-        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-        (second_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the sister of %s [%c].\n", first_person->name_,
+          (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+          (second_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_BROTHER:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the brother of %s [%c].\n", first_person->name_,
-        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-        (second_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the brother of %s [%c].\n", first_person->name_,
+          (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+          (second_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_MOTHER:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      if(first_person->mother_ != second_person)
-      {
-        printf("%s [%c] is the mother of %s [%c].\n", first_person->name_,
-        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-        (second_person->gender_ == 1) ? 'f' : 'm');
-      }
-      else
-      {
-        printf("%s [%c] is the mother of %s [%c].\n", second_person->name_,
-        (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
-        (first_person->gender_ == 1) ? 'f' : 'm');
-      }
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        if(first_person->mother_ != second_person)
+        {
+          printf("%s [%c] is the mother of %s [%c].\n", first_person->name_,
+          (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+          (second_person->gender_ == 1) ? 'f' : 'm');
+        }
+        else
+        {
+          printf("%s [%c] is the mother of %s [%c].\n", second_person->name_,
+          (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+          (first_person->gender_ == 1) ? 'f' : 'm');
+        }
+        break;
       case RELATION_FATHER:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      if(first_person->father_ != second_person)
-      {
-        printf("%s [%c] is the father of %s [%c].\n", first_person->name_,
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        if(first_person->father_ != second_person)
+        {
+          printf("%s [%c] is the father of %s [%c].\n", first_person->name_,
+          (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+          (second_person->gender_ == 1) ? 'f' : 'm');
+        }
+        else
+        {
+          printf("%s [%c] is the father of %s [%c].\n", second_person->name_,
+          (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+          (first_person->gender_ == 1) ? 'f' : 'm');
+        }
+        break;
+      case RELATION_GRANDMOTHER_FIRST_PERSON:
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the grandmother of %s [%c].\n", first_person->name_,
         (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
         (second_person->gender_ == 1) ? 'f' : 'm');
-      }
-      else
-      {
-        printf("%s [%c] is the father of %s [%c].\n", second_person->name_,
+        break;
+      case RELATION_GRANDMOTHER_SECOND_PERSON:
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the grandmother of %s [%c].\n", second_person->name_,
         (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
         (first_person->gender_ == 1) ? 'f' : 'm');
-      }
-      break;
-      case RELATION_GRANDMOTHER_FIRST_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the grandmother of %s [%c].\n", first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm');
-      break;
-      case RELATION_GRANDMOTHER_SECOND_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the grandmother of %s [%c].\n", second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        break;
       case RELATION_GRANDFATHER_FIRST_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the grandfather of %s [%c].\n", first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the grandfather of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_GRANDFATHER_SECOND_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the grandfather of %s [%c].\n", second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the grandfather of %s [%c].\n", second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_UNCLE_FIRST_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the uncle of %s [%c].\n", first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the uncle of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_UNCLE_SECOND_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the uncle of %s [%c].\n", second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the uncle of %s [%c].\n", second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_AUNT_FIRST_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the aunt of %s [%c].\n", first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the aunt of %s [%c].\n", first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm', second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case RELATION_AUNT_SECOND_PERSON:
-      showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
-      printf("%s [%c] is the aunt of %s [%c].\n", second_person->name_,
-      (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
-      (first_person->gender_ == 1) ? 'f' : 'm');
-      break;
+        showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
+        printf("%s [%c] is the aunt of %s [%c].\n", second_person->name_,
+        (second_person->gender_ == 1) ? 'f' : 'm', first_person->name_,
+        (first_person->gender_ == 1) ? 'f' : 'm');
+        break;
       case ERROR_RELATION_NOT_RELATED:
-      showError(ERROR_RELATION_NOT_RELATED);
-      break;
+        showError(ERROR_RELATION_NOT_RELATED);
+        break;
       default:
-      showError(ERROR_RELATION_NOT_RELATED);
-      break;
+        showError(ERROR_RELATION_NOT_RELATED);
+        break;
     }
   }
 }
@@ -2802,55 +2802,55 @@ void showError(short error_code)
   switch(error_code)
   {
     case ERROR_FILE_COULD_NOT_BE_READ:
-    printf("[ERR] Could not read file.\n");
-    break;
+      printf("[ERR] Could not read file.\n");
+      break;
     case ERROR_TO_MANY_ARGUMENTS_WHILE_LOADING_FILE:
-    printf("Usage: ./ass [file-name]\n");
-    break;
+      printf("Usage: ./ass [file-name]\n");
+      break;
     case ERROR_NO_ENTRIES_AVAILABLE:
-    printf("[ERR] No entries available.\n");
-    break;
+      printf("[ERR] No entries available.\n");
+      break;
     case ERROR_OUT_OF_MEMORY:
-    printf("[ERR] Out of memory.\n");
-    break;
+      printf("[ERR] Out of memory.\n");
+      break;
     case ERROR_WRONG_LIST_USAGE:
-    printf("[ERR] Wrong usage - list.\n");
-    break;
+      printf("[ERR] Wrong usage - list.\n");
+      break;
     case ERROR_WRONG_ADD_USAGE:
-    printf("[ERR] Wrong usage - add <namePerson1> [m/f] "
-      "<relation> <namePerson2> [m/f].\n");
-    break;
+      printf("[ERR] Wrong usage - add <namePerson1> [m/f] "
+        "<relation> <namePerson2> [m/f].\n");
+      break;
     case ERROR_WRONG_DRAW_ALL_USAGE:
-    printf("[ERR] Wrong usage - draw-all <file-name>.\n");
-    break;
+      printf("[ERR] Wrong usage - draw-all <file-name>.\n");
+      break;
     case ERROR_FILE_COULD_NOT_BE_WRITTEN:
-    printf("[ERR] Could not write file.\n");
-    break;
+      printf("[ERR] Could not write file.\n");
+      break;
     case ERROR_BOTH_PEOPLE_ARE_THE_SAME:
-    printf("[ERR] Both people are the same.\n");
-    break;
+      printf("[ERR] Both people are the same.\n");
+      break;
     case ERROR_SEX_DOES_NOT_MATCH:
-    printf("[ERR] Sex does not match with relation.\n");
-    break;
+      printf("[ERR] Sex does not match with relation.\n");
+      break;
     case ERROR_RELATION_NOT_POSSIBLE:
-    printf("[ERR] Relation not possible.\n");
-    break;
+      printf("[ERR] Relation not possible.\n");
+      break;
     case ERROR_WRONG_RELATIONSHIP_USAGE:
-    printf("[ERR] Wrong usage - relationship <namePerson1> [m/f] <namePerson2>"
-    " [m/f].\n");
+      printf("[ERR] Wrong usage - relationship <namePerson1> [m/f] <namePerson2>"
+      " [m/f].\n");
     break;
     case ERROR_RELATIONSHIP_PERSON_DOES_NOT_EXISTS:
-    printf("[ERR] At least one person does not exist yet.\n");
-    break;
+      printf("[ERR] At least one person does not exist yet.\n");
+      break;
     case ERROR_RELATION_NOT_RELATED:
-    printf("There is no relationship between them.\n");
-    break;
+      printf("There is no relationship between them.\n");
+      break;
     case ERROR_WRONG_DRAW_USAGE:
-    printf("[ERR] Wrong usage - draw <name> [m/f] <file-name>.\n");
-    break;
+      printf("[ERR] Wrong usage - draw <name> [m/f] <file-name>.\n");
+      break;
     case ERROR_PERSON_DOES_NOT_EXIST:
-    printf("[ERR] This person does not exist.\n");
-    break;
+      printf("[ERR] This person does not exist.\n");
+      break;
   }
 }
 
@@ -2868,16 +2868,16 @@ void showSuccessMessage(short msg_code)
   switch(msg_code)
   {
     case MSG_SUCCESS_PROGRAM_CLOSED_WITH_QUIT:
-    printf("Bye.\n");
-    break;
+      printf("Bye.\n");
+      break;
     case MSG_SUCCESS_DOT_FILE_PARSING:
-    printf("File parsing successful...\n");
-    break;
+      printf("File parsing successful...\n");
+      break;
     case MSG_SUCCESS_CREATING_DOT_FILE:
-    printf("Creating DOT-file was successful.\n");
-    break;
+      printf("Creating DOT-file was successful.\n");
+      break;
     case MSG_RELATION_PEOPLE_ARE_RELATED:
-    printf("The two people are related.\n");
-    break;
+      printf("The two people are related.\n");
+      break;
   }
 }

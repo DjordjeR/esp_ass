@@ -1,0 +1,13 @@
+digraph FamilyTree
+{
+  "?1 [m]" -> "Deda [m]";
+  "Bjanka [f]" -> "Rada [f]";
+  "Bjanka [f]" -> "Krstan [m]";
+  "Branka [f]" -> "Grozda [f]";
+  "Deda [m]";
+  "Grozda [f]" -> "Pero [m]";
+  "Krstan [m]" -> "Nedeljko [m]";
+  "Nedeljko [m]";
+  "Pero [m]" -> "?1 [m]";
+  "Rada [f]" -> "Grozda [f]";
+}
