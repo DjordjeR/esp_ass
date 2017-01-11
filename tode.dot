@@ -1,0 +1,9 @@
+digraph FamilyTree
+{
+  "Dejan [m]" -> "Dragana [f]";
+  "Dejan [m]" -> "Zeljo [m]";
+  "Dragana [f]";
+  "Tode [m]" -> "Dragana [f]";
+  "Tode [m]" -> "Zeljo [m]";
+  "Zeljo [m]";
+}
