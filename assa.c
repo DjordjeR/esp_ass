@@ -8,7 +8,7 @@
 // data in a .dot file format for further use. Dot file is properly formatted,
 // so it can be used to create an image of family a tree.  
 // 
-// Group: 3 study assistant Lorenz Kofler
+// Group: 15029 study assistant Lorenz Kofler
 //
 // Authors: Djordje Rajic 1431564
 // Stefan Rajinovic 1431905
@@ -495,7 +495,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
     }
   }
   *(name + (null_counter)) = '\0';
-  counter+=2; // We are skipping [
+  counter += 2; // We are skipping [
   if(*(line_to_parse + counter) != ']')
   {
     return FALSE;
