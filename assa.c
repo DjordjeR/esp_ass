@@ -68,6 +68,7 @@ typedef short BOOL;
 //Msc
 #define INIT_PERSONS_ARRAY_SIZE 100
 #define INCREMENT_COUNT_OF_UNKNOWN_PERSONS 1
+#define REALLOC_THRESHOLD INIT_PERSONS_ARRAY_SIZE - 5
 // Structure for storing every family member
 typedef struct _Person_
 {
@@ -240,7 +241,7 @@ int main(int argc, char **argv)
 {
   if(argc == 1)
   {
-    Person *persons_array = malloc(INIT_PERSONS_ARRAY_SIZE*sizeof(Person));
+    Person *persons_array = malloc(INIT_PERSONS_ARRAY_SIZE * sizeof(Person));
     if(persons_array == NULL)
     {
       showError(ERROR_OUT_OF_MEMORY);
@@ -286,7 +287,7 @@ Person *parseDotFile(char *file_content)
 {
   int number_of_lines = INIT_PERSONS_ARRAY_SIZE;
   int counter = 0;
-  while(*(file_content + counter) != '\0') // Counting number of lines
+  while(*(file_content + counter) != '\0') // Counting lines in document
   {
     if(*(file_content + counter) == '\n')
     {
@@ -322,6 +323,7 @@ Person *parseDotFile(char *file_content)
     showError(ERROR_FILE_COULD_NOT_BE_READ);
     exit(ERROR_FILE_COULD_NOT_BE_READ);
   }
+  // Preparing varibles in order to load persons into an array
   char name[MAX_NAME_LENGTH];
   char parrent_name[MAX_NAME_LENGTH];
   BOOL gender;
@@ -335,11 +337,13 @@ Person *parseDotFile(char *file_content)
   if(array_of_persons == NULL) 
   {
     free(file_content);
-  	showError(ERROR_OUT_OF_MEMORY);
-  	exit(ERROR_OUT_OF_MEMORY);
+    showError(ERROR_OUT_OF_MEMORY);
+    exit(ERROR_OUT_OF_MEMORY);
   }
   array_of_persons[(lines_separated_counter +
    INIT_PERSONS_ARRAY_SIZE) - 1].gender_ = 3;
+  // This next part parses the document, and inputs persons that have not been
+  // inputed allready
   for(counter = 2; counter < (lines_separated_counter - 1); counter++ )
   {
     if(parseSingleFileLine(lines_separated[counter], name, &gender, 
@@ -874,7 +878,7 @@ void showRelationship(Person *persons_array, char const *first_person_name, BOOL
   }
   else
   {
-    switch (checkRelation(first_person, second_person))
+    switch(checkRelation(first_person, second_person))
     {
       case RELATION_SISTER:
         showSuccessMessage(MSG_RELATION_PEOPLE_ARE_RELATED);
@@ -1197,12 +1201,12 @@ BOOL isUncle(Person *first_person, Person *second_person)
     if(second_person->mother_ != NULL || second_person->father_ != NULL)
     {
       if(second_person->father_ != NULL && isBrother(first_person, 
-      	second_person->father_) == TRUE)
+        second_person->father_) == TRUE)
       {
         return RELATION_UNCLE_FIRST_PERSON;
       }
       else if(second_person->mother_ != NULL && isBrother(first_person, 
-      	second_person->mother_) == TRUE)
+        second_person->mother_) == TRUE)
       {
         return RELATION_UNCLE_FIRST_PERSON;
       }
@@ -1213,12 +1217,12 @@ BOOL isUncle(Person *first_person, Person *second_person)
     if(first_person->mother_ != NULL || first_person->father_ != NULL)
     {
       if(first_person->father_ != NULL && isBrother(second_person, 
-      	first_person->father_) == TRUE)
+        first_person->father_) == TRUE)
       {
         return RELATION_UNCLE_SECOND_PERSON;
       }
       else if (first_person->mother_ != NULL && isBrother(second_person, 
-      	first_person->mother_) == TRUE)
+        first_person->mother_) == TRUE)
       {
         return RELATION_UNCLE_SECOND_PERSON;
       }
@@ -1247,12 +1251,12 @@ BOOL isAunt(Person *first_person, Person *second_person)
     if(second_person->mother_ != NULL || second_person->father_ != NULL)
     {
       if(second_person->father_ != NULL && isSister(first_person, 
-      	second_person->father_) == TRUE)
+        second_person->father_) == TRUE)
       {
         return RELATION_AUNT_FIRST_PERSON;
       }
       else if(second_person->mother_ != NULL && isSister(first_person, 
-      	second_person->mother_) == TRUE)
+        second_person->mother_) == TRUE)
       {
         return RELATION_AUNT_FIRST_PERSON;
       }
@@ -1263,12 +1267,12 @@ BOOL isAunt(Person *first_person, Person *second_person)
     if(first_person->mother_ != NULL || first_person->father_ != NULL)
     {
       if(first_person->father_ != NULL && isSister(second_person, 
-      	first_person->father_) == TRUE)
+        first_person->father_) == TRUE)
       {
         return RELATION_AUNT_SECOND_PERSON;
       }
       else if (first_person->mother_ != NULL && isSister(second_person, 
-      	first_person->mother_) == TRUE)
+        first_person->mother_) == TRUE)
       {
         return RELATION_AUNT_SECOND_PERSON;
       }
@@ -1396,10 +1400,10 @@ const *second_person_name, BOOL second_person_gender, char const *relationship,
 Person **array_of_persons)
 {
   if(findPerson(*array_of_persons, second_person_name, second_person_gender) 
-  	!= NULL)
+    != NULL)
   {
     Person *child = findPerson(*array_of_persons, second_person_name, 
-    	second_person_gender);
+      second_person_gender);
 
     if(child->mother_ == NULL || nameIsUnknown(child->mother_->name_))
     {
@@ -1413,12 +1417,12 @@ Person **array_of_persons)
          != NULL)
         {
           child->mother_ = findPerson(*array_of_persons, first_person_name, 
-          	first_person_gender);
+            first_person_gender);
         }
         else
         {
           int number_of_persons = numberOfPersons(*array_of_persons);
-          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          if(number_of_persons > REALLOC_THRESHOLD)
           {
             Person *buffer = realloc(*array_of_persons, sizeof(Person)*
               (number_of_persons * 5));
@@ -1431,9 +1435,9 @@ Person **array_of_persons)
             *array_of_persons = buffer;
           }  
           child = findPerson(*array_of_persons, second_person_name, 
-          	second_person_gender);
+            second_person_gender);
           strcpy((*array_of_persons + number_of_persons)->name_, 
-          	first_person_name);
+            first_person_name);
           (*array_of_persons + number_of_persons)->gender_ = 
           first_person_gender;
           (*array_of_persons + number_of_persons)->mother_ = NULL;
@@ -1445,6 +1449,24 @@ Person **array_of_persons)
     }
     else
     {
+      int number_of_persons = numberOfPersons(*array_of_persons);
+      if (number_of_persons > REALLOC_THRESHOLD)
+      {
+        Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+          (number_of_persons * 5));
+        if (buffer == NULL)
+        {
+          free(*array_of_persons);
+          showError(ERROR_OUT_OF_MEMORY);
+          exit(ERROR_OUT_OF_MEMORY);
+        }
+      }
+
+      strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+      (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+      (*array_of_persons + number_of_persons)->mother_ = NULL;
+      (*array_of_persons + number_of_persons)->father_ = NULL;
+      (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
       showError(ERROR_RELATION_NOT_POSSIBLE);
     }
   }
@@ -1466,9 +1488,9 @@ Person **array_of_persons)
     else
     {
       if(findPerson(*array_of_persons, first_person_name, first_person_gender) 
-      	!= NULL)
+        != NULL)
       {
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1481,7 +1503,7 @@ Person **array_of_persons)
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	second_person_name);
+          second_person_name);
         (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
         (*array_of_persons + number_of_persons)->father_ = NULL;
         (*array_of_persons + number_of_persons)->mother_ = 
@@ -1491,7 +1513,7 @@ Person **array_of_persons)
       }
       else
       {
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1504,7 +1526,7 @@ Person **array_of_persons)
           *array_of_persons = buffer;
         }  
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	first_person_name);
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = 1;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = NULL;
@@ -1539,10 +1561,10 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
  const *second_person_name, BOOL second_person_gender, char const *relationship,
  Person **array_of_persons) {
   if(findPerson(*array_of_persons, second_person_name, second_person_gender) != 
-  	NULL)
+    NULL)
   {
     Person *child = findPerson(*array_of_persons, second_person_name, 
-    	second_person_gender);
+      second_person_gender);
 
     if(child->father_ == NULL || nameIsUnknown(child->father_->name_))
     {
@@ -1553,15 +1575,15 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
       else
       {
         if(findPerson(*array_of_persons, first_person_name, first_person_gender) 
-        	!= NULL)
+          != NULL)
         {
           child->father_ = findPerson(*array_of_persons, first_person_name, 
-          	first_person_gender);
+            first_person_gender);
         }
         else
         {
           int number_of_persons = numberOfPersons(*array_of_persons);
-          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          if(number_of_persons > REALLOC_THRESHOLD)
           {
             Person *buffer = realloc(*array_of_persons, sizeof(Person)*
               (number_of_persons * 5));
@@ -1574,9 +1596,9 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
             *array_of_persons = buffer;
           }  
           child = findPerson(*array_of_persons, second_person_name, 
-          	second_person_gender);
+            second_person_gender);
           strcpy((*array_of_persons + number_of_persons)->name_, 
-          	first_person_name);
+            first_person_name);
           (*array_of_persons + number_of_persons)->gender_ = 
           first_person_gender;
           (*array_of_persons + number_of_persons)->mother_ = NULL;
@@ -1609,9 +1631,9 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
     else
     {
       if(findPerson(*array_of_persons, first_person_name, first_person_gender) 
-      	!= NULL)
+        != NULL)
       {
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1624,7 +1646,7 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	second_person_name);
+          second_person_name);
         (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = 
@@ -1634,7 +1656,7 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
       }
       else
       {
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1647,12 +1669,12 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
           *array_of_persons = buffer;
         }  
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	first_person_name);
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = 0;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = NULL;
         strcpy((*array_of_persons + (number_of_persons + 1))->name_, 
-        	second_person_name);
+          second_person_name);
         (*array_of_persons + (number_of_persons + 1))->gender_ =
          second_person_gender;
         (*array_of_persons + (number_of_persons + 1))->father_ = 
@@ -1683,7 +1705,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
  Person **array_of_persons)
 {
     if(findPerson(*array_of_persons, second_person_name, second_person_gender) 
-    	!= NULL)
+      != NULL)
     {
       Person *child = findPerson(*array_of_persons, second_person_name,
        second_person_gender);
@@ -1692,7 +1714,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
         if(child->mother_->mother_ == NULL)
         {
           int number_of_persons = numberOfPersons(*array_of_persons);
-          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          if(number_of_persons > REALLOC_THRESHOLD)
           {
             Person *buffer = realloc(*array_of_persons, sizeof(Person)*
               (number_of_persons * 5));
@@ -1714,7 +1736,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
           child->mother_->mother_ = (*array_of_persons + number_of_persons);
         }
         else if(child->mother_->mother_ != NULL && 
-        	nameIsUnknown(child->mother_->mother_->name_))
+          nameIsUnknown(child->mother_->mother_->name_))
         {
           strcpy(child->mother_->mother_->name_, first_person_name);
         }
@@ -1729,7 +1751,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
         child->mother_ = addUnknownPerson(*array_of_persons,
          first_person_gender);
         number_of_persons++;
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1742,7 +1764,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	first_person_name);
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
         (*array_of_persons + number_of_persons)->father_ = NULL;
         (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
@@ -1754,7 +1776,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
       int number_of_persons = numberOfPersons(*array_of_persons);
       Person *mother = addUnknownPerson(*array_of_persons, 1);
       number_of_persons++;
-      if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+      if(number_of_persons > REALLOC_THRESHOLD)
       {
         Person *buffer = realloc(*array_of_persons, sizeof(Person)*
           (number_of_persons * 5));
@@ -1767,7 +1789,7 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
         *array_of_persons = buffer;
       }      
       strcpy((*array_of_persons + number_of_persons)->name_, 
-      	second_person_name);
+        second_person_name);
       (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
       (*array_of_persons + number_of_persons)->father_ = NULL;
       strcpy((*array_of_persons + (number_of_persons + 1))->name_,
@@ -1810,7 +1832,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
         if(child->father_->mother_ == NULL)
         {
           int number_of_persons = numberOfPersons(*array_of_persons);
-          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          if(number_of_persons > REALLOC_THRESHOLD)
           {
             Person *buffer = realloc(*array_of_persons, sizeof(Person)*
               (number_of_persons * 5));
@@ -1846,7 +1868,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
       {
         child->father_ = addUnknownPerson(*array_of_persons, 0);
         int number_of_persons = numberOfPersons(*array_of_persons);
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1859,7 +1881,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	first_person_name);
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
@@ -1870,7 +1892,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
     {
       Person *father = addUnknownPerson(*array_of_persons, 0);
       int number_of_persons = numberOfPersons(*array_of_persons);
-      if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+      if(number_of_persons > REALLOC_THRESHOLD)
       {
         Person *buffer = realloc(*array_of_persons, sizeof(Person)*
           (number_of_persons * 5));
@@ -1883,7 +1905,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
         *array_of_persons = buffer;
       }      
       strcpy((*array_of_persons + number_of_persons)->name_, 
-      	second_person_name);
+        second_person_name);
       (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
       (*array_of_persons + number_of_persons)->mother_ = NULL;
       strcpy((*array_of_persons + (number_of_persons + 1))->name_,
@@ -1894,8 +1916,7 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
       (*array_of_persons + (number_of_persons + 1))->mother_ = NULL;
       (*array_of_persons + (number_of_persons + 2))->gender_ = 3;
       (*array_of_persons + number_of_persons)->father_ = father;
-      (*array_of_persons + (number_of_persons + 1))->father_->mother_ = 
-      (*array_of_persons + (number_of_persons + 1));
+      father->mother_ = (*array_of_persons + (number_of_persons + 1));
     } 
 }
 
@@ -1921,13 +1942,13 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
      != NULL)
     {
       Person *child = findPerson(*array_of_persons, second_person_name, 
-      	second_person_gender);
+        second_person_gender);
       if(child->mother_ != NULL)
       {
         if(child->mother_->father_ == NULL)
         {
           int number_of_persons = numberOfPersons(*array_of_persons);
-          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          if(number_of_persons > REALLOC_THRESHOLD)
           {
             Person *buffer = realloc(*array_of_persons, sizeof(Person)*
               (number_of_persons * 5));
@@ -1949,7 +1970,7 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
           child->mother_->father_ = (*array_of_persons + number_of_persons);
         }
         else if(child->mother_->father_ != NULL && 
-        	nameIsUnknown(child->mother_->father_->name_))
+          nameIsUnknown(child->mother_->father_->name_))
         {
           strcpy(child->mother_->father_->name_, first_person_name);
         }
@@ -1962,9 +1983,9 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
       {
         int number_of_persons = numberOfPersons(*array_of_persons);
         child->mother_ = addUnknownPerson(*array_of_persons, 
-        	first_person_gender);
+          first_person_gender);
         number_of_persons++;
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -1989,7 +2010,7 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
       int number_of_persons = numberOfPersons(*array_of_persons);
       Person *mother = addUnknownPerson(*array_of_persons, 1);
       number_of_persons++;
-      if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+      if(number_of_persons > REALLOC_THRESHOLD)
       {
         Person *buffer = realloc(*array_of_persons, sizeof(Person)*
           (number_of_persons * 5));
@@ -2002,7 +2023,7 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
         *array_of_persons = buffer;
       }      
       strcpy((*array_of_persons + number_of_persons)->name_, 
-      	second_person_name);
+        second_person_name);
       (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
       (*array_of_persons + number_of_persons)->father_ = NULL;
       strcpy((*array_of_persons + (number_of_persons + 1))->name_,
@@ -2036,16 +2057,16 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
  Person **array_of_persons)
 {
     if(findPerson(*array_of_persons, second_person_name, second_person_gender) 
-    	!= NULL)
+      != NULL)
     {
       Person *child = findPerson(*array_of_persons, second_person_name, 
-      	second_person_gender);
+        second_person_gender);
       if(child->father_ != NULL)
       {
         if(child->father_->father_ == NULL)
         {
           int number_of_persons = numberOfPersons(*array_of_persons);
-          if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+          if(number_of_persons > REALLOC_THRESHOLD)
           {
             Person *buffer = realloc(*array_of_persons, sizeof(Person)*
               (number_of_persons * 5));
@@ -2067,7 +2088,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
           child->father_->father_ = (*array_of_persons + number_of_persons);
         }
         else if(child->father_->father_ != NULL && 
-        	nameIsUnknown(child->father_->father_->name_))
+          nameIsUnknown(child->father_->father_->name_))
         {
           strcpy(child->father_->father_->name_, first_person_name);
         }
@@ -2080,9 +2101,9 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
       {
         int number_of_persons = numberOfPersons(*array_of_persons);
         child->father_ = addUnknownPerson(*array_of_persons, 
-        	first_person_gender);
+          first_person_gender);
         number_of_persons++;
-        if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+        if(number_of_persons > REALLOC_THRESHOLD)
         {
           Person *buffer = realloc(*array_of_persons, sizeof(Person)*
             (number_of_persons * 5));
@@ -2095,7 +2116,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
           *array_of_persons = buffer;
         } 
         strcpy((*array_of_persons + number_of_persons)->name_, 
-        	first_person_name);
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
@@ -2107,7 +2128,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
       int number_of_persons = numberOfPersons(*array_of_persons);
       Person *father = addUnknownPerson(*array_of_persons, 0);
       number_of_persons++;
-      if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+      if(number_of_persons > REALLOC_THRESHOLD)
       {
         Person *buffer = realloc(*array_of_persons, sizeof(Person)*
           (number_of_persons * 5));
@@ -2120,7 +2141,7 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
         *array_of_persons = buffer;
       }      
       strcpy((*array_of_persons + number_of_persons)->name_, 
-      	second_person_name);
+        second_person_name);
       (*array_of_persons + number_of_persons)->gender_ = second_person_gender;
       (*array_of_persons + number_of_persons)->mother_ = NULL;
       strcpy((*array_of_persons + (number_of_persons + 1))->name_,
@@ -2154,7 +2175,7 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
   char unknown[MAX_NAME_LENGTH] = "?";
   snprintf(buffer, 10, "%lu", unknown_person_count);
   strcat(unknown, buffer);
-  if(number_of_persons > (INIT_PERSONS_ARRAY_SIZE - 5))
+  if(number_of_persons > REALLOC_THRESHOLD)
   {
     Person *buffer = realloc(array_of_persons, sizeof(Person)*
       (number_of_persons * 5));
@@ -2187,16 +2208,18 @@ Person *addUnknownPerson(Person *array_of_persons, BOOL gender)
 //
 long unsigned unknownPersonIndex(long unsigned option)
 {
+  // Keping track of number of unknown persons
   static unsigned long unknown_person_count = 0;
+  // Incrementing the number of unkown persons
   if(option == INCREMENT_COUNT_OF_UNKNOWN_PERSONS)
   {
     unknown_person_count++;
-    return unknown_person_count;
   }
   else
   {
+    // Used in case we want to set number of unknown perons. Example : when 
+    // loading from file
     unknown_person_count = option;
-    return unknown_person_count;
   }
   return unknown_person_count;
 }
@@ -2210,7 +2233,7 @@ long unsigned unknownPersonIndex(long unsigned option)
 //
 long unsigned extractUnknownNameIndex(char const *name)
 {
-  long unsigned unknown_person_index = atoi(name + 1);
+  unsigned long unknown_person_index = atoi(name + 1);
   return unknown_person_index;
 }
 //------------------------------------------------------------------------------
@@ -2253,8 +2276,12 @@ BOOL parseDrawInput(Person *array_of_persons, char *input_command)
   counter+=2;
   char *file_name = input_command + (counter + 1);
   while(*(input_command + counter) != '\n' && *(input_command + counter) 
-  	!= '\0') 
+    != '\0') 
   {
+    if(*(input_command + (counter + 1)) == ' ')
+    {
+      return FALSE;
+    }
     counter++;
   }
   *(input_command + counter) = '\0';
@@ -2294,7 +2321,7 @@ void drawPersonTreeToFile(Person *array_of_persons,
     else
     {
       Person *person_tree_array = malloc(sizeof(Person)*
-      	INIT_PERSONS_ARRAY_SIZE*2);
+        INIT_PERSONS_ARRAY_SIZE*2);
       Person **person_tree_array_ptr = &person_tree_array;
       copyPerson(person_tree_array, person);
       findPersonTree(person_tree_array_ptr, person);
@@ -2366,7 +2393,7 @@ char *parseDrawAllInput(char *input_command, Person *persons)
   }
   while(*(file_name + counter) != '\n' && *(file_name + counter) != '\0')
   {
-    if(counter > INPUT_COMMAND_LENGTH)
+    if((counter > INPUT_COMMAND_LENGTH) || *(file_name + counter) == ' ')
     {
       return NULL;
     }
