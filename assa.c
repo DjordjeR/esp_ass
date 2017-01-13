@@ -242,7 +242,7 @@ int main(int argc, char **argv)
     if(persons_array == NULL)
     {
       showError(ERROR_OUT_OF_MEMORY);
-      exit(ERROR_OUT_OF_MEMORY);
+      return ERROR_OUT_OF_MEMORY;
     }
     (persons_array)->gender_ = 3;
     Person **persons_array_ptr = &persons_array;
@@ -256,8 +256,12 @@ int main(int argc, char **argv)
       showError(ERROR_FILE_COULD_NOT_BE_READ);
       return ERROR_FILE_COULD_NOT_BE_READ;
     }
-    char *file_contetnt = storeFileIntoMemory(file_name);
-    Person *persons_array = parseDotFile(file_contetnt);
+    char *file_content = storeFileIntoMemory(file_name);
+    if(file_content == NULL)
+    {
+      return ERROR_FILE_COULD_NOT_BE_READ;
+    }
+    Person *persons_array = parseDotFile(file_content);
     Person **persons_array_ptr = &persons_array;
     waitForInput(persons_array_ptr);
   }
@@ -1461,7 +1465,8 @@ Person **array_of_persons)
             exit(ERROR_OUT_OF_MEMORY);
           }
         }
-        strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+        strcpy((*array_of_persons + number_of_persons)->name_, 
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = NULL;
@@ -1625,7 +1630,8 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
             exit(ERROR_OUT_OF_MEMORY);
           }
         }
-        strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+        strcpy((*array_of_persons + number_of_persons)->name_, 
+          first_person_name);
         (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
         (*array_of_persons + number_of_persons)->mother_ = NULL;
         (*array_of_persons + number_of_persons)->father_ = NULL;
@@ -2360,6 +2366,8 @@ long unsigned extractUnknownNameIndex(char const *name)
 //
 BOOL parseDrawInput(Person *array_of_persons, char *input_command)
 {
+  // Goting trough input string, checking if everything we require is present
+  // such as [] spaces and newline
   int counter = 5;
   while(*(input_command + counter) != '[' && *(input_command + counter) != '\0')
   {
@@ -2461,6 +2469,7 @@ void drawPersonTreeToFile(Person *array_of_persons,
 //
 BOOL findPersonTree(Person **array_of_person_persons, Person *person)
 {
+  // Recursivly searching for persons tree, ther person has already been added
   static int counter = 1;
   if(person == NULL)
   {
@@ -2561,7 +2570,7 @@ void waitForInput(Person **persons_array)
 BOOL fileExists(const char *file_name) 
 {
   FILE *file_stream;
-  if((file_stream = fopen(file_name, "r")))
+  if((file_stream = fopen(file_name, "r")) != NULL) 
   {
       fclose(file_stream);
       return TRUE;
@@ -2581,7 +2590,7 @@ BOOL fileExists(const char *file_name)
 BOOL fileIsWritable(const char *file_name)
 {
   FILE *file_stream;
-  if((file_stream = fopen(file_name, "w")))
+  if((file_stream = fopen(file_name, "w")) != NULL)
   {
       fclose(file_stream);
       return TRUE;
@@ -2610,6 +2619,10 @@ BOOL writePersonToFile(char const *file_name, Person *persons_to_write)
     FILE *file_stream;
     int counter = 0;
     file_stream = fopen(file_name, "w");
+    if(file_stream == NULL)
+    {
+      return FALSE;
+    }
     fprintf(file_stream, "digraph FamilyTree\n");
     fprintf(file_stream, "{\n");
     Person *persons_sorted = sortPersons(persons_to_write);
@@ -2649,6 +2662,10 @@ BOOL writePersonToFile(char const *file_name, Person *persons_to_write)
     FILE *file_stream;
     int counter = 0;
     file_stream = fopen(file_name, "wb");
+    if(file_stream == NULL)
+    {
+      return FALSE;
+    }
     fprintf(file_stream, "digraph FamilyTree\n");
     fprintf(file_stream, "{\n");
     Person *persons_sorted = sortPersons(persons_to_write);
@@ -2696,10 +2713,14 @@ BOOL writePersonToFile(char const *file_name, Person *persons_to_write)
 //
 char *storeFileIntoMemory(const char *file_name)
 {
+  int size;
   char *file_content = NULL;
   FILE *file_stream = fopen(file_name, "r");
-  int size;
-  if(file_stream != NULL)
+  if(file_stream == NULL)
+  {
+    return NULL;
+  }
+  else
   {
       fseek (file_stream, 0, SEEK_END);
       size = ftell(file_stream);
@@ -2942,8 +2963,8 @@ void showError(short error_code)
       printf("[ERR] Relation not possible.\n");
       break;
     case ERROR_WRONG_RELATIONSHIP_USAGE:
-      printf("[ERR] Wrong usage - relationship <namePerson1> [m/f] <namePerson2>"
-      " [m/f].\n");
+      printf("[ERR] Wrong usage - relationship <namePerson1> [m/f] "
+        "<namePerson2> [m/f].\n");
     break;
     case ERROR_RELATIONSHIP_PERSON_DOES_NOT_EXISTS:
       printf("[ERR] At least one person does not exist yet.\n");
