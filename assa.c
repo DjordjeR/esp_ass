@@ -178,9 +178,6 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
 Person *addUnknownPerson(Person *array_of_persons, BOOL gender);
 
 // forward declaration
-BOOL namesArePartiallyEqual(char const *first_name, char const *second_name);
-
-// forward declaration
 int checkRelation(Person *first_person, Person *second_person);
 
 // forward declaration
@@ -1613,6 +1610,27 @@ void addFather(char const *first_person_name, BOOL first_person_gender, char
     }
     else
     {
+      if(findPerson(*array_of_persons, first_person_name, first_person_gender)
+        == NULL)
+      {
+        int number_of_persons = numberOfPersons(*array_of_persons);
+        if (number_of_persons > REALLOC_THRESHOLD)
+        {
+          Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+            (number_of_persons * 5));
+          if (buffer == NULL)
+          {
+            free(*array_of_persons);
+            showError(ERROR_OUT_OF_MEMORY);
+            exit(ERROR_OUT_OF_MEMORY);
+          }
+        }
+        strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+        (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+        (*array_of_persons + number_of_persons)->mother_ = NULL;
+        (*array_of_persons + number_of_persons)->father_ = NULL;
+        (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+      }
       showError(ERROR_RELATION_NOT_POSSIBLE);
     }
   }
@@ -1745,6 +1763,29 @@ void addMgm(char const *first_person_name, BOOL first_person_gender, char const
         }
         else
         {
+          if(findPerson(*array_of_persons, first_person_name, 
+            first_person_gender) == NULL)
+          {
+            int number_of_persons = numberOfPersons(*array_of_persons);
+            if (number_of_persons > REALLOC_THRESHOLD)
+            {
+              Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+                (number_of_persons * 5));
+              if (buffer == NULL)
+              {
+                free(*array_of_persons);
+                showError(ERROR_OUT_OF_MEMORY);
+                exit(ERROR_OUT_OF_MEMORY);
+              }
+            }
+            strcpy((*array_of_persons + number_of_persons)->name_, 
+              first_person_name);
+            (*array_of_persons + number_of_persons)->gender_ = 
+            first_person_gender;
+            (*array_of_persons + number_of_persons)->mother_ = NULL;
+            (*array_of_persons + number_of_persons)->father_ = NULL;
+            (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+          }
           showError(ERROR_RELATION_NOT_POSSIBLE);
         }
       }
@@ -1864,6 +1905,29 @@ void addFgm(char const *first_person_name, BOOL first_person_gender, char const
         }
         else
         {
+          if(findPerson(*array_of_persons, first_person_name, 
+            first_person_gender) == NULL)
+          {
+            int number_of_persons = numberOfPersons(*array_of_persons);
+            if (number_of_persons > REALLOC_THRESHOLD)
+            {
+              Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+                (number_of_persons * 5));
+              if (buffer == NULL)
+              {
+                free(*array_of_persons);
+                showError(ERROR_OUT_OF_MEMORY);
+                exit(ERROR_OUT_OF_MEMORY);
+              }
+            }
+            strcpy((*array_of_persons + number_of_persons)->name_, 
+              first_person_name);
+            (*array_of_persons + number_of_persons)->gender_ = 
+            first_person_gender;
+            (*array_of_persons + number_of_persons)->mother_ = NULL;
+            (*array_of_persons + number_of_persons)->father_ = NULL;
+            (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+          }
           showError(ERROR_RELATION_NOT_POSSIBLE);
         }
       }
@@ -1979,6 +2043,29 @@ void addMgf(char const *first_person_name, BOOL first_person_gender, char const
         }
         else
         {
+          if(findPerson(*array_of_persons, first_person_name, 
+            first_person_gender) == NULL)
+          {
+            int number_of_persons = numberOfPersons(*array_of_persons);
+            if (number_of_persons > REALLOC_THRESHOLD)
+            {
+              Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+                (number_of_persons * 5));
+              if (buffer == NULL)
+              {
+                free(*array_of_persons);
+                showError(ERROR_OUT_OF_MEMORY);
+                exit(ERROR_OUT_OF_MEMORY);
+              }
+            }
+            strcpy((*array_of_persons + number_of_persons)->name_, 
+              first_person_name);
+            (*array_of_persons + number_of_persons)->gender_ = 
+            first_person_gender;
+            (*array_of_persons + number_of_persons)->mother_ = NULL;
+            (*array_of_persons + number_of_persons)->father_ = NULL;
+            (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+          }
           showError(ERROR_RELATION_NOT_POSSIBLE);
         }
       }
@@ -2097,6 +2184,29 @@ void addFgf(char const *first_person_name, BOOL first_person_gender, char const
         }
         else
         {
+          if(findPerson(*array_of_persons, first_person_name, 
+            first_person_gender) == NULL)
+          {
+            int number_of_persons = numberOfPersons(*array_of_persons);
+            if (number_of_persons > REALLOC_THRESHOLD)
+            {
+              Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+                (number_of_persons * 5));
+              if (buffer == NULL)
+              {
+                free(*array_of_persons);
+                showError(ERROR_OUT_OF_MEMORY);
+                exit(ERROR_OUT_OF_MEMORY);
+              }
+            }
+            strcpy((*array_of_persons + number_of_persons)->name_, 
+              first_person_name);
+            (*array_of_persons + number_of_persons)->gender_ = 
+            first_person_gender;
+            (*array_of_persons + number_of_persons)->mother_ = NULL;
+            (*array_of_persons + number_of_persons)->father_ = NULL;
+            (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
+          }
           showError(ERROR_RELATION_NOT_POSSIBLE);
         }
       }
@@ -2323,10 +2433,12 @@ void drawPersonTreeToFile(Person *array_of_persons,
     }
     else
     {
+      int number_of_persons = numberOfPersons(array_of_persons);
       Person *person_tree_array = malloc(sizeof(Person)*
-        INIT_PERSONS_ARRAY_SIZE*2);
+        INIT_PERSONS_ARRAY_SIZE * number_of_persons);
       Person **person_tree_array_ptr = &person_tree_array;
       copyPerson(person_tree_array, person);
+      (person_tree_array + 1 )->gender_ = 3;
       findPersonTree(person_tree_array_ptr, person);
       writePersonToFile(file_name_with_dot, *person_tree_array_ptr);
       free(person_tree_array);
@@ -2353,6 +2465,7 @@ BOOL findPersonTree(Person **array_of_person_persons, Person *person)
   if(person == NULL)
   {
     counter = 1;
+    (*array_of_person_persons + counter)->gender_ = 3;
     return FALSE;
   }
   if(person->mother_ != NULL)
@@ -2652,10 +2765,11 @@ Person *sortPersons(Person *persons)
   int counter;
   Person *person_placeholder = malloc(sizeof(Person));
   int switch_counter;
-  Person *persons_sorted = malloc(sizeof(Person)*(number_of_persons + 1));
+  Person *persons_sorted = malloc(sizeof(Person) * INIT_PERSONS_ARRAY_SIZE * 
+    (number_of_persons + 1));
   for (counter = 0; counter < number_of_persons; counter++)
   {
-    copyPerson(persons_sorted + counter,persons + counter);
+    copyPerson(persons_sorted + counter, persons + counter);
   }
   persons_sorted[number_of_persons].gender_ = 3;
   for(counter = 0; counter < (number_of_persons - 1); counter++)
@@ -2680,51 +2794,12 @@ Person *sortPersons(Person *persons)
         copyPerson(persons_sorted + counter, persons_sorted + switch_counter);
         copyPerson(persons_sorted + switch_counter, person_placeholder);
       }
-      else if(namesArePartiallyEqual((persons_sorted + counter)->name_,
-        (persons_sorted + switch_counter)->name_) && (strlen((persons_sorted +
-         counter)->name_) > strlen((persons_sorted + switch_counter)->name_)))
-      {
-        copyPerson(person_placeholder, persons_sorted + counter);
-        copyPerson(persons_sorted + counter, persons_sorted + switch_counter);
-        copyPerson(persons_sorted + switch_counter, person_placeholder);
-      }
     }
   }
 
   free(person_placeholder);
   return persons_sorted;
 }
-
-//------------------------------------------------------------------------------
-///
-/// Check if two persons have the same name until " "(whitespaces)
-/// function needed for sorting
-/// 
-/// @param first_name
-/// @param second_name
-/// 
-/// @return TRUE/FALSE
-//
-BOOL namesArePartiallyEqual(char const *first_name, char const *second_name)
-{
-  char first_name_placeholder[MAX_NAME_LENGTH]; //This had to be done, due to
-  // strtok changing the original string
-  char second_name_placeholder[MAX_NAME_LENGTH];
-  char *first_name_token;
-  char *second_name_token;
-  strcpy(first_name_placeholder,first_name);
-  strcpy(second_name_placeholder,second_name);
-
-  first_name_token = strtok(first_name_placeholder," ");
-  second_name_token = strtok(second_name_placeholder," ");
-
-  if(strcmp(first_name_token, second_name_token) == 0)
-  {
-    return TRUE;
-  }
-  return FALSE;
-}
-
 //------------------------------------------------------------------------------
 ///
 /// List Persons

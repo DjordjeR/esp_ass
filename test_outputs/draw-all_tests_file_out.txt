@@ -6,17 +6,17 @@ Melania [f]
 Orion [m]
 Phineas [m]
 Pollux [m]
-Sirius Jr. [m]
 Sirius [m]
+Sirius Jr. [m]
 Ursula [f]
 Violetta [f]
 Walburga [f]
 File parsing successful...
-esp>[ERR] Wrong usage - draw-all <file-name>.
-esp>[ERR] Wrong usage - draw-all <file-name>.
-esp>[ERR] Wrong usage - draw-all <file-name>.
-esp>Creating DOT-file was successful.
-esp>Creating DOT-file was successful.
-esp>[ERR] Could not write file.
-esp>Creating DOT-file was successful.
-esp>
+esp> [ERR] Wrong usage - draw-all <file-name>.
+esp> [ERR] Wrong usage - draw-all <file-name>.
+esp> [ERR] Wrong usage - draw-all <file-name>.
+esp> Creating DOT-file was successful.
+esp> Creating DOT-file was successful.
+esp> [ERR] Could not write file.
+esp> Creating DOT-file was successful.
+esp> 

@@ -12,13 +12,75 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e87d35f3-9d83-48fb-8a38-274affeef167" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/drago.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/draginostablo.dot" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/amir test.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/assa.tar.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/assa_new.c.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bjanka" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/bjanka.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/djordje.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/draginostablo.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/drago.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/familijarajic.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/familijarajic.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/marija magdalena.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/marija.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/milosevic.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/milosevic.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/mirzatest.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/mirzatest.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/mojtestneki" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/neesto.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/nemanja.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/nemanja.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/nemanja2.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/nesto.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/nevise.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/nevise.dot.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/rosa.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/sofija.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/sofija.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/stefan" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/temp.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test dvjesta pari cipela malo stura.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test1.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test2" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test2.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test2.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test2324.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test32.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test322.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test4.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test5.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testdraw.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testdraw2.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testdraw3.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testmilion" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testmirjana.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tode.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tree.dot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/write-protected.dot.dot" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cmake-build-debug/esp_ass" afterPath="$PROJECT_DIR$/cmake-build-debug/esp_ass" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/assa.c" afterPath="$PROJECT_DIR$/assa.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/black_fam-tree.dot" afterPath="$PROJECT_DIR$/black_fam-tree.dot" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-file-1.dot" afterPath="$PROJECT_DIR$/test-file-1.dot" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-file-2.dot" afterPath="$PROJECT_DIR$/test-file-2.dot" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test.dot" afterPath="$PROJECT_DIR$/test.dot" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test2.dot" afterPath="$PROJECT_DIR$/test2.dot" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/add_tests_file_out.txt" afterPath="$PROJECT_DIR$/test_outputs/add_tests_file_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/add_tests_out.txt" afterPath="$PROJECT_DIR$/test_outputs/add_tests_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/add_tests_valgrind_file_out.txt" afterPath="$PROJECT_DIR$/test_outputs/add_tests_valgrind_file_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/add_tests_valgrind_out.txt" afterPath="$PROJECT_DIR$/test_outputs/add_tests_valgrind_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/draw-all_tests_file_out.txt" afterPath="$PROJECT_DIR$/test_outputs/draw-all_tests_file_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/draw-all_tests_out.txt" afterPath="$PROJECT_DIR$/test_outputs/draw-all_tests_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/draw-all_tests_valgrind_file_out.txt" afterPath="$PROJECT_DIR$/test_outputs/draw-all_tests_valgrind_file_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/draw-all_tests_valgrind_out.txt" afterPath="$PROJECT_DIR$/test_outputs/draw-all_tests_valgrind_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/list_tests_file_out.txt" afterPath="$PROJECT_DIR$/test_outputs/list_tests_file_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/list_tests_out.txt" afterPath="$PROJECT_DIR$/test_outputs/list_tests_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/list_tests_valgrind_file_out.txt" afterPath="$PROJECT_DIR$/test_outputs/list_tests_valgrind_file_out.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_outputs/list_tests_valgrind_out.txt" afterPath="$PROJECT_DIR$/test_outputs/list_tests_valgrind_out.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -39,9 +101,11 @@
       <file leaf-file-name="assa.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/assa.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="1933" column="71" lean-forward="true" selection-start-line="1933" selection-start-column="71" selection-end-line="1933" selection-end-column="71" />
-              <folding />
+            <state relative-caret-position="202">
+              <caret line="2692" column="7" lean-forward="true" selection-start-line="2692" selection-start-column="7" selection-end-line="2692" selection-end-column="7" />
+              <folding>
+                <element signature="e#751#769#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -52,6 +116,7 @@
     <findStrings>
       <find />
       <find>// inputed allready</find>
+      <find>copyPerson</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -98,16 +163,6 @@
     <panes>
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="esp_ass" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="esp_ass" />
@@ -299,7 +354,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="esp_ass" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="black_fam-tree.dot" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="esp_ass" TARGET_NAME="esp_ass" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="esp_ass" RUN_TARGET_NAME="esp_ass">
+    <configuration default="false" name="esp_ass" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="esp_ass" TARGET_NAME="esp_ass" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="esp_ass" RUN_TARGET_NAME="esp_ass">
       <envs />
       <method />
     </configuration>
@@ -321,11 +376,12 @@
       <workItem from="1481554730051" duration="15140000" />
       <workItem from="1484314243417" duration="61000" />
       <workItem from="1484314317331" duration="996000" />
+      <workItem from="1484319207565" duration="1357000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16200000" />
+    <option name="totallyTimeSpent" value="17557000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
@@ -334,7 +390,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18867925" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928064" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928064" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928064" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -368,7 +424,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#751#769#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -386,13 +444,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assa_new.c.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="434" column="1" lean-forward="true" selection-start-line="434" selection-start-column="1" selection-end-line="434" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/assa_new.c.c" />
     <entry file="file://$PROJECT_DIR$/cmake-build-debug/Makefile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -407,18 +459,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt" />
     <entry file="file://$PROJECT_DIR$/assa.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="1228" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="1715" selection-end-column="1" />
-          <folding />
+          <folding>
+            <element signature="e#751#769#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -426,7 +474,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18420">
           <caret line="1228" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="1715" selection-end-column="1" />
-          <folding />
+          <folding>
+            <element signature="e#751#769#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -444,13 +494,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assa_new.c.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="434" column="1" lean-forward="true" selection-start-line="434" selection-start-column="1" selection-end-line="434" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/assa_new.c.c" />
     <entry file="file://$PROJECT_DIR$/cmake-build-debug/Makefile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -465,18 +509,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt" />
     <entry file="file://$PROJECT_DIR$/assa.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="1933" column="71" lean-forward="true" selection-start-line="1933" selection-start-column="71" selection-end-line="1933" selection-end-column="71" />
-          <folding />
+        <state relative-caret-position="202">
+          <caret line="2692" column="7" lean-forward="true" selection-start-line="2692" selection-start-column="7" selection-end-line="2692" selection-end-column="7" />
+          <folding>
+            <element signature="e#751#769#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

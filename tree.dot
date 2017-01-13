@@ -1,6 +1,0 @@
-digraph FamilyTree
-{
-  "?1 [f]" -> "Rosa [f]";
-  "Angela [f]" -> "?1 [f]";
-  "Rosa [f]";
-}

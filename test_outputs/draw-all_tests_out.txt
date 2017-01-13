@@ -1,8 +1,8 @@
-esp>[ERR] Wrong usage - draw-all <file-name>.
-esp>[ERR] Wrong usage - draw-all <file-name>.
-esp>[ERR] Wrong usage - draw-all <file-name>.
-esp>[ERR] No entries available.
-esp>[ERR] No entries available.
-esp>[ERR] No entries available.
-esp>[ERR] No entries available.
-esp>
+esp> [ERR] Wrong usage - draw-all <file-name>.
+esp> [ERR] Wrong usage - draw-all <file-name>.
+esp> [ERR] Wrong usage - draw-all <file-name>.
+esp> [ERR] No entries available.
+esp> [ERR] No entries available.
+esp> [ERR] No entries available.
+esp> [ERR] No entries available.
+esp> 

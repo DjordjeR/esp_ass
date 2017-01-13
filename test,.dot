@@ -1,0 +1,6 @@
+digraph FamilyTree
+{
+  " [m]";
+  "Nekome [m]" -> "Tata 1 [m]";
+  "Tata 1 [m]";
+}

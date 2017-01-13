@@ -6,16 +6,16 @@ Melania [f]
 Orion [m]
 Phineas [m]
 Pollux [m]
-Sirius Jr. [m]
 Sirius [m]
+Sirius Jr. [m]
 Ursula [f]
 Violetta [f]
 Walburga [f]
 File parsing successful...
-esp>[ERR] Wrong usage - list.
-esp>[ERR] Wrong usage - list.
-esp>[ERR] Wrong usage - list.
-esp>Arcturus [m]
+esp> [ERR] Wrong usage - list.
+esp> [ERR] Wrong usage - list.
+esp> [ERR] Wrong usage - list.
+esp> Arcturus [m]
 Cygnus [m]
 Hester [f]
 Irma [f]
@@ -23,12 +23,12 @@ Melania [f]
 Orion [m]
 Phineas [m]
 Pollux [m]
-Sirius Jr. [m]
 Sirius [m]
+Sirius Jr. [m]
 Ursula [f]
 Violetta [f]
 Walburga [f]
-esp>[ERR] Wrong usage - list.
-esp>esp>esp>esp>esp>esp>[ERR] Wrong usage - list.
-esp>[ERR] Wrong usage - list.
-esp>
+esp> [ERR] Wrong usage - list.
+esp> esp> esp> esp> esp> esp> [ERR] Wrong usage - list.
+esp> [ERR] Wrong usage - list.
+esp> 
