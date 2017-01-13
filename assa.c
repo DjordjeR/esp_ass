@@ -1449,24 +1449,27 @@ Person **array_of_persons)
     }
     else
     {
-      int number_of_persons = numberOfPersons(*array_of_persons);
-      if (number_of_persons > REALLOC_THRESHOLD)
+      if(findPerson(*array_of_persons, first_person_name, first_person_gender)
+        == NULL)
       {
-        Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
-          (number_of_persons * 5));
-        if (buffer == NULL)
+        int number_of_persons = numberOfPersons(*array_of_persons);
+        if (number_of_persons > REALLOC_THRESHOLD)
         {
-          free(*array_of_persons);
-          showError(ERROR_OUT_OF_MEMORY);
-          exit(ERROR_OUT_OF_MEMORY);
+          Person *buffer = realloc(*array_of_persons, sizeof(Person) * 
+            (number_of_persons * 5));
+          if (buffer == NULL)
+          {
+            free(*array_of_persons);
+            showError(ERROR_OUT_OF_MEMORY);
+            exit(ERROR_OUT_OF_MEMORY);
+          }
         }
+        strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
+        (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
+        (*array_of_persons + number_of_persons)->mother_ = NULL;
+        (*array_of_persons + number_of_persons)->father_ = NULL;
+        (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
       }
-
-      strcpy((*array_of_persons + number_of_persons)->name_, first_person_name);
-      (*array_of_persons + number_of_persons)->gender_ = first_person_gender;
-      (*array_of_persons + number_of_persons)->mother_ = NULL;
-      (*array_of_persons + number_of_persons)->father_ = NULL;
-      (*array_of_persons + (number_of_persons + 1))->gender_ = 3;
       showError(ERROR_RELATION_NOT_POSSIBLE);
     }
   }
