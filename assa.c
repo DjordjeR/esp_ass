@@ -489,7 +489,7 @@ BOOL parseSingleFileLine(char *line_to_parse, char *name, BOOL *gender_b, char
   int null_counter = 0;
   while(*(line_to_parse + counter) != '[')
   {
-    *(name+null_counter) = *(line_to_parse + counter);
+    *(name + null_counter) = *(line_to_parse + counter);
     counter++;
     null_counter++;
     if(counter >= MAX_NAME_LENGTH || *(line_to_parse + counter) == ']' ||  *
@@ -2807,9 +2807,7 @@ Person *sortPersons(Person *persons)
       }
       else if(strcmp((persons_sorted + counter)->name_,(persons_sorted +
         switch_counter)->name_) == 0 && (persons_sorted + counter)->gender_ < 
-        (persons_sorted
-       +
-        switch_counter)->gender_)
+        (persons_sorted + switch_counter)->gender_)
       {
         copyPerson(person_placeholder, persons_sorted + counter);
         copyPerson(persons_sorted + counter, persons_sorted + switch_counter);
