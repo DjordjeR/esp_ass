@@ -1,25 +1,8 @@
-# ESP Projekat - Stammbaum
+# ESP Projekat
 
-##Neke od ideja : 
-1. napisati funkciju istDotFileValid() koja provjerava da li je fajl koji smo dobili od njih validan, ima li grešaka
- 
-2. napisati jednu funkciju parseDotFile() koja bi čitatala tekst fajl koji dobijemo od njih i smjestila to sve u jedan fin niz ovih eve strukture Person. Ovo je vjerovatno i najteži dio
-
-3. napisati funkciju parseConsoleInput() koja će provjeravati sve što je uneseno i da li je sve okej, ovdje negdje takođe treba i beskonačna petlja da ono njihovo esp> pa komande budu ispisane. Neće biti jednostavno jer ne možemo koristi argv i argc moramo napraviti sami svoje.
-
-4. napisati funkciju createDotFile() koja će kreirati fajl na osnovu unesenih podataka.
- 
-Fajl bi bilo dobro prvo učtiati u neki privremeni buffer pa tek onda parsirati.
-
- * **NOTE**: fread, sscanf itd će nam trebati.
-
-### istDotFileValid()
-Napisati detalje.
-### parseDotFile()
-Napisati detalje.
-### parseConsoleInput()
-Napisati detalje.
-### createDotFile()
-Napisati detalje.
-
-Dodati još.
+The program takes in the members of family either by the command line or from
+the already made documents. All necessary checks are being made in an attempt
+to ensure file and data validity. After all family members are successfully
+loaded or manually written, program gives a possibility to store acquired
+data in a .dot file format for further use. Dot file is properly formatted,
+so it can be used to create an image of family a tree.  
